@@ -7,6 +7,12 @@ project(dak_utility)
 add_definitions(-DUNICODE)
 add_definitions(-D_UNICODE)
 
+add_subdirectory(geometry)
+add_subdirectory(geometry_tests)
+
 add_subdirectory(utility)
 add_subdirectory(utility_tests)
+
+add_subdirectory(ui)
+add_subdirectory(ui_qt)
 

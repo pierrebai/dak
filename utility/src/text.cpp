@@ -20,6 +20,15 @@ namespace dak::utility
       return convert(text.c_str());
    }
 
+   const char* L::t(const char* some_text)
+   {
+      return some_text;
+   }
+
+   const wchar_t* L::t(const wchar_t* some_text)
+   {
+      return some_text;
+   }
 }
 
 // vim: sw=3 : sts=3 : et : sta : 

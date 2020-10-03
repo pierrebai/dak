@@ -13,6 +13,12 @@ namespace dak::utility
    
    std::wstring convert(const std::string& text);
    std::wstring convert(const char* text);
+
+   struct L
+   {
+      static const char* t(const char* some_text);
+      static const wchar_t* t(const wchar_t* some_text);
+   };
 }
 
 #endif
