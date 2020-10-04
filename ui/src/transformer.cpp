@@ -269,7 +269,7 @@ namespace dak
       {
          if (forced_interaction_mode != interaction_mode_t::normal)
             _interaction_mode = forced_interaction_mode;
-         else if (!me.has_modifiers(modifiers_t::shift))
+         else if (mouse_interaction_modifier != modifiers_t::none && !me.has_modifiers(mouse_interaction_modifier))
             _interaction_mode = interaction_mode_t::normal;
          else if ((me.has_buttons(mouse::buttons_t::two)) != 0)
             _interaction_mode = interaction_mode_t::rotating;

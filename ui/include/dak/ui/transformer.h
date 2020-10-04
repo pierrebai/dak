@@ -43,6 +43,9 @@ namespace dak::ui
       // Force a particular interaction mode.
       interaction_mode_t forced_interaction_mode = interaction_mode_t::normal;
 
+      // Modifier to be held to allow mouse interaction. By default, shift.
+      modifiers_t mouse_interaction_modifier = modifiers_t::shift;
+
       // Creation.
       transformer_t(std::function<void(transformer_t&)> draw_callback);
       transformer_t(transformable_t& tr, std::function<void(transformer_t&)> draw_callback);
