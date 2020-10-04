@@ -15,6 +15,7 @@ add_library(ui_qt
    include/dak/ui/qt/double_editor.h                  src/double_editor.cpp
    include/dak/ui/qt/drawing_canvas.h                 src/drawing_canvas.cpp
    include/dak/ui/qt/edges_map_canvas.h               src/edges_map_canvas.cpp
+   include/dak/ui/qt/function_drawing_canvas.h
    include/dak/ui/qt/int_editor.h                     src/int_editor.cpp
    include/dak/ui/qt/layered_canvas.h                 src/layered_canvas.cpp
    include/dak/ui/qt/message_reporter.h               src/message_reporter.cpp
