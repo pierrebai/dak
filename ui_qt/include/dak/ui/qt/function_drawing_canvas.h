@@ -1,9 +1,9 @@
 #pragma once
 
-#ifndef DAK_UI_QT_DRAWING_CANVAS_H
-#define DAK_UI_QT_DRAWING_CANVAS_H
+#ifndef DAK_UI_QT_FUNCTION_DRAWING_CANVAS_H
+#define DAK_UI_QT_FUNCTION_DRAWING_CANVAS_H
 
-#include <dak/ui/qt/canvas.h>
+#include <dak/ui/qt/drawing_canvas.h>
 
 #include <dak/ui/qt/painter_transformable.h>
 

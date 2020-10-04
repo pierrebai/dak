@@ -59,7 +59,7 @@ namespace dak::ui::mouse
 
       // Create an event.
       event_t(const point_t& a_position, mouse::buttons_t some_buttons, ui::modifiers_t some_modifiers, int a_scroll_amount)
-      : position(a_position), buttons(buttons), modifiers(some_modifiers), scroll_amount(a_scroll_amount)
+      : position(a_position), buttons(some_buttons), modifiers(some_modifiers), scroll_amount(a_scroll_amount)
       {
       }
    };

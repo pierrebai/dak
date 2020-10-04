@@ -20,6 +20,7 @@ namespace dak::ui
       channel b = 0;
       channel a = 0;
 
+      constexpr color_t() = default;
       constexpr color_t(channel r, channel g, channel b, channel a = 255) : r(r), g(g), b(b), a(a) { }
       static constexpr color_t from_fractions(double r, double g, double b, double a = 1.) { return color_t(channel(255 * r), channel(255 * g), channel(255 * b), channel(255 * a)); }
 
