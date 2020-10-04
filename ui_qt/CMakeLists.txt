@@ -29,9 +29,9 @@ add_library(ui_qt
 
 target_include_directories(ui_qt PUBLIC
    include
-   "${PROJECT_SOURCE_DIR}/geometry/include"
-   "${PROJECT_SOURCE_DIR}/utility/include"
-   "${PROJECT_SOURCE_DIR}/ui/include"
+   "${CMAKE_CURRENT_SOURCE_DIR}/../utility/include"
+   "${CMAKE_CURRENT_SOURCE_DIR}/../geometry/include"
+   "${CMAKE_CURRENT_SOURCE_DIR}/../ui/include"
 )
 
 target_include_directories(ui_qt PUBLIC

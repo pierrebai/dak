@@ -21,6 +21,7 @@ target_compile_features(geometry_tests PUBLIC
 
 target_include_directories(geometry_tests PUBLIC
    include
-   "${PROJECT_SOURCE_DIR}/geometry/include"
+   "${CMAKE_CURRENT_SOURCE_DIR}/../utility/include"
+   "${CMAKE_CURRENT_SOURCE_DIR}/../geometry/include"
 )
 

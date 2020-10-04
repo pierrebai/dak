@@ -16,8 +16,8 @@ add_library(ui
 
 target_include_directories(ui PUBLIC
    include
-   "${PROJECT_SOURCE_DIR}/geometry/include"
-   "${PROJECT_SOURCE_DIR}/utility/include"
+   "${CMAKE_CURRENT_SOURCE_DIR}/../utility/include"
+   "${CMAKE_CURRENT_SOURCE_DIR}/../geometry/include"
 )
 
 target_compile_features(ui PUBLIC

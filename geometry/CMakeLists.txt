@@ -15,7 +15,7 @@ add_library(geometry
 
 target_include_directories(geometry PUBLIC
    include
-   "${PROJECT_SOURCE_DIR}/utility/include"
+   "${CMAKE_CURRENT_SOURCE_DIR}/../utility/include"
 )
 
 target_compile_features(geometry PUBLIC
