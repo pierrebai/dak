@@ -2,6 +2,20 @@
 
 namespace dak::utility
 {
+   namespace
+   {
+      // Keeps track if we are in the middle of an undo/redo operation.
+      struct undoing_t
+      {
+         undoing_t(bool& f) : my_f(f) { my_f = true; }
+
+         ~undoing_t() { my_f = false; }
+
+      private:
+         bool& my_f;
+      };
+   }
+
    // Create an empty undo stack.
    undo_stack_t::undo_stack_t()
    : my_top_transaction(my_undos.end())
@@ -13,6 +27,9 @@ namespace dak::utility
    {
       my_undos.clear();
       my_top_transaction = my_undos.end();
+
+      if (changed)
+         changed(*this);
    }
 
    // Deaden the current my_top_transaction transaction_t data.
@@ -35,13 +52,22 @@ namespace dak::utility
    // Deaden the transaction_t data.
    void undo_stack_t::commit(const transaction_t& a_tr)
    {
+      // Refuse to commit during undo/redo/commit.
+      if (my_is_undoing)
+         return;
+
       // If there were undone transactions_t, erase them now that we're commiting a new timeline.
       if (has_redo())
          my_undos.erase(my_top_transaction + 1, my_undos.end());
 
+      undoing_t undoing(my_is_undoing);
+
       my_undos.emplace_back(a_tr);
       my_top_transaction = my_undos.end() - 1;
       deaden_top();
+
+      if (changed)
+         changed(*this);
    }
 
    void undo_stack_t::simple_commit(const simple_transaction_t& tr)
@@ -55,8 +81,14 @@ namespace dak::utility
    {
       if (!has_undo())
          return;
+
+      undoing_t undoing(my_is_undoing);
+
       --my_top_transaction;
       awaken_top();
+
+      if (changed)
+         changed(*this);
    }
 
    // Redo awakens the next transaction_t data that was commited.
@@ -65,8 +97,14 @@ namespace dak::utility
    {
       if (!has_redo())
          return;
+
+      undoing_t undoing(my_is_undoing);
+
       ++my_top_transaction;
       awaken_top();
+
+      if (changed)
+         changed(*this);
    }
 }
 

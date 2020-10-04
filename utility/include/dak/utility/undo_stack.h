@@ -55,6 +55,9 @@ namespace dak::utility
       typedef std::vector<undo_data_t> transaction_t;
       typedef std::vector<transaction_t> transactions_t;
 
+      // The function called when the undo stack changed (clear, commit, undo or redo called).
+      std::function<void(undo_stack_t&)> changed;
+
       // Create an empty undo stack.
       undo_stack_t();
 
@@ -80,6 +83,9 @@ namespace dak::utility
       // Verify if there is anything to redo.
       bool has_redo() const { return my_top_transaction != my_undos.end() && my_top_transaction != my_undos.end() - 1; }
 
+      // Verify if an commit/undo/redo operation is underway.
+      bool is_undoing() const { return my_is_undoing; }
+
       // Return the current full contents of the undo stack.
       const transactions_t& contents() const { return my_undos; }
 
@@ -92,6 +98,7 @@ namespace dak::utility
 
       transactions_t my_undos;
       transactions_t::iterator my_top_transaction;
+      bool my_is_undoing = false;
    };
 }
 
