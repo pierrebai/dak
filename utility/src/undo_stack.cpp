@@ -44,6 +44,11 @@ namespace dak::utility
       deaden_top();
    }
 
+   void undo_stack_t::simple_commit(const simple_transaction_t& tr)
+   {
+      commit({ tr });
+   }
+
    // Undo awakens the previous transaction_t data. (The one before the last commit.)
    // Does nothing if at the start of the undo stack.
    void undo_stack_t::undo()

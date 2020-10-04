@@ -51,6 +51,7 @@ namespace dak::utility
    {
    public:
       // The transaction_t data type and list of all undo transactions_t.
+      typedef undo_data_t simple_transaction_t;
       typedef std::vector<undo_data_t> transaction_t;
       typedef std::vector<transaction_t> transactions_t;
 
@@ -63,6 +64,7 @@ namespace dak::utility
       // Commit the given modified data to the undo stack.
       // Deaden the transaction_t data.
       void commit(const transaction_t& a_tr);
+      void simple_commit(const simple_transaction_t& tr);
 
       // Undo awakens the previous transaction_t data. (The one before the last commit.)
       // Does nothing if at the start of the undo stack.
