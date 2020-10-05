@@ -64,6 +64,8 @@ namespace dak::ui::qt
       {
          self->select_color();
       });
+
+      layout->addStretch();
    }
 
    void color_editor_t::select_color()
