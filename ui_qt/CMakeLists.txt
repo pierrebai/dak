@@ -12,6 +12,7 @@ find_package(Qt5 COMPONENTS WinExtras REQUIRED)
 add_library(ui_qt
    include/dak/ui/qt/canvas.h                         src/canvas.cpp
    include/dak/ui/qt/convert.h                        src/convert.cpp
+   include/dak/ui/qt/color_editor.h                   src/color_editor.cpp
    include/dak/ui/qt/double_editor.h                  src/double_editor.cpp
    include/dak/ui/qt/drawing_canvas.h                 src/drawing_canvas.cpp
    include/dak/ui/qt/edges_map_canvas.h               src/edges_map_canvas.cpp
