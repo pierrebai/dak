@@ -52,7 +52,7 @@ namespace dak::ui::qt
 
          qwe->accept();
 
-         return ui::mouse::event_t(point_t(qwe->x(), qwe->y()),
+         return ui::mouse::event_t(point_t(qwe->position().x(), qwe->position().y()),
             translate(qwe->buttons()), translate(qwe->modifiers()), qwe->delta());
       }
    }

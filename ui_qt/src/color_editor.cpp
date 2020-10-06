@@ -73,8 +73,10 @@ namespace dak::ui::qt
          title = QString::asprintf(tr("Select %s Color").toUtf8().constData(), label.toUtf8().constData());
       else
          title = tr("Select Color");
+
       const QColor new_color = QColorDialog::getColor(ui::qt::convert(my_color), this, title, QColorDialog::ColorDialogOption::ShowAlphaChannel);
-      set_color(ui::qt::convert(new_color), true);
+      if (new_color.isValid())
+         set_color(ui::qt::convert(new_color), true);
    }
 }
 
