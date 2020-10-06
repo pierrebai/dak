@@ -7,7 +7,6 @@
 
 #include <QtWidgets/qwidget>
 
-class QLabel;
 class QPushButton;
 
 namespace dak::ui::qt
@@ -31,7 +30,6 @@ namespace dak::ui::qt
 
       void select_color();
 
-      QLabel*        my_color_label = nullptr;
       QPushButton*   my_color_button = nullptr;
 
       color_t my_color;

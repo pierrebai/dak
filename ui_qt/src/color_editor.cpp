@@ -51,14 +51,11 @@ namespace dak::ui::qt
       auto layout = new QHBoxLayout(this);
       layout->setContentsMargins(0, 0, 0, 0);
 
-      if (some_text)
-      {
-         my_color_label = new QLabel(QString::fromWCharArray(some_text));
-         layout->addWidget(my_color_label);
-      }
-
       my_color_button = new QPushButton;
       layout->addWidget(my_color_button);
+
+      if (some_text)
+         my_color_button->setText(QString::fromWCharArray(some_text));
 
       my_color_button->connect(my_color_button, &QPushButton::clicked, [self = this]()
       {
@@ -70,7 +67,13 @@ namespace dak::ui::qt
 
    void color_editor_t::select_color()
    {
-      const QColor new_color = QColorDialog::getColor(ui::qt::convert(my_color), this, tr("Select Color"), QColorDialog::ColorDialogOption::ShowAlphaChannel);
+      QString label = my_color_button->text();
+      QString title;
+      if (label.length() > 0)
+         title = QString::asprintf(tr("Select %s Color").toUtf8().constData(), label.toUtf8().constData());
+      else
+         title = tr("Select Color");
+      const QColor new_color = QColorDialog::getColor(ui::qt::convert(my_color), this, title, QColorDialog::ColorDialogOption::ShowAlphaChannel);
       set_color(ui::qt::convert(new_color), true);
    }
 }
