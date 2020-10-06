@@ -17,7 +17,7 @@ namespace geometry::tests
    {
    public:
 
-      static size_t range_size(const edges_map_t::range& r)
+      static size_t range_size(const edges_map_t::range_t& r)
       {
          return r.second - r.first;
       }
