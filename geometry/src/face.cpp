@@ -8,7 +8,7 @@
 
 namespace dak::geometry
 {
-   using L = dak::utility::L;
+   using utility::L;
 
    namespace
    {
@@ -38,7 +38,7 @@ namespace dak::geometry
                }
             }
          }
-         
+            
          wchar_t error[200];
 
          // The number of white and black face times their number of edges should be equal.
@@ -83,9 +83,9 @@ namespace dak::geometry
       const edge_t* const first_edge = &all_edges.front();
       const edge_t* const last_edge = &all_edges.back();
 
-      auto edge_index = [first_edge=first_edge](const edge_t* edge_t) -> size_t
+      auto edge_index = [first_edge=first_edge](const edge_t* edge) -> size_t
       {
-         return edge_t - first_edge;
+         return edge - first_edge;
       };
 
       // Crossings where this is an odd number of edges cannot propagate the checker-board

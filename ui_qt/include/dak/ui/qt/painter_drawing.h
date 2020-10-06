@@ -29,7 +29,7 @@ namespace dak::ui::qt
       // Drawing on the given QPainter.
       painter_drawing_t(QPainter& p) : painter(&p) { }
 
-      // ui::drawing interface, complete the implementation.
+      // ui::drawing_t interface, complete the implementation.
       painter_drawing_t& draw_line(const point_t& from, const point_t& to) override;
       painter_drawing_t& draw_corner(const point_t& from, const point_t& corner, const point_t& to) override;
       painter_drawing_t& fill_polygon(const polygon_t& p) override;

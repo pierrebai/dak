@@ -7,7 +7,6 @@
 
 #include <cmath>
 #include <cstdint>
-#include <compare>
 
 namespace dak::geometry
 {

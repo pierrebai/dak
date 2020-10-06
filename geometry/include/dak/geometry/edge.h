@@ -109,7 +109,7 @@ namespace dak::geometry
       }
 
       // Verify if the edge is invalid.
-      bool is_invalid() const
+      constexpr bool is_invalid() const
       {
          return order == very_negative;
       }

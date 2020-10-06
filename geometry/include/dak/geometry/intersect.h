@@ -11,15 +11,15 @@ namespace dak::geometry::intersect
    //
    // Some routines for testing line segment intersections.
 
-   // Return a point_t (s,t), where s is the fraction from p1 to
+   // Return a point (s,t), where s is the fraction from p1 to
    // q1 where an intersection occurs.  t is defined similarly for p2 and q2.
-   // If there's no intersection, return an invalid point_t.
+   // If there's no intersection, return an invalid point.
    point_t get_intersection_params(const point_t& p1, const point_t& q1, const point_t& p2, const point_t& q2);
 
-   // Coerce the point_t to be invalid if not on both unit segments.
+   // Coerce the point to be invalid if not on both unit segments.
    const point_t& stay_on_units(const point_t& ip);
 
-   // Coerce the point_t to be invalid if too far off both unit segments.
+   // Coerce the point to be invalid if too far off both unit segments.
    static constexpr double near_limit = 0.2;
    const point_t& stay_near_units(const point_t& ip);
 
@@ -28,7 +28,7 @@ namespace dak::geometry::intersect
    point_t intersect(const point_t& p1, const point_t& q1, const point_t& p2, const point_t& q2);
 
    // Get the position of the intersection by interpolating.
-   // Returns invalid if parallel or if the point_t is too far off.
+   // Returns invalid if parallel or if the point is too far off.
    point_t intersect_near(const point_t& p1, const point_t& q1, const point_t& p2, const point_t& q2);
 
    // Get the position of the intersection by interpolating, even outside the segments.

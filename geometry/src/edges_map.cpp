@@ -6,10 +6,9 @@
 
 namespace dak::geometry
 {
-   using L = dak::utility::L;
+   using utility::L;
 
    const edge_t edge_t::invalid;
-
 
    //#define DAK_GEOMETRY_MAP_INTERNAL_VERIFY
 
@@ -41,22 +40,22 @@ namespace dak::geometry
       return iter != _sorted_edges.end() && *iter == e;
    }
 
-   edges_map_t::range edges_map_t::outbounds(const point_t& p) const
+   edges_map_t::range_t edges_map_t::outbounds(const point_t& p) const
    {
       auto lower = std::lower_bound(_sorted_edges.begin(), _sorted_edges.end(), edge_t::lowest_edge(p));
       auto upper = std::upper_bound(_sorted_edges.begin(), _sorted_edges.end(), edge_t::highest_edge(p));
       while (lower != upper && lower->p1 != p)
          ++lower;
-      return range(lower, upper);
+      return range_t(lower, upper);
    }
 
    std::pair<edge_t, edge_t> edges_map_t::before_after(const edge_t& e) const
    {
-      const range conns = outbounds(e.p2);
+      const range_t conns = outbounds(e.p2);
       return before_after(conns, e);
    }
 
-   std::pair<edge_t, edge_t> edges_map_t::before_after(const range& outbounds, const edge_t& e)
+   std::pair<edge_t, edge_t> edges_map_t::before_after(const range_t& outbounds, const edge_t& e)
    {
       // TODO: maybe return pair of iter instead? Same for before and after.
       const auto iter = std::lower_bound(outbounds.begin(), outbounds.end(), e.twin());
@@ -70,11 +69,11 @@ namespace dak::geometry
 
    const edge_t& edges_map_t::before(const edge_t& e) const
    {
-      const range conns = outbounds(e.p2);
+      const range_t conns = outbounds(e.p2);
       return before(conns, e);
    }
 
-   const edge_t& edges_map_t::before(const range& outbounds, const edge_t& e)
+   const edge_t& edges_map_t::before(const range_t& outbounds, const edge_t& e)
    {
       const auto iter = std::lower_bound(outbounds.begin(), outbounds.end(), e.twin());
       if (iter == outbounds.end())
@@ -85,11 +84,11 @@ namespace dak::geometry
 
    const edge_t& edges_map_t::after(const edge_t& e) const
    {
-      const range conns = outbounds(e.p2);
+      const range_t conns = outbounds(e.p2);
       return after(conns, e);
    }
 
-   const edge_t& edges_map_t::after(const range& outbounds, const edge_t& e)
+   const edge_t& edges_map_t::after(const range_t& outbounds, const edge_t& e)
    {
       const auto iter = std::lower_bound(outbounds.begin(), outbounds.end(), e.twin());
       if (iter == outbounds.end())
@@ -100,11 +99,11 @@ namespace dak::geometry
 
    const edge_t& edges_map_t::continuation(const edge_t& e) const
    {
-      const range conns = outbounds(e.p2);
+      const range_t conns = outbounds(e.p2);
       return continuation(conns, e);
    }
 
-   const edge_t& edges_map_t::continuation(const range& outbounds, const edge_t& e)
+   const edge_t& edges_map_t::continuation(const range_t& outbounds, const edge_t& e)
    {
       const auto iter = std::lower_bound(outbounds.begin(), outbounds.end(), e.twin());
       if (iter == outbounds.end())
@@ -117,7 +116,7 @@ namespace dak::geometry
 
    void edges_map_t::remove(const point_t& p)
    {
-      const range range_to_remove = outbounds(p);
+      const range_t range_to_remove = outbounds(p);
       const edges_t to_remove = edges_t(range_to_remove.begin(), range_to_remove.end());
       _sorted_edges.erase(range_to_remove.begin(), range_to_remove.end());
       for (const auto e : to_remove)
@@ -137,10 +136,22 @@ namespace dak::geometry
       internal_verify();
    }
 
+   void edges_map_t::reserve(size_t edge_count)
+   {
+      _sorted_edges.reserve(edge_count);
+   }
+
+   void edges_map_t::begin_merge_non_overlapping()
+   {
+   }
+
    void edges_map_t::merge_non_overlapping(const edges_map_t& other)
    {
-      _sorted_edges.reserve(_sorted_edges.size() + other._sorted_edges.size());
       _sorted_edges.insert(_sorted_edges.end(), other._sorted_edges.begin(), other._sorted_edges.end());
+   }
+
+   void edges_map_t::end_merge_non_overlapping()
+   {
       internal_sort_edges();
       internal_verify();
    }
@@ -261,7 +272,7 @@ namespace dak::geometry
 
       if (intersection_count == 0)
       {
-         // If no intersection found, just add the new edge_t with an invalid intersection point.
+         // If no intersection found, just add the new edge_t with an invalid intersection point_t.
          temp_edge_intersections.emplace_back(new_edge, point_t());
       }
    }
@@ -278,7 +289,7 @@ namespace dak::geometry
       edges_t new_sorted_canonical_edges;
       new_sorted_canonical_edges.reserve(_sorted_edges.size() + temp_edge_intersections.size());
 
-      // Keep track of previous edge_t and point so we can detect when
+      // Keep track of previous edge_t and point_t so we can detect when
       // we've finished splitting one particular edge_t.
       edge_t prev_edge;
       point_t prev_point;
@@ -344,7 +355,7 @@ namespace dak::geometry
                }
 
                // Split the input edge_t at every intersection. Beware that an edge_t might get split twice
-               // if it is intersected by an end-point of the other edges_map_t, which result in two identical
+               // if it is intersected by an end-point_t of the other edges_map_t, which result in two identical
                // intersections.
                if (prev_point != intersection)
                {

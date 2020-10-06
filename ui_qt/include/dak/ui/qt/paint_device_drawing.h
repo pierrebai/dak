@@ -23,7 +23,7 @@ namespace dak::ui::qt
       // Create a drawing on the given QT paint device.
       paint_device_drawing_t(QPaintDevice& pd) : paint_device(pd) { }
 
-      // ui::drawing interface, complete the implementation.
+      // ui::drawing_t interface, complete the implementation.
       paint_device_drawing_t& draw_line(const point_t& from, const point_t& to) override;
       paint_device_drawing_t& draw_corner(const point_t& from, const point_t& corner, const point_t& to) override;
       paint_device_drawing_t& fill_polygon(const polygon_t& p) override;

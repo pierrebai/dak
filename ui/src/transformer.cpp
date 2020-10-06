@@ -110,7 +110,7 @@ namespace dak
          {
             const stroke_t saved_stroke = drawing.get_stroke();
             //float dashes[] = { size / 1024.0f, size / 16.0f };
-            //stroke wideStroke = stroke( size / 16, stroke::cap_style::round, stroke::join_style::round, 1.0f, dashes, 0.0f );
+            //stroke wideStroke = stroke( size / 16, stroke::cap_style::round, stroke::join_style_t::round, 1.0f, dashes, 0.0f );
             const stroke_t wideStroke = stroke_t(size / 16, stroke_t::cap_style_t::round, stroke_t::join_style_t::round);
             drawing.set_stroke(wideStroke);
             drawing.draw_line(mid, interaction_moving_delta + mid);
