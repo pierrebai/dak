@@ -338,18 +338,25 @@ namespace dak
       {
          const double from_ratio = calculate_scaling(from);
          const double to_ratio = calculate_scaling(to);
-         if (from_ratio == 0. || to_ratio == 0.)
+         if (utility::near_zero(from_ratio) || utility::near_zero(to_ratio))
          {
             draw_callback(*this);
             return;
          }
 
          const double ratio = to_ratio / from_ratio;
+         common_scale(initial_point, ratio);
+      }
 
-         interaction_scaling_factor *= ratio;
+      void transformer_t::common_scale(const point_t & a_center_of_scale, double a_ratio)
+      {
+         if (utility::near_zero(a_ratio))
+            return;
+
+         interaction_scaling_factor *= a_ratio;
 
          if (manipulated)
-            manipulated->compose(transform_t::scale(screen_to_transformable(initial_point), ratio));
+            manipulated->compose(transform_t::scale(screen_to_transformable(a_center_of_scale), a_ratio));
 
          draw_callback(*this);
       }
@@ -439,7 +446,7 @@ namespace dak
 
       void transformer_t::wheel_scale(const mouse::event_t& me)
       {
-         common_scale(point_t::origin(), me.scroll_delta);
+         common_scale(me.position, 1. + me.angle_degrees_delta / 180.);
       }
 
       ////////////////////////////////////////////////////////////////////////////

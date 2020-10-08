@@ -50,7 +50,8 @@ namespace dak::ui::qt
       {
          // Qt keep angle as 1/8 of a degree.
          const double eight_of_degrees = std::sqrt(point.x() * point.x() + point.y() * point.y());
-         const double degrees = eight_of_degrees * 8.;
+         const double sign = ((point.x() < 0) != (point.y() < 0)) ? -1 : 1;
+         const double degrees = sign * eight_of_degrees / 8.;
          return degrees;
       }
 

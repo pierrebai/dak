@@ -86,6 +86,7 @@ namespace dak::ui
       void common_rotate(const point_t& from, const point_t& to);
       void common_rotate(const point_t& a_center_of_rotation, double a_radians_angle);
       void common_scale(const point_t& from, const point_t& to);
+      void common_scale(const point_t& a_center_of_scale, double a_ratio);
 
       void drag_move(const mouse::event_t& me);
       void drag_rotate(const mouse::event_t& me);
