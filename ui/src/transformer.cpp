@@ -307,14 +307,19 @@ namespace dak
          if (delta_angle > PI)
             delta_angle -= 2 * PI;
 
-         interaction_rotating_angle += delta_angle;
+         common_rotate(mid, delta_angle);
+      }
+
+      void transformer_t::common_rotate(const point_t& a_center_of_rotation, double a_radians_angle)
+      {
+         interaction_rotating_angle += a_radians_angle;
          while (interaction_rotating_angle >= 2 * PI)
             interaction_rotating_angle -= 2 * PI;
          while (interaction_rotating_angle <= -2 * PI)
             interaction_rotating_angle += 2 * PI;
 
          if (manipulated)
-            manipulated->compose(transform_t::rotate(mid, delta_angle));
+            manipulated->compose(transform_t::rotate(a_center_of_rotation, a_radians_angle));
          draw_callback(*this);
       }
 
@@ -416,32 +421,25 @@ namespace dak
 
       void transformer_t::wheel_move(const mouse::event_t& me)
       {
-         const int amount = me.scroll_amount;
+         const point_t delta = (me.scroll_delta != point_t::origin())
+                             ? me.scroll_delta
+                             : point_t(0, -me.angle_degrees_delta);
 
          const point_t from = screen_to_transformable(point_t::origin());
-         const point_t to = screen_to_transformable(point_t(0, -amount));
+         const point_t to = screen_to_transformable(delta);
 
          common_move(from, to);
       }
 
       void transformer_t::wheel_rotate(const mouse::event_t& me)
       {
-         const int amount = me.scroll_amount;
-
-         const point_t from = screen_to_transformable(point_t::origin());
-         const point_t to = screen_to_transformable(point_t(0, amount));
-
-         common_rotate(from, to);
+         const point_t center_of_rotation = screen_to_transformable(me.position);
+         common_rotate(center_of_rotation, me.angle_degrees_delta * PI / 180.);
       }
 
       void transformer_t::wheel_scale(const mouse::event_t& me)
       {
-         const int amount = me.scroll_amount;
-
-         const point_t from = point_t::origin();
-         const point_t to = point_t(0, amount);
-
-         common_scale(from, to);
+         common_scale(point_t::origin(), me.scroll_delta);
       }
 
       ////////////////////////////////////////////////////////////////////////////

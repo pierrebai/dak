@@ -47,7 +47,8 @@ namespace dak::ui::mouse
       ui::modifiers_t modifiers;
 
       // Amount of mouse-wheel scrolling.
-      int scroll_amount = 0;
+      double angle_degrees_delta = 0;
+      point_t scroll_delta = point_t::origin();
 
       // Verify if the given buttons_t are pressed down.
       // Return true if any are pressed.
@@ -58,8 +59,8 @@ namespace dak::ui::mouse
       bool has_modifiers(ui::modifiers_t a) const { return (int(modifiers) & int(a)) != 0; }
 
       // Create an event.
-      event_t(const point_t& a_position, mouse::buttons_t some_buttons, ui::modifiers_t some_modifiers, int a_scroll_amount)
-      : position(a_position), buttons(some_buttons), modifiers(some_modifiers), scroll_amount(a_scroll_amount)
+      event_t(point_t a_position, mouse::buttons_t some_buttons, ui::modifiers_t some_modifiers, double an_angle_delta, point_t a_scroll_delta)
+      : position(a_position), buttons(some_buttons), modifiers(some_modifiers), angle_degrees_delta(an_angle_delta), scroll_delta(a_scroll_delta)
       {
       }
    };

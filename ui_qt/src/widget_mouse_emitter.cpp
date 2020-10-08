@@ -1,4 +1,5 @@
 #include <dak/ui/qt/widget_mouse_emitter.h>
+#include <dak/ui/qt/convert.h>
 
 #include <QtGui/qevent.h>
 
@@ -37,23 +38,31 @@ namespace dak::ui::qt
       ui::mouse::event_t translate(QMouseEvent* qme)
       {
          if (!qme)
-            return ui::mouse::event_t(point_t(), buttons_t::none, modifiers_t::none, 0);
+            return ui::mouse::event_t(point_t(), buttons_t::none, modifiers_t::none, 0, point_t::origin());
 
          qme->accept();
 
          return ui::mouse::event_t(point_t(qme->x(), qme->y()),
-            translate(qme->buttons()), translate(qme->modifiers()), 0);
+            translate(qme->buttons()), translate(qme->modifiers()), 0, point_t::origin());
+      }
+
+      double convertPointToDegrees(const QPoint& point)
+      {
+         // Qt keep angle as 1/8 of a degree.
+         const double eight_of_degrees = std::sqrt(point.x() * point.x() + point.y() * point.y());
+         const double degrees = eight_of_degrees * 8.;
+         return degrees;
       }
 
       ui::mouse::event_t translate(QWheelEvent* qwe)
       {
          if (!qwe)
-            return ui::mouse::event_t(point_t(), buttons_t::none, modifiers_t::none, 0);
+            return ui::mouse::event_t(point_t(), buttons_t::none, modifiers_t::none, 0, point_t::origin());
 
          qwe->accept();
 
          return ui::mouse::event_t(point_t(qwe->position().x(), qwe->position().y()),
-            translate(qwe->buttons()), translate(qwe->modifiers()), qwe->delta());
+            translate(qwe->buttons()), translate(qwe->modifiers()), convertPointToDegrees(qwe->angleDelta()), convert(qwe->pixelDelta()));
       }
    }
 
