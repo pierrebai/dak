@@ -12,6 +12,7 @@ add_library(utility
    include/dak/utility/threaded_work.h
    include/dak/utility/selection.h
    include/dak/utility/text.h                      src/text.cpp
+   include/dak/utility/types.h
    include/dak/utility/undo_stack.h                src/undo_stack.cpp
 )
 

@@ -16,5 +16,6 @@
 #include <dak/utility/stream_progress.h>
 #include <dak/utility/thread_pool.h>
 #include <dak/utility/threaded_work.h>
+#include <dak/utility/types.h>
 
 #endif /* DAK_UTILITY_ALL_H */
