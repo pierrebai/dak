@@ -21,6 +21,12 @@ namespace Microsoft::VisualStudio::CppUnitTestFramework
       RETURN_WIDE_STRING(a_var);
    }
 
+   template<> inline std::wstring ToString<dak::any_op::comparison_t>(const dak::any_op::comparison_t& a_cmp)
+   {
+      using namespace dak::any_op;
+      RETURN_WIDE_STRING(a_cmp);
+   }
+
 }
 
 #endif /* DAK_ANY_TESTS_HELPERS_H */

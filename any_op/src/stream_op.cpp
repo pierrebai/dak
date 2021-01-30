@@ -35,7 +35,7 @@ namespace dak::any_op
 
    std::wostream& operator<<(std::wostream& a_stream, const std::any& a_value)
    {
-      return stream_op_t::call(a_stream, a_value);
+      return stream(a_stream, a_value);
    }
 
    void stream_op_t::register_ops()

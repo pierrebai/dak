@@ -96,12 +96,6 @@ namespace dak::any_op
          register_op<A, EXTRA_SELECTORS...>(op);
       }
 
-   private:
-      // The null operation, used in the default constructor.
-      static std::any no_op(EXTRA_ARGS..., const std::any&) { return {}; }
-
-      op_func_t my_op_func = no_op;
-
       // Call a unary operation with the optional extra args and selected with the extra selectors.
       template <class... EXTRA_SELECTORS>
       static std::any call_op(EXTRA_ARGS... args, const std::any& arg_a)
@@ -127,6 +121,12 @@ namespace dak::any_op
             return std::any();
          return pos->second.my_op_func(args..., arg_a);
       }
+
+   private:
+      // The null operation, used in the default constructor.
+      static std::any no_op(EXTRA_ARGS..., const std::any&) { return {}; }
+
+      op_func_t my_op_func = no_op;
 
       // Register an operation implementation. Called by make_op.
       template <class A, class... EXTRA_SELECTORS>

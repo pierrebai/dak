@@ -1,5 +1,6 @@
 
 add_library(any_op_tests SHARED
+   src/any_tests.cpp
    src/compare_op_tests.cpp
    src/convert_op_tests.cpp
    src/dominant_op_tests.cpp

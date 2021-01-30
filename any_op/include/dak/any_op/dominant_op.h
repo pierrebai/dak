@@ -21,28 +21,28 @@ namespace dak::any_op
 
    struct dominant_op_t : unary_op_t<dominant_op_t>
    {
-
-      template<class OTHER>
-      static std::any call(const std::any& arg_a)
-      {
-         const std::any result = call_op<OTHER>(arg_a);
-         if (result.has_value())
-            return result;
-         else
-            return arg_a;
-      }
-
-      template<class OTHER, class FROM>
-      static std::any call(const FROM& arg_a)
-      {
-         return call<OTHER>(std::any(arg_a));
-      }
-
       // Note: pre-defined operations implementation are automatically registered,
       //       but these static variables do not get initialized by the testing framework.
       //       Tests need to explicitly call a function to trigger initialization.
       static void register_ops();
    };
+
+   template<class OTHER>
+   inline std::any dominant(const std::any& arg_a)
+   {
+      const std::any result = dominant_op_t::call_op<OTHER>(arg_a);
+      if (result.has_value())
+         return result;
+      else
+         return arg_a;
+   }
+
+   template<class OTHER, class FROM>
+   inline std::any dominant(const FROM& arg_a)
+   {
+      return dominant<OTHER>(std::any(arg_a));
+   }
+
 }
 
 #endif /* DAK_ANY_OP_DOMINANT_OP_H */

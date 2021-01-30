@@ -16,26 +16,27 @@ namespace dak::any_op
 
    struct size_op_t : unary_op_t<size_op_t>
    {
-      static uint64_t call(const std::any& arg_a)
-      {
-         const std::any result = call_op(arg_a);
-         if (result.has_value())
-            return std::any_cast<uint64_t>(result);
-         else
-            return 0;
-      }
-
-      template<class A>
-      static uint64_t call(const A& arg_a)
-      {
-         return call(std::make_any<A>());
-      }
-
       // Note: pre-defined operations implementation are automatically registered,
       //       but these static variables do not get initialized by the testing framework.
       //       Tests need to explicitly call a function to trigger initialization.
       static void register_ops();
    };
+
+   inline uint64_t size(const std::any& arg_a)
+   {
+      const std::any result = size_op_t::call_op(arg_a);
+      if (result.has_value())
+         return std::any_cast<uint64_t>(result);
+      else
+         return 0;
+   }
+
+   template<class A>
+   inline uint64_t size(const A& arg_a)
+   {
+      return size(std::make_any<A>());
+   }
+
 }
 
 #endif /* DAK_ANY_OP_SIZE_OP_H */
