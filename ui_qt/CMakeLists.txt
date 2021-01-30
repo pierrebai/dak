@@ -42,7 +42,4 @@ target_include_directories(ui_qt PUBLIC
    "${Qt5WinExtras_INCLUDE_DIRS}"
 )
 
-target_compile_features(ui_qt PUBLIC
-   cxx_std_20
-)
-
+set_property(TARGET ui_qt PROPERTY CXX_STANDARD 20)

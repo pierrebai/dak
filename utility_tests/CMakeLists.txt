@@ -15,9 +15,8 @@ target_link_libraries(utility_tests PUBLIC
    utility
 )
 
-target_compile_features(utility_tests PUBLIC cxx_std_20)
-
 target_include_directories(utility_tests PUBLIC
    "${CMAKE_CURRENT_SOURCE_DIR}/../utility/include"
 )
 
+set_property(TARGET utility_tests PROPERTY CXX_STANDARD 20)

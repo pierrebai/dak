@@ -15,9 +15,7 @@ target_link_libraries(any_op_tests PUBLIC
    any_op
 )
 
-target_compile_features(any_op_tests PUBLIC
-   cxx_std_20
-)
+set_property(TARGET any_op_tests PROPERTY CXX_STANDARD 20)
 
 target_include_directories(any_op_tests PUBLIC
    include

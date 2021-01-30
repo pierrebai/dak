@@ -13,7 +13,6 @@ namespace dak::any_op
 
    struct convert_op_t : unary_op_t<convert_op_t>
    {
-
       template<class TO>
       static TO call(const std::any& arg_a)
       {
@@ -23,6 +22,7 @@ namespace dak::any_op
          else
             return TO {};
       }
+
       template<class TO, class FROM>
       static TO call(const FROM& arg_a)
       {

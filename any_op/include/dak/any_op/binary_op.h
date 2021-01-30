@@ -135,7 +135,7 @@ namespace dak::any_op
       {
          using selector_t = typename binary_op_selector_t<EXTRA_SELECTORS...>::selector_t;
          auto& ops = get_ops<selector_t>();
-         ops[binary_op_selector_t<EXTRA_SELECTORS...>::make<A, B>()] = an_op;
+         ops[binary_op_selector_t<EXTRA_SELECTORS...>::template make<A, B>()] = an_op;
       }
 
       // The container of registered implementations.

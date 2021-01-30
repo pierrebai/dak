@@ -8,6 +8,8 @@ namespace dak::any_op
    //
    // Conversion to text.
 
+   const to_text_op_t to_text;
+   
    namespace
    {
       struct to_text_op_init_t

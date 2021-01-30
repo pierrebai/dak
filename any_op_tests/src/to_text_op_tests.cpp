@@ -11,7 +11,7 @@ namespace dak::any_op::tests
    TEST_CLASS(to_text_op_tests)
 	{
 	public:
-		TEST_METHOD(to_text)
+		TEST_METHOD(to_text_test)
 		{
          to_text_op_t::register_ops();
 
@@ -31,19 +31,19 @@ namespace dak::any_op::tests
          std::any e_r1(7.0f);
          std::any e_r2(8.0);
 
-         Assert::AreEqual<text_t>(L"text_t",   to_text_op_t::call(e_t1));
-         Assert::AreEqual<text_t>(L"strptr",   to_text_op_t::call(e_t2));
-         Assert::AreEqual<text_t>(L"c",        to_text_op_t::call(e_c1));
-         Assert::AreEqual<text_t>(L"w",        to_text_op_t::call(e_c2));
-         Assert::AreEqual<text_t>(L"true",     to_text_op_t::call(e_b ));
-         Assert::AreEqual<text_t>(L"2",        to_text_op_t::call(e_i2));
-         Assert::AreEqual<text_t>(L"1",        to_text_op_t::call(e_i1));
-         Assert::AreEqual<text_t>(L"3",        to_text_op_t::call(e_i3));
-         Assert::AreEqual<text_t>(L"4",        to_text_op_t::call(e_u1));
-         Assert::AreEqual<text_t>(L"5",        to_text_op_t::call(e_u2));
-         Assert::AreEqual<text_t>(L"6",        to_text_op_t::call(e_u3));
-         Assert::AreEqual<text_t>(L"7",        to_text_op_t::call(e_r1));
-         Assert::AreEqual<text_t>(L"8",        to_text_op_t::call(e_r2));
+         Assert::AreEqual<text_t>(L"text_t",   to_text(e_t1));
+         Assert::AreEqual<text_t>(L"strptr",   to_text(e_t2));
+         Assert::AreEqual<text_t>(L"c",        to_text(e_c1));
+         Assert::AreEqual<text_t>(L"w",        to_text(e_c2));
+         Assert::AreEqual<text_t>(L"true",     to_text(e_b ));
+         Assert::AreEqual<text_t>(L"2",        to_text(e_i2));
+         Assert::AreEqual<text_t>(L"1",        to_text(e_i1));
+         Assert::AreEqual<text_t>(L"3",        to_text(e_i3));
+         Assert::AreEqual<text_t>(L"4",        to_text(e_u1));
+         Assert::AreEqual<text_t>(L"5",        to_text(e_u2));
+         Assert::AreEqual<text_t>(L"6",        to_text(e_u3));
+         Assert::AreEqual<text_t>(L"7",        to_text(e_r1));
+         Assert::AreEqual<text_t>(L"8",        to_text(e_r2));
       }
    };
 }

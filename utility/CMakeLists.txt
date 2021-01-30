@@ -20,7 +20,5 @@ target_include_directories(utility PUBLIC
    include
 )
 
-target_compile_features(utility PUBLIC
-   cxx_std_20
-)
+set_property(TARGET utility PROPERTY CXX_STANDARD 20)
 

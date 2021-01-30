@@ -14,6 +14,17 @@ namespace dak::any_op
 
    struct to_text_op_t : unary_op_t<to_text_op_t>
    {
+      text_t operator()(const std::any& arg_a) const
+      {
+         return call(arg_a);
+      }
+
+      template<class A>
+      text_t operator()(const A& arg_a) const
+      {
+         return call<A>(arg_a);
+      }
+
       static text_t call(const std::any& arg_a)
       {
          const std::any result = call_op(arg_a);
@@ -34,6 +45,8 @@ namespace dak::any_op
       //       Tests need to explicitly call a function to trigger initialization.
       static void register_ops();
    };
+
+   extern const to_text_op_t to_text;
 }
 
 #endif /* DAK_ANY_OP_TO_TEXT_OP_H */

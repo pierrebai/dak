@@ -18,9 +18,9 @@ target_include_directories(any_op PUBLIC
    "${CMAKE_CURRENT_SOURCE_DIR}/../utility/include"
 )
 
-target_compile_features(any_op PUBLIC
-   cxx_std_20
-)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set_property(TARGET any_op PROPERTY CXX_STANDARD 20)
 
 target_compile_options(any_op PRIVATE
    /bigobj

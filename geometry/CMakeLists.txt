@@ -18,7 +18,5 @@ target_include_directories(geometry PUBLIC
    "${CMAKE_CURRENT_SOURCE_DIR}/../utility/include"
 )
 
-target_compile_features(geometry PUBLIC
-   cxx_std_20
-)
+set_property(TARGET geometry PROPERTY CXX_STANDARD 20)
 

@@ -15,9 +15,7 @@ target_link_libraries(geometry_tests PUBLIC
    utility
 )
 
-target_compile_features(geometry_tests PUBLIC
-   cxx_std_20
-)
+set_property(TARGET geometry_tests PROPERTY CXX_STANDARD 20)
 
 target_include_directories(geometry_tests PUBLIC
    include
