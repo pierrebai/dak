@@ -26,14 +26,14 @@ namespace dak::any_op
    struct op_selector_converter_t
    {
       // This is how the type A is converted to std::type_index.
-      using selector_t = std::type_index;
+      using type_index = std::type_index;
    };
 
    template <class... SELECTORS>
    struct op_selector_t
    {
       // The selector_t type is a tuple of type index.
-      using selector_t = std::tuple<typename op_selector_converter_t<SELECTORS>::selector_t...>;
+      using selector_t = std::tuple<typename op_selector_converter_t<SELECTORS>::type_index...>;
    };
 
    //////////////////////////////////////////////////////////////////////////
