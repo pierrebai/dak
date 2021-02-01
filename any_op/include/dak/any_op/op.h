@@ -21,23 +21,22 @@ namespace dak::any_op
    //    be empty. It is only needed to identity the operation via its type.
    //    For our example:
    //
-   //            class foo_op_t : public op_t<foo> {};
+   //            class foo_op_t : public op_t<foo_op_t> {};
    //
    //    Right after the class, declare the function foo(). It will call
-   //    the call<>::op<> on the foo_op_t. It is needed only as a
-   //    convenience, to mimick the normal appearance of an aoverloaded
-   //    function.
+   //    the call<>::op<> on the foo_op_t. This is the fnction that the
+   //    users of your operation will call.
    //
-   // To implement the operation foo for type A returning RET:
+   // To implement the overload foo for type A returning RET:
    //
-   //    Create an instance by calling foo_op_t<foo>::make<>::op<RET, A>
+   //    Register an overload by calling foo_op_t<foo>::make<>::op<RET, A>
    //    passing a function taking an A and returning a RET.
    //
    // The class hierarchy will be:
    //
    //                       opt_t<foo_op_t>
-   //                            |
-   //                         foo_op_t
+   //                             |
+   //                          foo_op_t
    //
    // The reasons there are two classes are:
    //
@@ -60,19 +59,19 @@ namespace dak::any_op
    // call:
    //
    //        std::any arg_a = 2152671; // any value type!
-   //        std::any arg_b = "hello"; // any value type!
-   //        std::any result = foo(arg_a, arg_b);
+   //        std::any result = foo(arg_a);
    //
    // The declaration of the operations support:
    //
    //    - Extra arguments passed to the operation. These are the EXTRA_ARGS
-   //      variadic template argument on the operation. The extra arguments
+   //      variadic template argument of the op_t template. The extra arguments
    //      are passed as the first arguments of the operation when called.
    //
-   //    - Extra selection types used to select the opration implementation.
+   //    - Extra selection types used to select the operation overload.
    //      These are the EXTRA_SELECTORS variadic template arguments in the
    //      make and call intermediary templates. They are used to provide
-   //      further selection of the implementation.
+   //      further selection of the implementation, in addition to the types
+   //      ar the arguments of the function itself.
 
    template <class OP, class... EXTRA_ARGS>
    struct op_t

@@ -32,13 +32,13 @@ namespace dak::any_op
       using any = std::any;
    };
 
+   //////////////////////////////////////////////////////////////////////////
+   //
+   // Selectors for n-ary operations.
+
    template <class... EXTRA_SELECTORS>
    struct op_selector_t
    {
-      //////////////////////////////////////////////////////////////////////////
-      //
-      // Selectors for n-ary operations.
-
       template <class... N_ARY>
       struct n_ary_t
       {
