@@ -3,7 +3,7 @@
 #ifndef DAK_ANY_OP_DOMINANT_OP_H
 #define DAK_ANY_OP_DOMINANT_OP_H
 
-#include <dak/any_op/unary_op.h>
+#include <dak/any_op/op.h>
 
 namespace dak::any_op
 {
@@ -19,7 +19,7 @@ namespace dak::any_op
    // If the value would be the same, the operation will not be defined
    // and this absence will mean the leave the value as-is.
 
-   struct dominant_op_t : unary_op_t<dominant_op_t>
+   struct dominant_op_t : op_t<dominant_op_t>
    {
       // Note: pre-defined operations implementation are automatically registered,
       //       but these static variables do not get initialized by the testing framework.
@@ -30,7 +30,7 @@ namespace dak::any_op
    template<class OTHER>
    inline std::any dominant(const std::any& arg_a)
    {
-      const std::any result = dominant_op_t::call_op<OTHER>(arg_a);
+      const std::any result = dominant_op_t::call_any<OTHER>::op(arg_a);
       if (result.has_value())
          return result;
       else
@@ -40,7 +40,11 @@ namespace dak::any_op
    template<class OTHER, class FROM>
    inline std::any dominant(const FROM& arg_a)
    {
-      return dominant<OTHER>(std::any(arg_a));
+      const std::any result = dominant_op_t::call<OTHER>::op(arg_a);
+      if (result.has_value())
+         return result;
+      else
+         return arg_a;
    }
 
 }

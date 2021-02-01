@@ -12,8 +12,8 @@ namespace dak::any_op
       {
          size_op_init_t()
          {
-            size_op_t::make_op<uint64_t, text_t   >([](const text_t& arg_a  ) -> uint64_t { return arg_a.size(); });
-            size_op_t::make_op<uint64_t, str_ptr_t>([](str_ptr_t arg_a      ) -> uint64_t { return arg_a ? wcslen(arg_a) : 0; });
+            size_op_t::make<>::op<uint64_t, text_t   >([](const text_t& arg_a  ) -> uint64_t { return arg_a.size(); });
+            size_op_t::make<>::op<uint64_t, str_ptr_t>([](str_ptr_t arg_a      ) -> uint64_t { return arg_a ? wcslen(arg_a) : 0; });
          }
       };
 
