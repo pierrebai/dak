@@ -34,7 +34,7 @@ namespace dak::any_op
    template<class A>
    inline uint64_t size(const A& arg_a)
    {
-      return size(std::make_any<A>());
+      return size(std::make_any<A>(arg_a));
    }
 
 }
