@@ -266,7 +266,7 @@ selection types, `EXTRA_SELECTORS`, to create the full selector.
 Note how the ellipsis is applied to the line:
 
    ```C++
-   typename type_converter_t<EXTRA_SELECTORS>::selector_t...
+   typename type_converter_t<EXTRA_SELECTORS>::type_index...
    ```
 
 How the C++ language applies the ellipsis is a bit of the black magic
