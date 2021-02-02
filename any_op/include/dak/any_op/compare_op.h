@@ -3,7 +3,7 @@
 #ifndef DAK_ANY_OP_COMPARE_OP_H
 #define DAK_ANY_OP_COMPARE_OP_H
 
-#include <dak/any_op/binary_op.h>
+#include <dak/any_op/op.h>
 
 namespace dak::any_op
 {
@@ -37,7 +37,7 @@ namespace dak::any_op
    // 
    // Note: returns comparison_t::incomparable if two values cannot be compared.
 
-   struct compare_op_t : binary_op_t<compare_op_t>
+   struct compare_op_t : op_t<compare_op_t>
    {
       // Note: pre-defined operations implementation are automatically registered,
       //       but these static variables do not get initialized by the testing framework.
@@ -61,7 +61,7 @@ namespace dak::any_op
          return comparison_t::more;
       }
 
-      const std::any result = compare_op_t::call_op(arg_a, arg_b);
+      const std::any result = compare_op_t::call_any<>::op(arg_a, arg_b);
       if (result.has_value())
          return std::any_cast<comparison_t>(result);
 
@@ -71,7 +71,11 @@ namespace dak::any_op
    template<class A>
    inline comparison_t compare(const A& arg_a, const A& arg_b)
    {
-      return compare(std::any(arg_a), std::any(arg_b));
+      const std::any result = compare_op_t::call<>::op(arg_a, arg_b);
+      if (result.has_value())
+         return std::any_cast<comparison_t>(result);
+
+      return comparison_t::incomparable;
    }
 
    //////////////////////////////////////////////////////////////////////////

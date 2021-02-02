@@ -3,7 +3,7 @@
 #ifndef DAK_ANY_OP_SIZE_OP_H
 #define DAK_ANY_OP_SIZE_OP_H
 
-#include <dak/any_op/unary_op.h>
+#include <dak/any_op/op.h>
 
 namespace dak::any_op
 {
@@ -14,7 +14,7 @@ namespace dak::any_op
    //
    // That is, the number of elements it contains.
 
-   struct size_op_t : unary_op_t<size_op_t>
+   struct size_op_t : op_t<size_op_t>
    {
       // Note: pre-defined operations implementation are automatically registered,
       //       but these static variables do not get initialized by the testing framework.
@@ -24,7 +24,7 @@ namespace dak::any_op
 
    inline uint64_t size(const std::any& arg_a)
    {
-      const std::any result = size_op_t::call_op(arg_a);
+      const std::any result = size_op_t::call_any<>::op(arg_a);
       if (result.has_value())
          return std::any_cast<uint64_t>(result);
       else
@@ -34,7 +34,11 @@ namespace dak::any_op
    template<class A>
    inline uint64_t size(const A& arg_a)
    {
-      return size(std::make_any<A>(arg_a));
+      const std::any result = size_op_t::call<>::op(arg_a);
+      if (result.has_value())
+         return std::any_cast<uint64_t>(result);
+      else
+         return 0;
    }
 
 }

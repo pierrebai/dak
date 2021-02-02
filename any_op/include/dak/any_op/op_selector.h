@@ -23,102 +23,48 @@ namespace dak::any_op
    // for each selection type.
 
    template <class A>
-   struct op_selector_converter_t
+   struct type_converter_t
    {
       // This is how the type A is converted to std::type_index.
       using type_index = std::type_index;
+
+      // This is how the type A is converted to std::any.
+      using any = std::any;
    };
 
-   template <class... SELECTORS>
+   //////////////////////////////////////////////////////////////////////////
+   //
+   // Selectors for n-ary operations.
+
+   template <class... EXTRA_SELECTORS>
    struct op_selector_t
    {
-      // The selector_t type is a tuple of type index.
-      using selector_t = std::tuple<typename op_selector_converter_t<SELECTORS>::type_index...>;
-   };
-
-   //////////////////////////////////////////////////////////////////////////
-   //
-   // Selectors for the nullary operations.
-
-   template <class... EXTRA_SELECTORS>
-   struct nullary_op_selector_t : op_selector_t<EXTRA_SELECTORS...>
-   {
-      using selector_t = typename op_selector_t<EXTRA_SELECTORS...>::selector_t;
-
-      // Make a selector using the compile-time type index of the extra selectors.
-      static selector_t make()
+      template <class... N_ARY>
+      struct n_ary_t
       {
-         return selector_t(std::type_index(typeid(EXTRA_SELECTORS))...);
-      }
+         // The selector_t type is a tuple of type index.
+         using selector_t = std::tuple<typename type_converter_t<EXTRA_SELECTORS>::type_index..., typename type_converter_t<N_ARY>::type_index...>;
 
-      // Make a selector using the provided type index of the extra selectors.
-      // This is used to create a selector from std::any in nullary_op_t::call_any_op.
-      static selector_t make_any(EXTRA_SELECTORS... selectors)
-      {
-         return selector_t(selectors...);
-      }
-   };
+         // Make a selector using the compile-time type index of the binary types plus the extra selectors.
+         static selector_t make()
+         {
+            return selector_t(std::type_index(typeid(EXTRA_SELECTORS))..., std::type_index(typeid(N_ARY))...);
+         }
 
-   //////////////////////////////////////////////////////////////////////////
-   //
-   // Selectors for the unary operations.
+         // Make a selector using the provided type index of the binary arguments.
+         // This is used to create a selector from std::any in binary_op_t::call_op.
+         static selector_t make_any(const typename type_converter_t<N_ARY>::any&... args)
+         {
+            return selector_t(std::type_index(typeid(EXTRA_SELECTORS))..., std::type_index(args.type())...);
+         }
 
-   template <class... EXTRA_SELECTORS>
-   struct unary_op_selector_t : op_selector_t<std::any, EXTRA_SELECTORS...>
-   {
-      using selector_t = typename op_selector_t<std::any, EXTRA_SELECTORS...>::selector_t;
-
-      // Make a selector using the compile-time type index of the unary type plus the extra selectors.
-      template <class A>
-      static selector_t make()
-      {
-         return selector_t(std::type_index(typeid(A)), std::type_index(typeid(EXTRA_SELECTORS))...);
-      }
-
-      // Make a selector using the provided type index of the unary argument.
-      // This is used to create a selector from std::any in unary_op_t::call_op.
-      static selector_t make(const std::any& arg_a)
-      {
-         return selector_t(std::type_index(arg_a.type()), std::type_index(typeid(EXTRA_SELECTORS))...);
-      }
-
-      // Make a selector using the provided type index of the unary argument plus of the extra selectors.
-      // This is used to create a selector from std::any in unary_op_t::call_any_op.
-      static selector_t make_any(const std::any& arg_a, EXTRA_SELECTORS... selectors)
-      {
-         return selector_t(std::type_index(arg_a.type()), selectors...);
-      }
-   };
-
-   //////////////////////////////////////////////////////////////////////////
-   //
-   // Selectors for the binary operations.
-
-   template <class... EXTRA_SELECTORS>
-   struct binary_op_selector_t : op_selector_t<std::any, std::any, EXTRA_SELECTORS...>
-   {
-      using selector_t = typename op_selector_t<std::any, std::any, EXTRA_SELECTORS...>::selector_t;
-
-      // Make a selector using the compile-time type index of the binary types plus the extra selectors.
-      template <class A, class B>
-      static selector_t make()
-      {
-         return selector_t(std::type_index(typeid(A)), std::type_index(typeid(B)), std::type_index(typeid(EXTRA_SELECTORS))...);
-      }
-
-      // Make a selector using the provided type index of the binary arguments.
-      // This is used to create a selector from std::any in binary_op_t::call_op.
-      static selector_t make(const std::any& arg_a, const std::any& arg_b)
-      {
-         return selector_t(std::type_index(arg_a.type()), std::type_index(arg_b.type()), std::type_index(typeid(EXTRA_SELECTORS))...);
-      }
-
-      // Make a selector using the provided type index of the binary arguments plus of the extra selectors.
-      // This is used to create a selector from std::any in binary_op_t::call_any_op.
-      static selector_t make_any(const std::any& arg_a, const std::any& arg_b, EXTRA_SELECTORS... selectors)
-      {
-         return selector_t(std::type_index(arg_a.type()), std::type_index(arg_b.type()), selectors...);
-      }
+         // Make a selector using the provided type index of the binary arguments plus of the extra selectors.
+         // This is used to create a selector from std::any in binary_op_t::call_any_op.
+         static selector_t make_extra_any(const typename type_converter_t<EXTRA_SELECTORS>::type_index&... selectors, const typename type_converter_t<N_ARY>::any&... args)
+         {
+            return selector_t(selectors..., std::type_index(args.type())...);
+         }
+      };
    };
 
    // Needed so that the global operations are initialized in the tests.
