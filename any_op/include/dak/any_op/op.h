@@ -116,7 +116,7 @@ namespace dak::any_op
          }
       };
 
-      // Call a binary operation with the optional extra args and selected with the extra selectors.
+      // Call a n-ary operation with the optional extra args and selected with the extra selectors.
       template <class... EXTRA_SELECTORS>
       struct call_any
       {
@@ -135,9 +135,9 @@ namespace dak::any_op
          }
       };
 
-      // Call a binary operation with the optional extra args and selected with the extra selectors
+      // Call a n-ary operation with the optional extra args and selected with the extra selectors
       // receiving the std::type_index of the extra selector explicitly. This is used when there
-      // are extra selectors but the function hasstd::any values instead of compile-time types.
+      // are extra selectors but the function has std::any values instead of compile-time types.
       template <class... EXTRA_SELECTORS>
       struct call_extra_any
       {
