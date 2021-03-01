@@ -10,20 +10,21 @@ namespace dak::utility
 {
    ////////////////////////////////////////////////////////////////////////////
    //
-   // A selection_t container.
+   // A selection container.
+
    class selection_t
    {
    public:
-      // The data kept in the selection_t.
+      // The data kept in the selection.
       std::vector<std::any> data;
 
-      // Create an empty selection_t.
+      // Create an empty selection.
       selection_t() { }
 
-      // Create a selection_t with data.
+      // Create a selection with data.
       selection_t(const std::any& d) { data.emplace_back(d); }
 
-      // Add to the selection_t.
+      // Add to the selection.
       void add(const std::any& d) { data.emplace_back(d); }
 
       // Verify if there is anything to undo.

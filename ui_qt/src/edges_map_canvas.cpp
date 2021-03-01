@@ -6,7 +6,7 @@ namespace dak::ui::qt
 {
    ////////////////////////////////////////////////////////////////////////////
    //
-   // A widget drawing_canvas_t working with a map.
+   // A widget drawing canvas working with a map.
 
    edges_map_canvas_t::edges_map_canvas_t(QWidget* parent)
    : drawing_canvas_t(parent)

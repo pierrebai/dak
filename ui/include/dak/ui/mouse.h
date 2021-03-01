@@ -15,7 +15,7 @@ namespace dak::ui::mouse
 
    ////////////////////////////////////////////////////////////////////////////
    //
-   // Mouse buttons_t. Support three buttons_t.
+   // Mouse buttons. Support three buttons.
 
    enum class buttons_t
    {
@@ -40,7 +40,7 @@ namespace dak::ui::mouse
       // On-screen position relative to the widget.
       point_t position;
 
-      // Mouse buttons_t being pressed down.
+      // Mouse buttons being pressed down.
       mouse::buttons_t buttons;
 
       // Keyboard modifiers being held down.
@@ -50,7 +50,7 @@ namespace dak::ui::mouse
       double angle_degrees_delta = 0;
       point_t scroll_delta = point_t::origin();
 
-      // Verify if the given buttons_t are pressed down.
+      // Verify if the given buttons are pressed down.
       // Return true if any are pressed.
       bool has_buttons(mouse::buttons_t a) const { return (int(buttons) & int(a)) != 0; }
 

@@ -25,7 +25,7 @@ namespace dak::geometry
       {
          std::vector<std::wstring> errors;
 
-         // Unfortunately, some tilings are degenrate with faces_t that are simple lines and cause checks to fail.
+         // Unfortunately, some tilings are degenrate with faces that are simple lines and cause checks to fail.
          // Don't verify those tilings.
          const std::vector<polygon_t>* all_faces[4] = { &white, &black, &red, &exteriors };
          for (const auto& faces_t : all_faces)
@@ -53,7 +53,7 @@ namespace dak::geometry
             errors.emplace_back(error);
          }
 
-         // Make sure there are exactly as many points in the faces_t as in the map.
+         // Make sure there are exactly as many points in the faces as in the map.
          const size_t map_edge_count = map.all().size();
          const size_t faces_edge_count = white_edges + black_edges + red_edges + exterior_edges;
          if (map_edge_count != faces_edge_count)
@@ -75,7 +75,7 @@ namespace dak::geometry
       // The edges we need to process.
       //
       // Because the edges are sorted by their p1, we can easily find all edges around the same point
-      // as another edge_t by "looking around" the address of the edge_t in the vector.
+      // as another edge by "looking around" the address of the edge in the vector.
       const std::vector<edge_t>& all_edges = m.all();
       if (all_edges.empty())
          return;
@@ -121,7 +121,7 @@ namespace dak::geometry
          return iter;
       };
 
-      // Keeping track of which edge_t needs to be done and which are already done.
+      // Keeping track of which edge needs to be done and which are already done.
       std::deque<const edge_t *> edges_todo;
       std::vector<bool> done_edges(all_edges.size(), false);
       std::vector<bool> seen_edges(all_edges.size(), false);
@@ -186,7 +186,7 @@ namespace dak::geometry
                continue;
             }
 
-            // Odd-crossing faces_t are not part of the black/white division.
+            // Odd-crossing faces are not part of the black/white division.
             if (face_has_odd_crossing)
             {
                red.emplace_back(new_face);

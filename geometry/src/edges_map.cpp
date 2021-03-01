@@ -227,7 +227,7 @@ namespace dak::geometry
       std::sort(_sorted_edges.begin(), _sorted_edges.end());
    }
 
-   // Split existing edges_t and record the intersections for each edge_t, old and new.
+   // Split existing edges and record the intersections for each edge, old and new.
    void edges_map_t::internal_connect(const edge_t& new_edge, std::vector<std::pair<edge_t, point_t>>& temp_edge_intersections)
    {
       const point_t& new_p1 = new_edge.p1;
@@ -272,7 +272,7 @@ namespace dak::geometry
 
       if (intersection_count == 0)
       {
-         // If no intersection found, just add the new edge_t with an invalid intersection point_t.
+         // If no intersection found, just add the new edge with an invalid intersection point.
          temp_edge_intersections.emplace_back(new_edge, point_t());
       }
    }
@@ -283,14 +283,14 @@ namespace dak::geometry
       std::sort(temp_edge_intersections.begin(), temp_edge_intersections.end());
 
 
-      // We will build a new vector of sorted edges_t.
-      // It will be filled by iterating over the existing sorted edges_t and the intersections
-      // in parallel so that edges_t are inserted in already sorted order.
+      // We will build a new vector of sorted edges.
+      // It will be filled by iterating over the existing sorted edges and the intersections
+      // in parallel so that edges are inserted in already sorted order.
       edges_t new_sorted_canonical_edges;
       new_sorted_canonical_edges.reserve(_sorted_edges.size() + temp_edge_intersections.size());
 
-      // Keep track of previous edge_t and point_t so we can detect when
-      // we've finished splitting one particular edge_t.
+      // Keep track of previous edge and point so we can detect when
+      // we've finished splitting one particular edge.
       edge_t prev_edge;
       point_t prev_point;
       point_t last_point;
@@ -318,7 +318,7 @@ namespace dak::geometry
          }
          else if (valid_inter)
          {
-            // Skip over sorted edge_t that is split, if any.
+            // Skip over sorted edge that is split, if any.
             if (valid_edges && *edges_iter == inter_iter->first)
             {
                ++edges_iter;
@@ -329,21 +329,21 @@ namespace dak::geometry
 
             if (intersection.is_invalid())
             {
-               // If the edge_t was not split, then it was a new edge_t
-               // that didn't touch any existing edges_t.
-               // Just add it straight to the edges_map_t.
+               // If the edge was not split, then it was a new edge
+               // that didn't touch any existing edges.
+               // Just add it straight to the edges map.
                new_sorted_canonical_edges.emplace_back(split_edge);
                new_sorted_canonical_edges.emplace_back(split_edge.twin());
             }
             else
             {
-               // If the edge_t was split, we need to remove it and replace
-               // it by new smaller edges_t.
+               // If the edge was split, we need to remove it and replace
+               // it by new smaller edges.
 
-               // First, check if we've changed which edge_t we're splitting.
+               // First, check if we've changed which edge we're splitting.
                if (split_edge != prev_edge)
                {
-                  // Finish any previous splitted edge_t.
+                  // Finish any previous splitted edge.
                   if (!prev_point.is_invalid())
                   {
                      new_sorted_canonical_edges.emplace_back(prev_point, last_point);
@@ -354,8 +354,8 @@ namespace dak::geometry
                   last_point = split_edge.p1 < split_edge.p2 ? split_edge.p2 : split_edge.p1;
                }
 
-               // Split the input edge_t at every intersection. Beware that an edge_t might get split twice
-               // if it is intersected by an end-point_t of the other edges_map_t, which result in two identical
+               // Split the input edge at every intersection. Beware that an edge might get split twice
+               // if it is intersected by an end-point of the other edges map, which result in two identical
                // intersections.
                if (prev_point != intersection)
                {
@@ -372,7 +372,7 @@ namespace dak::geometry
          }
       }
 
-      // Finish any previous splitted edge_t.
+      // Finish any previous splitted edge.
       if (!prev_point.is_invalid())
       {
          new_sorted_canonical_edges.emplace_back(prev_point, last_point);
@@ -403,7 +403,7 @@ namespace dak::geometry
 
       wchar_t error[200];
 
-      // Make sure there are no trivial edges_t.
+      // Make sure there are no trivial edges.
       for (const auto& e : _sorted_edges)
       {
          if (e.p1 == e.p2)
@@ -419,7 +419,7 @@ namespace dak::geometry
          }
       }
 
-      // Make sure the edges_t are in sorted order.
+      // Make sure the edges are in sorted order.
       {
          edge_t prev;
          for (const auto& e : _sorted_edges)

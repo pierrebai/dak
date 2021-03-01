@@ -11,7 +11,7 @@ namespace dak::utility
 {
    ////////////////////////////////////////////////////////////////////////////
    //
-   // Data kept in an undo transaction_t.
+   // Data kept in an undo transaction.
 
    class undo_data_t
    {
@@ -30,15 +30,15 @@ namespace dak::utility
 
    ////////////////////////////////////////////////////////////////////////////
    //
-   // An object tracking data changing transactions_t and undo / redo stack.
+   // An object tracking data changing transactions and undo / redo stack.
    //
    // You initially commit the data that you want to be able to undo back
-   // to a transaction_t object.
+   // to a transaction object.
    //
    // ***  You cannot undo if the stack is empty, so don't forget  ***
    // ***  that initial commit!                                    ***
    //
-   // Call commit with a transaction_t filled with the new data in order
+   // Call commit with a transaction filled with the new data in order
    // to commit that data to the undo stack.
    //
    // The undo function awakens the data that was saved before
@@ -50,7 +50,7 @@ namespace dak::utility
    class undo_stack_t
    {
    public:
-      // The transaction_t data type and list of all undo transactions_t.
+      // The transaction data type and list of all undo transactions.
       typedef undo_data_t simple_transaction_t;
       typedef std::vector<undo_data_t> transaction_t;
       typedef std::vector<transaction_t> transactions_t;
@@ -65,15 +65,15 @@ namespace dak::utility
       void clear();
 
       // Commit the given modified data to the undo stack.
-      // Deaden the transaction_t data.
+      // Deaden the transaction data.
       void commit(const transaction_t& a_tr);
       void simple_commit(const simple_transaction_t& tr);
 
-      // Undo awakens the previous transaction_t data. (The one before the last commit.)
+      // Undo awakens the previous transaction data. (The one before the last commit.)
       // Does nothing if at the start of the undo stack.
       void undo();
 
-      // Redo awakens the next transaction_t data that was committed.
+      // Redo awakens the next transaction data that was committed.
       // Does nothing if at the end of the undo stack.
       void redo();
 
@@ -90,10 +90,10 @@ namespace dak::utility
       const transactions_t& contents() const { return my_undos; }
 
    private:
-      // Deaden the current my_top_transaction transaction_t data.
+      // Deaden the current my_top_transaction transaction data.
       void deaden_top();
 
-      // Awaken the current my_top_transaction transaction_t data.
+      // Awaken the current my_top_transaction transaction data.
       void awaken_top() const;
 
       transactions_t my_undos;
