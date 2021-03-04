@@ -27,7 +27,7 @@ namespace dak::ui::qt
 
       // Paint using the prepared drawing.
       // Sub-class should override this to draw in the canvas.
-      virtual void draw(drawing_t& drw);
+      virtual void draw(drawing_t& drw) = 0;
 
       // This will allow painting using a drawing.
       dak::ui::qt::painter_transformable painter_trf_drawing;

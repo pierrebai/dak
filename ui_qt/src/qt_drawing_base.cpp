@@ -21,12 +21,6 @@ namespace dak::ui::qt
       return QBrush(convert(co));
    }
 
-   static void clear_background(drawing_t& drw)
-   {
-      drw.set_color(color_t::white());
-      drw.fill_polygon(polygon_t::from_rect(drw.get_bounds()).apply(drw.get_transform().invert()));
-   }
-
    void draw_layered(drawing_t& drw, ui::layered_t* layered)
    {
       drw.set_color(color_t::white());
