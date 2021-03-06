@@ -4,6 +4,7 @@ add_library(geometry
    include/dak/geometry/edge.h
    include/dak/geometry/edges_map.h       src/edges_map.cpp
    include/dak/geometry/face.h            src/face.cpp
+   include/dak/geometry/geometry_io.h     src/geometry_io.cpp
    include/dak/geometry/intersect.h       src/intersect.cpp
    include/dak/geometry/point.h           src/point.cpp
    include/dak/geometry/polygon.h         src/polygon.cpp
