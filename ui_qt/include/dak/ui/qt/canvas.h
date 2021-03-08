@@ -30,12 +30,22 @@ namespace dak::ui::qt
       // This will draw the transformer drawings, if any.
       void paintEvent(QPaintEvent * pe) override;
 
+      // Time-out to erase transformer drawings.
+      void timerEvent(QTimerEvent* te) override;
+
+      // Setup to trigger a repaint for the transformer.
+      void paint_transformer();
+
       // This gets called by the paint event to do the painting.
       // Sub-class should override this and call this implementation last.
       virtual void paint(QPainter& painter);
 
       // This will allow receiving mouse event from the canvas.
       dak::ui::qt::widget_emitter_t emi;
+
+      // Timer used to redraw after transformer drew somthing,
+      // to erase it after a time-out.
+      int redraw_timer = 0;
    };
 }
 

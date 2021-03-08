@@ -35,22 +35,19 @@ namespace dak
       //
       // Drawing current interaction.
 
-      void transformer_t::draw(drawing_t& drw)
+      bool transformer_t::draw(drawing_t& drw)
       {
          switch (_interaction_mode)
          {
             default:
             case interaction_mode_t::normal:
-               break;
+               return false;
             case interaction_mode_t::moving:
-               draw_moving(drw);
-               break;
+               return draw_moving(drw);
             case interaction_mode_t::rotating:
-               draw_rotating(drw);
-               break;
+               return draw_rotating(drw);
             case interaction_mode_t::scaling:
-               draw_scaling(drw);
-               break;
+               return draw_scaling(drw);
          }
       }
 
@@ -59,10 +56,10 @@ namespace dak
          return (r.width < r.height ? r.width : r.height) * manipSizePercent / 100;
       }
 
-      void transformer_t::draw_moving(drawing_t& drawing)
+      bool transformer_t::draw_moving(drawing_t& drawing)
       {
          if (initial_point.is_invalid())
-            return;
+            return false;
 
          const double size = get_feedback_size(drawing.get_bounds());
          const point_t& mid = initial_point;
@@ -120,12 +117,14 @@ namespace dak
          {
             drawing.fill_oval(mid, size / 16, size / 16);
          }
+
+         return true;
       }
 
-      void transformer_t::draw_rotating(drawing_t& drawing)
+      bool transformer_t::draw_rotating(drawing_t& drawing)
       {
          if (initial_point.is_invalid())
-            return;
+            return false;
 
          const double size = get_feedback_size(drawing.get_bounds());
          const point_t& mid = initial_point;
@@ -165,12 +164,14 @@ namespace dak
 
          drawing.fill_arc(mid, size / 2, size / 2, 0, interaction_rotating_angle);
          drawing.fill_oval(mid, rotate_oval_radius, rotate_oval_radius);
+
+         return true;
       }
 
-      void transformer_t::draw_scaling(drawing_t& drawing)
+      bool transformer_t::draw_scaling(drawing_t& drawing)
       {
          if (initial_point.is_invalid())
-            return;
+            return false;
 
          const double size = get_feedback_size(drawing.get_bounds());
          const point_t& mid = initial_point;
@@ -224,6 +225,8 @@ namespace dak
          drawing.draw_oval(mid, scale_oval_radius * isf, scale_oval_radius * isf);
 
          drawing.set_stroke(saved_stroke);
+
+         return true;
       }
 
       ////////////////////////////////////////////////////////////////////////////
@@ -477,9 +480,8 @@ namespace dak
       void transformer_t::mouse_exited(const mouse::event_t& me)
       {
          update_tracked_position(me);
-
-         _interaction_mode = interaction_mode_t::normal;
-         draw_callback(*this);
+         // TODO: should we keep interacting when exiting?
+         end_interaction();
       }
 
       void transformer_t::mouse_pressed(const mouse::event_t& me)

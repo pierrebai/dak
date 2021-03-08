@@ -50,9 +50,10 @@ namespace dak::ui
       transformer_t(std::function<void(transformer_t&)> draw_callback);
       transformer_t(transformable_t& tr, std::function<void(transformer_t&)> draw_callback);
 
-      void draw(drawing_t& drw);
+      // Draw interaction feedback when needed. Returns True if it drew something.
+      bool draw(drawing_t& drw);
 
-      // Mouse event handling from mouse::receiver.
+      // Mouse event handling from mouse::receiver_t.
       void mouse_clicked(const mouse::event_t& me) override;
       void mouse_entered(const mouse::event_t& me) override;
       void mouse_exited(const mouse::event_t& me) override;
@@ -64,15 +65,17 @@ namespace dak::ui
 
       const point_t& get_tracked_point() const { return tracked_point; }
 
+      void end_interaction();
+
    private:
       // Interaction modes.
       interaction_mode_t get_wheel_interaction_mode(const mouse::event_t& me);
       interaction_mode_t get_button_interaction_mode(const mouse::event_t& me);
 
-      // Drawing current interaction.
-      void draw_moving(drawing_t& drawing_t);
-      void draw_rotating(drawing_t& drawing_t);
-      void draw_scaling(drawing_t& drawing_t);
+      // Drawing current interaction. Returns True if it drew something.
+      bool draw_moving(drawing_t& drawing_t);
+      bool draw_rotating(drawing_t& drawing_t);
+      bool draw_scaling(drawing_t& drawing_t);
 
       // Internal data handling.
       void clear_interaction_data();
@@ -80,7 +83,6 @@ namespace dak::ui
 
       // Mouse interactions.
       void start_interaction(const mouse::event_t& me);
-      void end_interaction();
 
       void common_move(const point_t& from, const point_t& to);
       void common_rotate(const point_t& from, const point_t& to);
