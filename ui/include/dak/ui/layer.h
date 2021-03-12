@@ -20,7 +20,11 @@ namespace dak::ui
    class layer_t : public transformable_t
    {
    public:
-      bool hide = false;
+      // If false, the layer is not drawn.
+      bool is_drawn = true;
+
+      // If false, the layer ignores set_transform().
+      bool is_moving = true;
 
       // Create a layer.
       layer_t() { }
@@ -33,9 +37,9 @@ namespace dak::ui
       void draw(drawing_t& drw);
 
       // transformable implementation.
-      const transform_t& get_transform() const override { return trf; }
-      layer_t& set_transform(const transform_t& t) override { trf = t; return *this; }
-      layer_t& compose(const transform_t& t) override { trf = trf.compose(t); return *this; }
+      const transform_t& get_transform() const override;
+      layer_t& set_transform(const transform_t& t) override;
+      layer_t& compose(const transform_t& t) override;
 
    protected:
       // The internal draw is called with the layer transform already applied.

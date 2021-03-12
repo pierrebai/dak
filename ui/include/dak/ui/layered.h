@@ -37,7 +37,6 @@ namespace dak::ui
       layered_t& compose(const transform_t& t) override;
 
    private:
-      transform_t trf = transform_t::identity();
       layers_t _layers;
    };
 

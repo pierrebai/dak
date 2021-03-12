@@ -16,7 +16,6 @@ namespace dak
          for (auto i = _layers.rbegin(); i != end; ++i)
          {
             drw.push_transform();
-            drw.compose(trf);
             (*i)->draw(drw);
             drw.pop_transform();
          }
@@ -24,18 +23,29 @@ namespace dak
 
       const transform_t& layered_t::get_transform() const
       {
-         return trf;
+         for (const auto& layer : _layers)
+            if (layer->is_moving)
+               return layer->get_transform();
+
+         static const transform_t none = transform_t::identity();
+         return none;
       }
 
       layered_t& layered_t::set_transform(const transform_t& t)
       {
-         trf = t;
+         for (auto& layer : _layers)
+            if (layer->is_moving)
+               layer->set_transform(t);
+
          return *this;
       }
 
       layered_t& layered_t::compose(const transform_t& t)
       {
-         trf = trf.compose(t);
+         for (auto& layer : _layers)
+            if (layer->is_moving)
+               layer->compose(t);
+
          return *this;
       }
 
