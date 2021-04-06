@@ -68,7 +68,6 @@ namespace dak::any_op
    };
 
    // Needed so that the global operations are initialized in the tests.
-   // TODO: move elsewhere?
    void register_ops();
 }
 

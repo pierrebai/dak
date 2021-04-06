@@ -57,7 +57,6 @@ namespace dak::geometry
 
    std::pair<edge_t, edge_t> edges_map_t::before_after(const range_t& outbounds, const edge_t& e)
    {
-      // TODO: maybe return pair of iter instead? Same for before and after.
       const auto iter = std::lower_bound(outbounds.begin(), outbounds.end(), e.twin());
       if (iter == outbounds.end())
          return std::pair<edge_t, edge_t>();
@@ -381,7 +380,7 @@ namespace dak::geometry
 
       _sorted_edges.swap(new_sorted_canonical_edges);
       internal_sort_edges();
-      _sorted_edges.erase(std::unique(_sorted_edges.begin(), _sorted_edges.end()), _sorted_edges.end());  // TODO: needed?
+      _sorted_edges.erase(std::unique(_sorted_edges.begin(), _sorted_edges.end()), _sorted_edges.end());
    }
 
    void edges_map_t::internal_verify() const
