@@ -196,7 +196,7 @@ namespace dak::object::tests
          Assert::AreEqual<array_t>((array_t()), e_a);
          Assert::AreEqual<dict_t>((dict_t()), e_d);
          Assert::AreEqual<name_t>(voc::rock, e_n);
-         Assert::AreEqual<ref_t<object_t>>(o, e_o);
+         Assert::AreEqual<ref_t<const object_t>>(o, e_o);
       }
 
       TEST_METHOD(element_const_conversion)
@@ -239,7 +239,7 @@ namespace dak::object::tests
          Assert::AreEqual<array_t>((array_t()), e_a);
          Assert::AreEqual<dict_t>((dict_t()), e_d);
          Assert::AreEqual<name_t>(voc::rock, e_n);
-         Assert::AreEqual<ref_t<object_t>>(o, e_o);
+         Assert::AreEqual<ref_t<const object_t>>(o, e_o);
       }
 
       TEST_METHOD(element_unknown_assignments)
@@ -322,7 +322,7 @@ namespace dak::object::tests
          Assert::AreEqual<array_t>((array_t()), e_a);
          Assert::AreEqual<dict_t>((dict_t()), e_d);
          Assert::AreNotEqual<name_t>(name_t(), e_n);
-         Assert::AreNotEqual<ref_t<object_t>>(o, e_o);
+         Assert::AreNotEqual<ref_t<const object_t>>(o, e_o);
       }
 
       TEST_METHOD(element_size)
@@ -679,7 +679,7 @@ namespace dak::object::tests
          Assert::AreEqual<array_t>(a, e_a);
          Assert::AreEqual<dict_t>(d, e_d);
          Assert::AreEqual<name_t>(voc::rock, e_n);
-         Assert::AreEqual<ref_t<object_t>>(o, e_o);
+         Assert::AreEqual<ref_t<const object_t>>(o, e_o);
 
          // Ensuring a similar type should preserve most of the value.
          e_u.ensure(datatype_t::integer);
@@ -810,7 +810,7 @@ namespace dak::object::tests
          Assert::AreEqual<array_t>(a, e_a);
          Assert::AreEqual<dict_t>(d, e_d);
          Assert::AreEqual<name_t>(voc::rock, e_n);
-         Assert::AreEqual<ref_t<object_t>>(o, e_o);
+         Assert::AreEqual<ref_t<const object_t>>(o, e_o);
       }
 
       TEST_METHOD(element_int64_operators)

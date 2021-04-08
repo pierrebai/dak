@@ -214,12 +214,12 @@ namespace dak::object
       *this = n;
    }
 
-   element_t::element_t(const ref_t<object_t>& o)
-   : element_t(o.operator dak::object::object_t* ())
+   element_t::element_t(const ref_t<const object_t>& o)
+   : element_t(o.operator const dak::object::object_t* ())
    {
    }
 
-   element_t::element_t(object_t* o)
+   element_t::element_t(const object_t* o)
    : my_o(0), my_type(datatype_t::ref)
    {
       *this = o;
@@ -355,12 +355,12 @@ namespace dak::object
       return *this;
    }
 
-   element_t& element_t::operator =(const ref_t<object_t>& o)
+   element_t& element_t::operator =(const ref_t<const object_t>& o)
    {
-      return *this = o.operator dak::object::object_t * ();
+      return *this = o.operator const dak::object::object_t * ();
    }
 
-   element_t& element_t::operator =(object_t* o)
+   element_t& element_t::operator =(const object_t* o)
    {
       reset(datatype_t::ref);
       {
@@ -539,12 +539,12 @@ namespace dak::object
       return name_t(nullptr);
    }
 
-   element_t::operator ref_t<object_t>() const
+   element_t::operator ref_t<const object_t>() const
    {
       if (compatible(datatype_t::ref))
-         return ref_t<object_t>(my_o);
+         return ref_t<const object_t>(my_o);
 
-      return ref_t<object_t>();
+      return ref_t<const object_t>();
    }
 
    // Array conversion + immediate array op.

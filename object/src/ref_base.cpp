@@ -1,3 +1,4 @@
+#include "dak/object/name.h"
 #include "dak/object/ref.h"
 #include "dak/object/ref_counted.h"
 

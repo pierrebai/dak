@@ -33,12 +33,12 @@ namespace Microsoft::VisualStudio::CppUnitTestFramework
       RETURN_WIDE_STRING(o);
    }
 
-   template<> inline std::wstring ToString<dak::object::object_t>(const dak::object::object_t& o)
+   template<> inline std::wstring ToString<dak::object::ref_t<const dak::object::object_t>>(const dak::object::ref_t<const dak::object::object_t>& o)
    {
-      RETURN_WIDE_STRING(dak::object::namer_t(dak::object::voc::get_root()) << o);
+      RETURN_WIDE_STRING(o);
    }
 
-   template<> inline std::wstring ToString<dak::object::modifiable_object_t>(const dak::object::modifiable_object_t& o)
+   template<> inline std::wstring ToString<dak::object::object_t>(const dak::object::object_t& o)
    {
       RETURN_WIDE_STRING(dak::object::namer_t(dak::object::voc::get_root()) << o);
    }

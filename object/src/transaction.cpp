@@ -3,10 +3,10 @@
 
 namespace dak::object
 {
-   modifiable_object_t* transaction_t::add(const ref_t<object_t>& an_object)
+   void transaction_t::add(const ref_t<const object_t>& an_object)
    {
       if (!an_object)
-         return nullptr;
+         return;
 
       const auto pos = my_modified_objects.find(an_object);
       if (pos == my_modified_objects.end())
@@ -14,8 +14,6 @@ namespace dak::object
          auto saved_copy = object_t::make(*an_object);
          my_modified_objects[an_object] = saved_copy;
       }
-
-      return &an_object->modify(object_t::modification_key_t());
    }
 
    void transaction_t::forget()
@@ -28,8 +26,8 @@ namespace dak::object
       transaction_t undo_transaction;
       for (const auto& [dest, saved] : objects)
       {
-         modifiable_object_t* mod_dest = undo_transaction.add(dest);
-         modifiable_object_t* mod_saved = undo_transaction.add(saved);
+         object_t* mod_dest = dest->modify(undo_transaction);
+         object_t* mod_saved = saved->modify(undo_transaction);
          mod_dest->swap(*mod_saved);
       }
       undo_transaction.forget();

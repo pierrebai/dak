@@ -5,29 +5,34 @@ namespace dak::object
 {
    const object_t object_t::empty;
 
-   ref_t<object_t> object_t::make()
+   ref_t<const object_t> object_t::make()
    {
-      return ref_t<object_t>(new object_t);
+      return ref_t<const object_t>(new object_t);
    }
 
-   ref_t<object_t> object_t::make(const object_t & d)
+   ref_t<const object_t> object_t::make(const object_t& an_obj)
    {
-      return ref_t<object_t>(new object_t(d));
+      return ref_t<const object_t>(new object_t(an_obj));
    }
 
-   modifiable_object_t& modifiable_object_t::operator +=(const modifiable_object_t & d)
+   ref_t<const object_t> object_t::make(ref_t<const object_t> & an_obj)
    {
-      append(d);
+      return ref_t<const object_t>(new object_t(*an_obj));
+   }
+
+   object_t& object_t::operator +=(const object_t & an_obj)
+   {
+      append(an_obj);
       return *this;
    }
 
-   void modifiable_object_t::append(const modifiable_object_t & d)
+   void object_t::append(const object_t & an_obj)
    {
-      for (const auto& [n, e] : d.my_elements)
+      for (const auto& [n, e] : an_obj.my_elements)
          (*this)[n] = e;
    }
 
-   bool modifiable_object_t::erase(const name_t& n)
+   bool object_t::erase(const name_t& n)
    {
       iterator pos = my_elements.find(n);
       if (pos == my_elements.end())
@@ -37,27 +42,27 @@ namespace dak::object
       return true;
    }
 
-   void modifiable_object_t::swap(modifiable_object_t& an_other)
+   void object_t::swap(object_t& an_other)
    {
       my_elements.swap(an_other.my_elements);
    }
 
-   bool modifiable_object_t::contains(const name_t& n) const
+   bool object_t::contains(const name_t& n) const
    {
       return 0 != my_elements.count(n);
    }
 
-   index_t modifiable_object_t::size() const
+   index_t object_t::size() const
    {
       return my_elements.size();
    }
 
-   element_t & modifiable_object_t::operator [](const name_t& n)
+   element_t & object_t::operator [](const name_t& n)
    {
       return my_elements[n];
    }
 
-   const element_t & modifiable_object_t::operator [](const name_t& n) const
+   const element_t & object_t::operator [](const name_t& n) const
    {
       const_iterator pos = my_elements.find(n);
       if(my_elements.end() == pos)
@@ -66,23 +71,29 @@ namespace dak::object
          return pos->second;
    }
 
-   modifiable_object_t::iterator modifiable_object_t::begin()
+   object_t::iterator object_t::begin()
    {
       return my_elements.begin();
    }
 
-   modifiable_object_t::iterator modifiable_object_t::end()
+   object_t::iterator object_t::end()
    {
       return my_elements.end();
    }
 
-   modifiable_object_t::const_iterator modifiable_object_t::begin() const
+   object_t::const_iterator object_t::begin() const
    {
       return my_elements.begin();
    }
 
-   modifiable_object_t::const_iterator modifiable_object_t::end() const
+   object_t::const_iterator object_t::end() const
    {
       return my_elements.end();
+   }
+
+   ref_t<object_t> object_t::modify(transaction_t& a_trans) const
+   {
+      a_trans.add(ref_t<const object_t>(this));
+      return ref_t<object_t>(const_cast<object_t*>(this));
    }
 }

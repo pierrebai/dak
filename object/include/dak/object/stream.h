@@ -40,44 +40,39 @@ namespace dak::object
    // By default, uses the standard output stream. Specialized for our own types.
 
    namer_stream_helper_t operator <<(std::wostream& o, const namer_t&);
-   namer_stream_helper_t print(namer_stream_helper_t o, const element_t& v);
-   namer_stream_helper_t print(namer_stream_helper_t o, const array_t&);
-   namer_stream_helper_t print(namer_stream_helper_t o, const dict_t&);
-   namer_stream_helper_t print(namer_stream_helper_t o, const object_t&);
-   namer_stream_helper_t print(namer_stream_helper_t o, const modifiable_object_t&);
+   const namer_stream_helper_t& print(const namer_stream_helper_t& nsh, const element_t& e);
+   const namer_stream_helper_t& print(const namer_stream_helper_t& nsh, const array_t& a);
+   const namer_stream_helper_t& print(const namer_stream_helper_t& nsh, const dict_t& d);
+   const namer_stream_helper_t& print(const namer_stream_helper_t& nsh, const object_t& o);
 
    template <class T>
-   inline namer_stream_helper_t operator <<(namer_stream_helper_t o, const T& v)
+   inline const namer_stream_helper_t& operator <<(const namer_stream_helper_t& nsh, const T& v)
    {
       if constexpr (std::is_base_of<name_t, T>())
       {
-         o.get_stream() << (o.get_namer().find(v));
-         return o;
+         nsh.get_stream() << (nsh.get_namer().find(v));
+         return nsh;
       }
       else if constexpr (std::is_base_of<dict_t, T>())
       {
-         return print(o, v);
+         return print(nsh, v);
       }
       else if constexpr (std::is_base_of<array_t, T>())
       {
-         return print(o, v);
+         return print(nsh, v);
       }
       else if constexpr (std::is_base_of<element_t, T>())
       {
-         return print(o, v);
+         return print(nsh, v);
       }
       else if constexpr (std::is_base_of<object_t, T>())
       {
-         return print(o, v);
-      }
-      else if constexpr (std::is_base_of<modifiable_object_t, T>())
-      {
-         return print(o, v);
+         return print(nsh, v);
       }
       else
       {
-         o.get_stream() << v;
-         return o;
+         nsh.get_stream() << v;
+         return nsh;
       }
    }
 }

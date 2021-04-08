@@ -2,6 +2,7 @@
 
 #include "dak/object/object.h"
 #include "dak/object/transaction.h"
+#include "dak/utility/undo_stack.h"
 #include "dak/object/voc.h"
 #include "dak/object/tests/helpers.h"
 
@@ -18,7 +19,7 @@ namespace dak::object::tests
          transaction_t t1;
 
          auto ro1 = object_t::make();
-         auto& o1 = *t1.add(ro1);
+         auto& o1 = *ro1->modify(t1);
 
          Assert::AreEqual<index_t>(0, o1.size());
 
@@ -51,7 +52,7 @@ namespace dak::object::tests
          transaction_t t1;
 
          auto ro1 = object_t::make();
-         auto& o1 = *t1.add(ro1);
+         auto& o1 = *ro1->modify(t1);
 
          o1[rock] = 3;
          o1[pebble] = 4;
@@ -59,7 +60,7 @@ namespace dak::object::tests
          o1[hello][world] = rock;
 
          auto ro2 = object_t::make();
-         auto& o2 = *t1.add(ro2);
+         auto& o2 = *ro2->modify(t1);
 
          o2 += o1;
 
@@ -86,7 +87,7 @@ namespace dak::object::tests
          transaction_t t1;
 
          auto ro1 = object_t::make();
-         auto& o1 = *t1.add(ro1);
+         auto& o1 = *ro1->modify(t1);
 
          o1[rock] = 3;
          o1[pebble] = 4;
@@ -109,5 +110,64 @@ namespace dak::object::tests
 
          Assert::AreEqual<int32_t>(4, count);
       }
+
+      TEST_METHOD(object_const)
+      {
+         auto ro1 = object_t::make();
+         Assert::AreEqual<index_t>(0, ro1->size());
+
+         undo_stack_t undo_redo;
+
+         {
+            transaction_t t1;
+
+            auto& o1 = *ro1->modify(t1);
+
+            o1[voc::rock] = 3;
+            o1[voc::pebble] = 4;
+            o1[voc::sand] = 5.0;
+            o1[voc::hello] = L"6";
+            o1[voc::world] = voc::rock;
+
+            t1.commit(undo_redo);
+         }
+
+         Assert::AreEqual<index_t>(5, ro1->size());
+
+         Assert::AreEqual<int32_t>(3, ro1[rock]);
+         Assert::AreEqual<int64_t>(4, ro1[pebble]);
+         Assert::AreEqual<double>(5.0, ro1[sand]);
+         Assert::AreEqual<text_t>(L"6", ro1[hello]);
+         Assert::AreEqual<name_t>(rock, ro1[world]);
+
+         Assert::AreEqual<int32_t>(3, ro1->get(rock));
+         Assert::AreEqual<int64_t>(4, ro1->get(pebble));
+         Assert::AreEqual<double>(5.0, ro1->get(sand));
+         Assert::AreEqual<text_t>(L"6", ro1->get(hello));
+         Assert::AreEqual<name_t>(rock, ro1->get(world));
+
+         {
+            transaction_t t2;
+
+            auto o1 = ro1->modify(t2);
+
+            o1->get(voc::rock) = 33;
+            o1->get(voc::pebble) = 44;
+            o1->get(voc::sand) = 55.0;
+            o1->get(voc::hello) = L"66";
+            o1->get(voc::world) = voc::age;
+
+            t2.commit(undo_redo);
+         }
+
+         Assert::AreEqual<index_t>(5, ro1->size());
+
+         Assert::AreEqual<int32_t>(33, ro1->get(rock));
+         Assert::AreEqual<int64_t>(44, ro1->get(pebble));
+         Assert::AreEqual<double>(55.0, ro1->get(sand));
+         Assert::AreEqual<text_t>(L"66", ro1->get(hello));
+         Assert::AreEqual<name_t>(age, ro1->get(world));
+      }
+
    };
 }

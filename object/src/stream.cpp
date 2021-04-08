@@ -10,62 +10,53 @@ namespace dak::object
    //
    // Stream operations.
 
-   namer_stream_helper_t operator <<(std::wostream& o, const namer_t& n)
+   namer_stream_helper_t operator <<(std::wostream& nsh, const namer_t& n)
    {
-      return namer_stream_helper_t(o, n);
+      return namer_stream_helper_t(nsh, n);
    }
 
-   namer_stream_helper_t print(namer_stream_helper_t o, const element_t& e)
+   const namer_stream_helper_t& print(const namer_stream_helper_t& nsh, const element_t& e)
    {
       switch(e.type())
       {
-         case datatype_t::unknown:  return o << L"unknown";
-         case datatype_t::boolean:  return o << (bool) e;
-         case datatype_t::integer:  return o << (int64_t) e;
-         case datatype_t::ref:      return o << L"ref"; // TODO
-         case datatype_t::name:     return o << (const name_t &) e;
-         case datatype_t::real:     return o << (double) e;
-         case datatype_t::array:    return o << (const array_t &) e;
-         case datatype_t::dict:     return o << (const dict_t &) e;
-         case datatype_t::text:     return o << (str_ptr_t) e;
-         default:                 return o;
+         case datatype_t::unknown:  return nsh << L"unknown";
+         case datatype_t::boolean:  return nsh << (bool) e;
+         case datatype_t::integer:  return nsh << (int64_t) e;
+         case datatype_t::ref:      return nsh << L"ref"; // TODO
+         case datatype_t::name:     return nsh << (const name_t &) e;
+         case datatype_t::real:     return nsh << (double) e;
+         case datatype_t::array:    return nsh << (const array_t &) e;
+         case datatype_t::dict:     return nsh << (const dict_t &) e;
+         case datatype_t::text:     return nsh << (str_ptr_t) e;
+         default:                 return nsh;
       }
    }
 
-   namer_stream_helper_t print(namer_stream_helper_t o, const array_t& a)
+   const namer_stream_helper_t& print(const namer_stream_helper_t& nsh, const array_t& a)
    {
-      o << L"[ ";
+      nsh << L"[ ";
       for (const element_t& e : a)
-         o << e << L" , ";
-      o << L"]";
-      return o;
+         nsh << e << L" , ";
+      nsh << L"]";
+      return nsh;
    }
 
-   namer_stream_helper_t print(namer_stream_helper_t o, const dict_t& d)
+   const namer_stream_helper_t& print(const namer_stream_helper_t& nsh, const dict_t& d)
    {
-      o << L"{ ";
+      nsh << L"{ ";
       for (const auto& [n, e] : d)
-         o << n << L" : " <<  e << L" , ";
-      o << L"}";
-      return o;
+         nsh << n << L" : " <<  e << L" , ";
+      nsh << L"}";
+      return nsh;
    }
 
-   namer_stream_helper_t print(namer_stream_helper_t o, const modifiable_object_t& d)
+   const namer_stream_helper_t& print(const namer_stream_helper_t& nsh, const object_t& o)
    {
-      o << L"{ ";
-      for (const auto& [n, e] : d)
-         o << n << L" : " << e << L" , ";
-      o << L"}";
-      return o;
-   }
-
-   namer_stream_helper_t print(namer_stream_helper_t o, const object_t& d)
-   {
-      o << L"{ ";
-      for (const auto& [n, e] : d)
-         o << n << L" : " << e << L" , ";
-      o << L"}";
-      return o;
+      nsh << L"{ ";
+      for (const auto& [n, e] : o)
+         nsh << n << L" : " << e << L" , ";
+      nsh << L"}";
+      return nsh;
    }
 }
 

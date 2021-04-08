@@ -25,7 +25,7 @@ namespace dak::object
 
    struct transaction_t
    {
-      using modified_objects_t = std::map<ref_t<object_t>, ref_t<object_t>>;
+      using modified_objects_t = std::map<ref_t<const object_t>, ref_t<const object_t>>;
 
       // Constructors.
       transaction_t() = default;
@@ -36,7 +36,7 @@ namespace dak::object
 
       // Add an object to the transaction.
       // Automatically done when an object is modified.
-      modifiable_object_t* add(const ref_t<object_t>& an_object);
+      void add(const ref_t<const object_t>& an_object);
 
       // Commit and cancel.
       void commit(undo_stack_t&);

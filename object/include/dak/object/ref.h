@@ -2,10 +2,14 @@
 #define DAK_OBJECT_REF_H
 
 #include <dak/utility/types.h>
+#include <dak/object/name.h>
 #include <dak/object/ref_counted.h>
 
 namespace dak::object
 {
+   struct element_t;
+   struct name_t;
+
    //////////////////////////////////////////////////////////////////////////
    //
    // Base class for the smart reference-counted templated pointer.
@@ -60,8 +64,12 @@ namespace dak::object
       T* operator ->() const { return static_cast<T*>(my_object); }
       T& operator *() const { return static_cast<T&>(*my_object); }
 
+      // Element retrieval.
+      // Non-const version inserts when the name is not found.
+      const element_t& operator [](const name_t& n) const;
+
    private:
-      ref_t(T* t) : ref_base_t(t) {}
+      ref_t(T* t) : ref_base_t((ref_counted_t*) t) {}
       ref_t<T>& operator =(T* t) { ref_base_t::operator =(t); return *this; }
 
       friend T;
