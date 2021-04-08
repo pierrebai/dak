@@ -6,12 +6,15 @@
 #include <dak/utility/types.h>
 #include <dak/object/element.h>
 #include <dak/object/ref_counted.h>
+#include <dak/object/ref.h>
 
 #include <map>
 
 namespace dak::object
 {
    USING_DAK_UTILITY_TYPES;
+   struct transaction_t;
+   struct element_t;
 
    //////////////////////////////////////////////////////////////////////////
    //
@@ -42,11 +45,17 @@ namespace dak::object
       // Modifications to the object.
       void append(const modifiable_object_t &);
       bool erase(const name_t &);
+      void swap(modifiable_object_t&);
+
+      // Element containment check.
       bool contains(const name_t &) const;
 
       // Element retrieval.
+      // Non-const version inserts when the name is not found.
       element_t & operator [](const name_t &);
       const element_t & operator [](const name_t &) const;
+
+      const element_t& lookup(const name_t& n) const { return (*this)[n]; }
 
       // Iterations over the elements.
       iterator begin();
@@ -61,6 +70,7 @@ namespace dak::object
       elements_t my_elements;
 
       friend struct ref_t<modifiable_object_t>;
+      friend struct element_t;
 
       // Make a ref-counted instance.
       static ref_t<object_t> make();
@@ -68,16 +78,13 @@ namespace dak::object
 
    };
 
+
    struct object_t : private modifiable_object_t
    {
       // Types used by the object: data container and iterators.
       using modifiable_object_t::elements_t;
       using modifiable_object_t::iterator;
       using modifiable_object_t::const_iterator;
-
-      // Constructors.
-      object_t() = default;
-      object_t(const object_t &) = default;
 
       // Make a ref-counted instance.
       static ref_t<object_t> make();
@@ -89,7 +96,7 @@ namespace dak::object
       // Number of elements in the object.
       index_t size() const { return modifiable_object_t::size(); }
 
-      // Modifications to the object.
+      // Element containment check.
       bool contains(const name_t &a_name) const { return modifiable_object_t::contains(a_name); }
 
       // Element retrieval.
@@ -102,8 +109,26 @@ namespace dak::object
       // Comparisons.
       auto operator <=> (const object_t&) const = default;
 
+      // Modification. Only a transaction can make an object modifiable.
+      struct modification_key_t
+      {
+      private:
+         modification_key_t() = default;
+         modification_key_t(const modification_key_t&) = delete;
+         modification_key_t(const modification_key_t&&) = delete;
+
+         friend struct transaction_t;
+      };
+
+      modifiable_object_t& modify(const modification_key_t&) { return *this; }
+
    protected:
+      // Constructors.
+      object_t() = default;
+      object_t(const object_t&) = default;
+
       friend struct ref_t<object_t>;
+      friend struct element_t;
    };
 }
 

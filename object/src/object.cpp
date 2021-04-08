@@ -1,8 +1,5 @@
-// File: object.cpp
-//
-// Dak Copyright © 2012-2021. All Rights Reserved.
-
 #include "dak/object/object.h"
+#include "dak/object/transaction.h"
 
 namespace dak::object
 {
@@ -38,6 +35,11 @@ namespace dak::object
 
       my_elements.erase(pos);
       return true;
+   }
+
+   void modifiable_object_t::swap(modifiable_object_t& an_other)
+   {
+      my_elements.swap(an_other.my_elements);
    }
 
    bool modifiable_object_t::contains(const name_t& n) const

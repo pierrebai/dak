@@ -56,22 +56,17 @@ namespace dak::object
       ref_t<T>& operator =(const ref_t<T>& other) { ref_base_t::operator =(other); return *this; }
 
       // Access to the referenced object.
-      operator T*() { return static_cast<T*>(my_object); }
-      operator const T*() const { return static_cast<const T*>(my_object); }
-
-      T* operator ->() { return static_cast<T*>(my_object); }
-      const T* operator ->() const { return static_cast<const T*>(my_object); }
-
-      T& operator *() { return static_cast<T&>(*my_object); }
-      const T& operator *() const { return static_cast<const T&>(*my_object); }
+      operator T*() const { return static_cast<T*>(my_object); }
+      T* operator ->() const { return static_cast<T*>(my_object); }
+      T& operator *() const { return static_cast<T&>(*my_object); }
 
    private:
       ref_t(T* t) : ref_base_t(t) {}
       ref_t<T>& operator =(T* t) { ref_base_t::operator =(t); return *this; }
 
-      friend ref_t<T> T::make();
-      friend ref_t<T> T::make(const T&);
+      friend T;
       friend struct name_t;
+      friend struct element_t;
    };
 }
 

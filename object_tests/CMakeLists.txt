@@ -4,7 +4,9 @@ add_library(object_tests SHARED
    src/dict_tests.cpp
    src/element_tests.cpp
    src/name_tests.cpp
+   src/object_tests.cpp
    src/stream_tests.cpp
+   src/transaction_tests.cpp
    include/dak/object/tests/helpers.h
 )
 

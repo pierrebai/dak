@@ -9,6 +9,7 @@
 #include "dak/object/dict.h"
 #include "dak/object/name.h"
 #include "dak/object/namer.h"
+#include "dak/object/object.h"
 #include "dak/object/stream.h"
 #include "dak/object/voc.h"
 
@@ -25,6 +26,21 @@ namespace Microsoft::VisualStudio::CppUnitTestFramework
    template<> inline std::wstring ToString<dak::object::element_t>(const dak::object::element_t& e)
    {
       RETURN_WIDE_STRING(dak::object::namer_t(dak::object::voc::get_root()) << e);
+   }
+
+   template<> inline std::wstring ToString<dak::object::ref_t<dak::object::object_t>>(const dak::object::ref_t<dak::object::object_t>& o)
+   {
+      RETURN_WIDE_STRING(o);
+   }
+
+   template<> inline std::wstring ToString<dak::object::object_t>(const dak::object::object_t& o)
+   {
+      RETURN_WIDE_STRING(dak::object::namer_t(dak::object::voc::get_root()) << o);
+   }
+
+   template<> inline std::wstring ToString<dak::object::modifiable_object_t>(const dak::object::modifiable_object_t& o)
+   {
+      RETURN_WIDE_STRING(dak::object::namer_t(dak::object::voc::get_root()) << o);
    }
 
    template<> inline std::wstring ToString<dak::utility::uint16_t>(const dak::utility::uint16_t& e)

@@ -2,6 +2,7 @@
 #include "dak/utility/types.h"
 #include "dak/object/dict.h"
 #include "dak/object/array.h"
+#include "dak/object/object.h"
 
 namespace dak::object
 {
@@ -45,6 +46,24 @@ namespace dak::object
       o << L"{ ";
       for (const auto& [n, e] : d)
          o << n << L" : " <<  e << L" , ";
+      o << L"}";
+      return o;
+   }
+
+   namer_stream_helper_t print(namer_stream_helper_t o, const modifiable_object_t& d)
+   {
+      o << L"{ ";
+      for (const auto& [n, e] : d)
+         o << n << L" : " << e << L" , ";
+      o << L"}";
+      return o;
+   }
+
+   namer_stream_helper_t print(namer_stream_helper_t o, const object_t& d)
+   {
+      o << L"{ ";
+      for (const auto& [n, e] : d)
+         o << n << L" : " << e << L" , ";
       o << L"}";
       return o;
    }

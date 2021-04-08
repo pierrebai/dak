@@ -1,6 +1,7 @@
 #include "dak/object/element.h"
 #include "dak/object/dict.h"
 #include "dak/object/array.h"
+#include "dak/object/object.h"
 
 #include <exception>
 #include <wchar.h>
@@ -17,12 +18,12 @@ namespace dak::object
          case datatype_t::unknown:
          case datatype_t::boolean:
          case datatype_t::integer:
-         case datatype_t::real:
-         case datatype_t::ref:   my_i = 0;              break;
-         case datatype_t::name:  if (my_n) my_n->unref(); my_n = 0; break;
-         case datatype_t::array: delete my_a; my_a = 0;   break;
-         case datatype_t::dict:  delete my_d; my_d = 0;   break;
-         case datatype_t::text:  delete my_t; my_t = 0; break;
+         case datatype_t::real:  my_i = 0;                                 break;
+         case datatype_t::ref:   if (my_o) my_o->unref(); my_o = nullptr;  break;
+         case datatype_t::name:  if (my_n) my_n->unref(); my_n = nullptr;  break;
+         case datatype_t::array: delete my_a; my_a = nullptr;              break;
+         case datatype_t::dict:  delete my_d; my_d = nullptr;              break;
+         case datatype_t::text:  delete my_t; my_t = nullptr;              break;
       }
 
       my_type = a_type;
@@ -34,8 +35,8 @@ namespace dak::object
          case datatype_t::boolean:
          case datatype_t::integer:
          case datatype_t::real:
-         case datatype_t::ref:                     break;
-         case datatype_t::name:  my_n = 0;         break;
+         case datatype_t::ref:   my_o = nullptr;     break;
+         case datatype_t::name:  my_n = 0;           break;
          case datatype_t::text:  my_t = new text_t;  break;
          case datatype_t::array: my_a = new array_t; break;
          case datatype_t::dict:  my_d = new dict_t;  break;
@@ -213,6 +214,17 @@ namespace dak::object
       *this = n;
    }
 
+   element_t::element_t(const ref_t<object_t>& o)
+   : element_t(o.operator dak::object::object_t* ())
+   {
+   }
+
+   element_t::element_t(object_t* o)
+   : my_o(0), my_type(datatype_t::ref)
+   {
+      *this = o;
+   }
+
    element_t::~element_t()
    {
       reset();
@@ -226,6 +238,7 @@ namespace dak::object
          case datatype_t::unknown: reset(); break;
          case datatype_t::boolean:
          case datatype_t::integer: *this =  anOther.my_i; break;
+         case datatype_t::ref:     *this =  anOther.my_o; break;
          case datatype_t::name:    *this =  name_t(anOther.my_n); break;
          case datatype_t::real:    *this =  anOther.my_r; break;
          case datatype_t::array:   *this = *anOther.my_a; break;
@@ -342,6 +355,23 @@ namespace dak::object
       return *this;
    }
 
+   element_t& element_t::operator =(const ref_t<object_t>& o)
+   {
+      return *this = o.operator dak::object::object_t * ();
+   }
+
+   element_t& element_t::operator =(object_t* o)
+   {
+      reset(datatype_t::ref);
+      {
+         my_o = o;
+         if (my_o)
+            my_o->addref();
+      }
+
+      return *this;
+   }
+
    element_t::operator char() const
    {
       if (compatible(datatype_t::integer))
@@ -412,6 +442,7 @@ namespace dak::object
          case datatype_t::integer:  return my_i != 0;
          case datatype_t::name:     return my_n != 0;
          case datatype_t::real:     return my_r != 0;
+         case datatype_t::ref:      return my_o != nullptr;
          case datatype_t::array:
          case datatype_t::dict:
          case datatype_t::text:     return size() > 0;
@@ -508,6 +539,14 @@ namespace dak::object
       return name_t(nullptr);
    }
 
+   element_t::operator ref_t<object_t>() const
+   {
+      if (compatible(datatype_t::ref))
+         return ref_t<object_t>(my_o);
+
+      return ref_t<object_t>();
+   }
+
    // Array conversion + immediate array op.
    element_t & element_t::operator [](index_t anIndex)
    {
@@ -591,8 +630,8 @@ namespace dak::object
          case datatype_t::boolean:
          case datatype_t::integer:
          case datatype_t::real:
-         case datatype_t::ref:
          case datatype_t::name:  return 0;
+         case datatype_t::ref:   return my_o ? my_o->size() : 0;
          case datatype_t::array: return my_a->size();
          case datatype_t::dict:  return my_d->size();
          case datatype_t::text:  return my_t->length();
@@ -616,7 +655,7 @@ namespace dak::object
          case datatype_t::boolean: 
          case datatype_t::integer: return my_i == e.my_i;
          case datatype_t::real:    return my_r == e.my_r;
-         case datatype_t::ref:     return false;
+         case datatype_t::ref:     return my_o == e.my_o; // TODO: or use full-object equality?
          case datatype_t::name:    return my_n == e.my_n;
          case datatype_t::array:   return *my_a == *e.my_a;
          case datatype_t::dict:    return *my_d == *e.my_d;

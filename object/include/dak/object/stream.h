@@ -7,6 +7,7 @@
 #include <dak/object/array.h>
 #include <dak/object/dict.h>
 #include <dak/object/namer.h>
+#include <dak/object/object.h>
 
 #include <iostream>
 #include <type_traits>
@@ -42,6 +43,8 @@ namespace dak::object
    namer_stream_helper_t print(namer_stream_helper_t o, const element_t& v);
    namer_stream_helper_t print(namer_stream_helper_t o, const array_t&);
    namer_stream_helper_t print(namer_stream_helper_t o, const dict_t&);
+   namer_stream_helper_t print(namer_stream_helper_t o, const object_t&);
+   namer_stream_helper_t print(namer_stream_helper_t o, const modifiable_object_t&);
 
    template <class T>
    inline namer_stream_helper_t operator <<(namer_stream_helper_t o, const T& v)
@@ -60,6 +63,14 @@ namespace dak::object
          return print(o, v);
       }
       else if constexpr (std::is_base_of<element_t, T>())
+      {
+         return print(o, v);
+      }
+      else if constexpr (std::is_base_of<object_t, T>())
+      {
+         return print(o, v);
+      }
+      else if constexpr (std::is_base_of<modifiable_object_t, T>())
       {
          return print(o, v);
       }

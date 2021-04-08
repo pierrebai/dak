@@ -5,6 +5,7 @@
 
 #include <dak/utility/types.h>
 #include <dak/object/name.h>
+#include <dak/object/ref.h>
 
 namespace dak::object
 {
@@ -69,6 +70,8 @@ namespace dak::object
       element_t(const array_t &);
       element_t(const dict_t &);
       element_t(const name_t &);
+      element_t(const ref_t<object_t>&);
+      element_t(object_t*);
       ~element_t();
 
       static const element_t empty;
@@ -93,6 +96,8 @@ namespace dak::object
       element_t& operator =(const array_t &);
       element_t& operator =(const dict_t &);
       element_t& operator =(const name_t &);
+      element_t& operator =(const ref_t<object_t>&);
+      element_t& operator =(object_t*);
 
       // Data access. Does not change the type.
       operator char() const;
@@ -111,6 +116,7 @@ namespace dak::object
       operator const array_t &() const;
       operator const dict_t &() const;
       operator name_t() const;
+      operator ref_t<object_t>() const;
 
       // Array conversion + immediate array_t op.
       element_t & operator [](index_t an_index);
@@ -168,8 +174,6 @@ namespace dak::object
          double                  my_r;
          dict_t *                my_d;
          array_t *               my_a;
-         element_t *             my_e;
-         const element_t*        my_ce;
          text_t *                my_t;
          name_t::rc_sub_names_t* my_n;
          object_t *              my_o;

@@ -1,6 +1,7 @@
 #include "CppUnitTest.h"
 
 #include "dak/object/element.h"
+#include "dak/object/object.h"
 #include "dak/object/tests/helpers.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -29,6 +30,8 @@ namespace dak::object::tests
 
       TEST_METHOD(element_constructors)
       {
+         auto o = object_t::make();
+
          element_t e_u;
          element_t e_t1(text_t(L"text"));
          element_t e_t2(L"strptr");
@@ -46,6 +49,7 @@ namespace dak::object::tests
          element_t e_a((array_t()));
          element_t e_d((dict_t()));
          element_t e_n(voc::rock);
+         element_t e_o(o);
 
          Assert::AreEqual(datatype_t::unknown, e_u.type());
          Assert::AreEqual(datatype_t::text, e_t1.type());
@@ -64,10 +68,13 @@ namespace dak::object::tests
          Assert::AreEqual(datatype_t::array, e_a.type());
          Assert::AreEqual(datatype_t::dict, e_d.type());
          Assert::AreEqual(datatype_t::name, e_n.type());
+         Assert::AreEqual(datatype_t::ref, e_o.type());
       }
 
       TEST_METHOD(element_assignments)
       {
+         auto o = object_t::make();
+
          element_t e_u;
          element_t e_t1;
          element_t e_t2;
@@ -85,6 +92,7 @@ namespace dak::object::tests
          element_t e_a;
          element_t e_d;
          element_t e_n;
+         element_t e_o;
 
          e_u  = element_t();
          e_t1 = text_t(L"text");
@@ -103,6 +111,7 @@ namespace dak::object::tests
          e_a  = array_t();
          e_d  = dict_t();
          e_n  = voc::rock;
+         e_o  = o;
 
          Assert::AreEqual(datatype_t::unknown, e_u.type());
          Assert::AreEqual(datatype_t::text, e_t1.type());
@@ -121,6 +130,7 @@ namespace dak::object::tests
          Assert::AreEqual(datatype_t::array, e_a.type());
          Assert::AreEqual(datatype_t::dict, e_d.type());
          Assert::AreEqual(datatype_t::name, e_n.type());
+         Assert::AreEqual(datatype_t::ref, e_o.type());
       }
 
       TEST_METHOD(element_text_assignments)
@@ -148,6 +158,8 @@ namespace dak::object::tests
 
       TEST_METHOD(element_conversion)
       {
+         auto o = object_t::make();
+
          element_t e_u;
          element_t e_t1(text_t(L"text"));
          element_t e_t2(L"strptr");
@@ -165,6 +177,7 @@ namespace dak::object::tests
          element_t e_a((array_t()));
          element_t e_d((dict_t()));
          element_t e_n(voc::rock);
+         element_t e_o(o);
 
          Assert::AreEqual<int32_t>(0, e_u);
          Assert::AreEqual<text_t>(text_t(L"text"), e_t1);
@@ -183,10 +196,13 @@ namespace dak::object::tests
          Assert::AreEqual<array_t>((array_t()), e_a);
          Assert::AreEqual<dict_t>((dict_t()), e_d);
          Assert::AreEqual<name_t>(voc::rock, e_n);
+         Assert::AreEqual<ref_t<object_t>>(o, e_o);
       }
 
       TEST_METHOD(element_const_conversion)
       {
+         auto o = object_t::make();
+
          const element_t e_u;
          const element_t e_t1(text_t(L"text"));
          const element_t e_t2(L"strptr");
@@ -204,6 +220,7 @@ namespace dak::object::tests
          const element_t e_a((array_t()));
          const element_t e_d((dict_t()));
          const element_t e_n(voc::rock);
+         const element_t e_o(o);
 
          Assert::AreEqual<int32_t>(0, e_u);
          Assert::AreEqual<text_t>(text_t(L"text"), e_t1);
@@ -222,10 +239,13 @@ namespace dak::object::tests
          Assert::AreEqual<array_t>((array_t()), e_a);
          Assert::AreEqual<dict_t>((dict_t()), e_d);
          Assert::AreEqual<name_t>(voc::rock, e_n);
+         Assert::AreEqual<ref_t<object_t>>(o, e_o);
       }
 
       TEST_METHOD(element_unknown_assignments)
       {
+         auto o = object_t::make();
+
          element_t e_u;
          element_t e_t1(text_t(L"text"));
          element_t e_t2(L"strptr");
@@ -243,6 +263,7 @@ namespace dak::object::tests
          element_t e_a((array_t()));
          element_t e_d((dict_t()));
          element_t e_n(voc::rock);
+         element_t e_o(o);
 
          // Assigning an empty element_t of type unknown
          // should set the type to unknown and reset the value.
@@ -263,6 +284,7 @@ namespace dak::object::tests
          e_a = element_t();
          e_d = element_t();
          e_n = element_t();
+         e_o = element_t();
 
          Assert::AreEqual(datatype_t::unknown, e_u.type());
          Assert::AreEqual(datatype_t::unknown, e_t1.type());
@@ -281,6 +303,7 @@ namespace dak::object::tests
          Assert::AreEqual(datatype_t::unknown, e_a.type());
          Assert::AreEqual(datatype_t::unknown, e_d.type());
          Assert::AreEqual(datatype_t::unknown, e_n.type());
+         Assert::AreEqual(datatype_t::unknown, e_o.type());
 
          Assert::AreEqual<int32_t>(0, e_u);
          Assert::AreEqual<text_t>(text_t(L""), e_t1);
@@ -299,10 +322,13 @@ namespace dak::object::tests
          Assert::AreEqual<array_t>((array_t()), e_a);
          Assert::AreEqual<dict_t>((dict_t()), e_d);
          Assert::AreNotEqual<name_t>(name_t(), e_n);
+         Assert::AreNotEqual<ref_t<object_t>>(o, e_o);
       }
 
       TEST_METHOD(element_size)
       {
+         auto o = object_t::make();
+
          dict_t d;
          d[voc::rock] = 33;
          d[voc::pebble] = 4;
@@ -330,6 +356,7 @@ namespace dak::object::tests
          const element_t e_a(a);
          const element_t e_d(d);
          const element_t e_n(voc::rock);
+         const element_t e_o(o);
 
          Assert::AreEqual<index_t>(0, e_u.size());
          Assert::AreEqual<index_t>(4, e_t1.size());
@@ -348,10 +375,13 @@ namespace dak::object::tests
          Assert::AreEqual<index_t>(3, e_a.size());
          Assert::AreEqual<index_t>(3, e_d.size());
          Assert::AreEqual<index_t>(0, e_n.size());
+         Assert::AreEqual<index_t>(0, e_o.size());
       }
 
       TEST_METHOD(element_compatible)
       {
+         auto o = object_t::make();
+
          dict_t d;
          d[voc::rock] = 33;
          d[voc::pebble] = 4;
@@ -379,6 +409,7 @@ namespace dak::object::tests
          const element_t e_a(a);
          const element_t e_d(d);
          const element_t e_n(voc::rock);
+         const element_t e_o(o);
 
          Assert::IsTrue(e_u.compatible(datatype_t::unknown));
          Assert::IsTrue(e_t1.compatible(datatype_t::text));
@@ -397,6 +428,7 @@ namespace dak::object::tests
          Assert::IsTrue(e_a.compatible(datatype_t::array));
          Assert::IsTrue(e_d.compatible(datatype_t::dict));
          Assert::IsTrue(e_n.compatible(datatype_t::name));
+         Assert::IsTrue(e_o.compatible(datatype_t::ref));
 
          Assert::IsTrue(e_b.compatible(datatype_t::integer));
          Assert::IsTrue(e_i2.compatible(datatype_t::boolean));
@@ -423,10 +455,13 @@ namespace dak::object::tests
          Assert::IsFalse(e_a.compatible(datatype_t::dict));
          Assert::IsFalse(e_d.compatible(datatype_t::array));
          Assert::IsFalse(e_n.compatible(datatype_t::integer));
+         Assert::IsFalse(e_o.compatible(datatype_t::integer));
       }
 
       TEST_METHOD(element_reset)
       {
+         auto o = object_t::make();
+
          dict_t d;
          d[voc::rock] = 33;
          d[voc::pebble] = 4;
@@ -454,6 +489,7 @@ namespace dak::object::tests
          element_t e_a(a);
          element_t e_d(d);
          element_t e_n(voc::rock);
+         element_t e_o(o);
 
          e_u.reset();
          e_t1.reset();
@@ -472,6 +508,7 @@ namespace dak::object::tests
          e_a.reset();
          e_d.reset();
          e_n.reset();
+         e_o.reset();
 
          Assert::AreEqual(datatype_t::unknown, e_u.type());
          Assert::AreEqual(datatype_t::unknown, e_t1.type());
@@ -490,6 +527,7 @@ namespace dak::object::tests
          Assert::AreEqual(datatype_t::unknown, e_a.type());
          Assert::AreEqual(datatype_t::unknown, e_d.type());
          Assert::AreEqual(datatype_t::unknown, e_n.type());
+         Assert::AreEqual(datatype_t::unknown, e_o.type());
       }
 
       TEST_METHOD(element_ensure)
@@ -511,6 +549,7 @@ namespace dak::object::tests
          element_t e_a;
          element_t e_d;
          element_t e_n;
+         element_t e_o;
 
          e_u.ensure(datatype_t::unknown);
          e_t1.ensure(datatype_t::text);
@@ -529,6 +568,7 @@ namespace dak::object::tests
          e_a.ensure(datatype_t::array);
          e_d.ensure(datatype_t::dict);
          e_n.ensure(datatype_t::name);
+         e_o.ensure(datatype_t::ref);
 
          Assert::AreEqual(datatype_t::unknown, e_u.type());
          Assert::AreEqual(datatype_t::text, e_t1.type());
@@ -547,10 +587,13 @@ namespace dak::object::tests
          Assert::AreEqual(datatype_t::array, e_a.type());
          Assert::AreEqual(datatype_t::dict, e_d.type());
          Assert::AreEqual(datatype_t::name, e_n.type());
+         Assert::AreEqual(datatype_t::ref, e_o.type());
       }
 
       TEST_METHOD(element_ensure_preserve_value)
       {
+         auto o = object_t::make();
+
          dict_t d;
          d[voc::rock] = 33;
          d[voc::pebble] = 4;
@@ -578,6 +621,7 @@ namespace dak::object::tests
          element_t e_a(a);
          element_t e_d(d);
          element_t e_n(voc::rock);
+         element_t e_o(o);
 
          // Ensuring the same type should not reset the value.
          e_u.ensure(datatype_t::unknown);
@@ -597,6 +641,7 @@ namespace dak::object::tests
          e_a.ensure(datatype_t::array);
          e_d.ensure(datatype_t::dict);
          e_n.ensure(datatype_t::name);
+         e_o.ensure(datatype_t::ref);
 
          Assert::AreEqual(datatype_t::unknown, e_u.type());
          Assert::AreEqual(datatype_t::text, e_t1.type());
@@ -615,6 +660,7 @@ namespace dak::object::tests
          Assert::AreEqual(datatype_t::array, e_a.type());
          Assert::AreEqual(datatype_t::dict, e_d.type());
          Assert::AreEqual(datatype_t::name, e_n.type());
+         Assert::AreEqual(datatype_t::ref, e_o.type());
 
          Assert::AreEqual<int32_t>(0, e_u);
          Assert::AreEqual<text_t>(text_t(L"text"), e_t1);
@@ -633,6 +679,7 @@ namespace dak::object::tests
          Assert::AreEqual<array_t>(a, e_a);
          Assert::AreEqual<dict_t>(d, e_d);
          Assert::AreEqual<name_t>(voc::rock, e_n);
+         Assert::AreEqual<ref_t<object_t>>(o, e_o);
 
          // Ensuring a similar type should preserve most of the value.
          e_u.ensure(datatype_t::integer);
@@ -652,6 +699,7 @@ namespace dak::object::tests
          e_a.ensure(datatype_t::boolean);
          e_d.ensure(datatype_t::boolean);
          e_n.ensure(datatype_t::boolean);
+         e_o.ensure(datatype_t::boolean);
 
          Assert::AreEqual<int64_t>(0, e_u);
          Assert::AreEqual<bool>(true, e_t1);
@@ -670,11 +718,13 @@ namespace dak::object::tests
          Assert::AreEqual<bool>(true, e_a);
          Assert::AreEqual<bool>(true, e_d);
          Assert::AreEqual<bool>(true, e_n);
-
+         Assert::AreEqual<bool>(true, e_o);
       }
 
       TEST_METHOD(element_verify)
       {
+         auto o = object_t::make();
+
          dict_t d;
          d[voc::rock] = 33;
          d[voc::pebble] = 4;
@@ -702,6 +752,7 @@ namespace dak::object::tests
          element_t e_a(a);
          element_t e_d(d);
          element_t e_n(voc::rock);
+         element_t e_o(o);
 
          // Verifying the same type should not reset the value.
          e_u.verify(datatype_t::unknown);
@@ -721,6 +772,7 @@ namespace dak::object::tests
          e_a.verify(datatype_t::array);
          e_d.verify(datatype_t::dict);
          e_n.verify(datatype_t::name);
+         e_o.verify(datatype_t::ref);
 
          Assert::AreEqual(datatype_t::unknown, e_u.type());
          Assert::AreEqual(datatype_t::text, e_t1.type());
@@ -739,6 +791,7 @@ namespace dak::object::tests
          Assert::AreEqual(datatype_t::array, e_a.type());
          Assert::AreEqual(datatype_t::dict, e_d.type());
          Assert::AreEqual(datatype_t::name, e_n.type());
+         Assert::AreEqual(datatype_t::ref, e_o.type());
 
          Assert::AreEqual<int32_t>(0, e_u);
          Assert::AreEqual<text_t>(text_t(L"text"), e_t1);
@@ -757,6 +810,7 @@ namespace dak::object::tests
          Assert::AreEqual<array_t>(a, e_a);
          Assert::AreEqual<dict_t>(d, e_d);
          Assert::AreEqual<name_t>(voc::rock, e_n);
+         Assert::AreEqual<ref_t<object_t>>(o, e_o);
       }
 
       TEST_METHOD(element_int64_operators)
@@ -873,6 +927,8 @@ namespace dak::object::tests
 
       TEST_METHOD(element_bool_operator)
       {
+         auto o = object_t::make();
+
          element_t e_u;
          element_t e_t1(L"");
          element_t e_t2(text_t(L""));
@@ -890,6 +946,7 @@ namespace dak::object::tests
          element_t e_a(array_t::empty);
          element_t e_d(dict_t::empty);
          element_t e_n((name_t()));
+         element_t e_o(o);
 
          Assert::AreEqual<bool>(false, e_u);
          Assert::AreEqual<bool>(false, e_t1);
@@ -908,6 +965,7 @@ namespace dak::object::tests
          Assert::AreEqual<bool>(false, e_a);
          Assert::AreEqual<bool>(false, e_d);
          Assert::AreEqual<bool>(true, e_n);
+         Assert::AreEqual<bool>(true, e_o);
 
          dict_t d;
          d[voc::rock] = 33;
@@ -936,6 +994,7 @@ namespace dak::object::tests
          e_a = a;
          e_d = d;
          e_n = voc::rock;
+         e_o = object_t::make();
 
          Assert::AreEqual<bool>(false, e_u);
          Assert::AreEqual<bool>(true, e_t1);
