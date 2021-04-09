@@ -2,15 +2,6 @@
 
 namespace dak::object
 {
-   namespace voc
-   {
-      name_t& get_root()
-      {
-         static name_t root;
-         return root;
-      }
-   }
-
    //////////////////////////////////////////////////////////////////////////
    //
    // Constructors.

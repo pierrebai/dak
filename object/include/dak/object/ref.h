@@ -48,7 +48,7 @@ namespace dak::object
    //
    // You cannot create an initialized instance of a smart pointer directly.
    // To create one, call the make() function on the type T.
-   // See for example: array::make() in array.h.
+   // See for example: object_t::make() in object.h.
 
    template<class T> struct ref_t : ref_base_t
    {

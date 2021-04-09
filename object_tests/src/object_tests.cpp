@@ -2,7 +2,6 @@
 
 #include "dak/object/object.h"
 #include "dak/object/transaction.h"
-#include "dak/utility/undo_stack.h"
 #include "dak/object/voc.h"
 #include "dak/object/tests/helpers.h"
 
@@ -16,9 +15,9 @@ namespace dak::object::tests
 	public:
 		TEST_METHOD(object_base)
 		{
-         transaction_t t1;
-
          auto ro1 = object_t::make();
+
+         transaction_t t1;
          auto& o1 = *ro1->modify(t1);
 
          Assert::AreEqual<index_t>(0, o1.size());
@@ -49,9 +48,9 @@ namespace dak::object::tests
 
       TEST_METHOD(object_append)
       {
-         transaction_t t1;
-
          auto ro1 = object_t::make();
+
+         transaction_t t1;
          auto& o1 = *ro1->modify(t1);
 
          o1[rock] = 3;
@@ -84,9 +83,9 @@ namespace dak::object::tests
 
       TEST_METHOD(object_iterator)
       {
-         transaction_t t1;
-
          auto ro1 = object_t::make();
+
+         transaction_t t1;
          auto& o1 = *ro1->modify(t1);
 
          o1[rock] = 3;
@@ -116,7 +115,7 @@ namespace dak::object::tests
          auto ro1 = object_t::make();
          Assert::AreEqual<index_t>(0, ro1->size());
 
-         undo_stack_t undo_redo;
+         commited_transactions_t undo_redo;
 
          {
             transaction_t t1;

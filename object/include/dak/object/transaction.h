@@ -7,6 +7,7 @@
 #include <dak/object/object.h>
 
 #include <map>
+#include <deque>
 
 namespace dak::utility
 {
@@ -16,7 +17,7 @@ namespace dak::utility
 namespace dak::object
 {
    USING_DAK_UTILITY_TYPES;
-   using utility::undo_stack_t;
+   struct commited_transactions_t;
 
    //////////////////////////////////////////////////////////////////////////
    //
@@ -39,16 +40,47 @@ namespace dak::object
       void add(const ref_t<const object_t>& an_object);
 
       // Commit and cancel.
-      void commit(undo_stack_t&);
+      void commit(struct commited_transactions_t&);
       void cancel();
 
-   protected:
+   private:
       void forget();
 
-      static void awaken_objects(const modified_objects_t& objects);
+      static void undo_redo_objects(const modified_objects_t& objects);
 
       modified_objects_t my_modified_objects;
+
+      friend struct commited_transactions_t;
    };
+
+
+   //////////////////////////////////////////////////////////////////////////
+   //
+   // Commited transations. Keep modified objects are create an undo when commited
+   // or undo the changes if canceled.
+
+   struct commited_transactions_t
+   {
+      using modified_objects_t = transaction_t::modified_objects_t;
+      using commits_t = std::deque<modified_objects_t>;
+
+      commited_transactions_t();
+
+      // Commmit modified objects.
+      void commit(modified_objects_t&&);
+
+      // Undo / redo
+      bool has_undo() const { return my_top_commit != my_commits.begin(); }
+      bool has_redo() const { return my_top_commit != my_commits.end(); }
+
+      void undo();
+      void redo();
+
+   private:
+      commits_t my_commits;
+      commits_t::iterator my_top_commit;
+   };
+
 }
 
 #endif /* DAK_TRANSATION_TRANSATION_H */

@@ -11,7 +11,7 @@ add_library(object
    include/dak/object/ref_counted.h             src/ref_counted.cpp
    include/dak/object/stream.h                  src/stream.cpp
    include/dak/object/transaction.h             src/transaction.cpp
-   include/dak/object/voc.h
+   include/dak/object/voc.h                     src/voc.cpp
 )
 
 target_include_directories(object PUBLIC
