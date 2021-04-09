@@ -118,6 +118,11 @@ namespace dak::object
       operator name_t() const;
       operator ref_t<const object_t>() const;
 
+      // Modifiable data access. Change the type if needed.
+      operator text_t& ();
+      operator array_t& ();
+      operator dict_t& ();
+
       // Array conversion + immediate array_t op.
       element_t & operator [](index_t an_index);
       const element_t & operator [](index_t an_index) const;

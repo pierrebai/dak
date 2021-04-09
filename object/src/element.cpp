@@ -547,6 +547,25 @@ namespace dak::object
       return ref_t<const object_t>();
    }
 
+   // Modifiable data access. Change the type if needed.
+   element_t::operator text_t& ()
+   {
+      ensure(datatype_t::text);
+      return *my_t;
+   }
+
+   element_t::operator array_t& ()
+   {
+      ensure(datatype_t::array);
+      return *my_a;
+   }
+
+   element_t::operator dict_t& ()
+   {
+      ensure(datatype_t::dict);
+      return *my_d;
+   }
+
    // Array conversion + immediate array op.
    element_t & element_t::operator [](index_t anIndex)
    {
