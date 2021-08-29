@@ -37,8 +37,8 @@ namespace dak::utility
       };
 
       // Create a threaded work using the given thread pool.
-      threaded_work_t(size_t a_max_recursion = 3)
-         : my_max_recursion(a_max_recursion), my_thread_pool(*this, std::thread::hardware_concurrency()) {}
+      threaded_work_t(size_t a_max_recursion = 3, size_t a_reserved_ui_threads = 0)
+         : my_max_recursion(a_max_recursion), my_thread_pool(*this, std::max(size_t(1), std::thread::hardware_concurrency() - a_reserved_ui_threads)) {}
 
       ~threaded_work_t() { stop(); }
 
