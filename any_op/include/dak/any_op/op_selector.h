@@ -34,7 +34,14 @@ namespace dak::any_op
 
    //////////////////////////////////////////////////////////////////////////
    //
-   // Selectors for n-ary operations.
+   // Selectors for n-ary operations. This is the key encoding all the
+   // types used to select the correct overload.
+   //
+   // It is used when registering an overload, so that it can be found later
+   // during calls.
+   // 
+   // It is used in calls, so that the call can find the overload
+   // corresponding to its arguments.
 
    template <class... EXTRA_SELECTORS>
    struct op_selector_t
@@ -51,15 +58,15 @@ namespace dak::any_op
             return selector_t(std::type_index(typeid(EXTRA_SELECTORS))..., std::type_index(typeid(N_ARY))...);
          }
 
-         // Make a selector using the provided type index of the binary arguments.
-         // This is used to create a selector from std::any in binary_op_t::call_op.
+         // Make a selector using the provided type index of the arguments.
+         // This is used to create a selector from std::any in op_t::call::op.
          static selector_t make_any(const typename type_converter_t<N_ARY>::any&... args)
          {
             return selector_t(std::type_index(typeid(EXTRA_SELECTORS))..., std::type_index(args.type())...);
          }
 
-         // Make a selector using the provided type index of the binary arguments plus of the extra selectors.
-         // This is used to create a selector from std::any in binary_op_t::call_any_op.
+         // Make a selector using the provided type index of the arguments plus of the extra selectors.
+         // This is used to create a selector from std::any in op_t::call_any::op.
          static selector_t make_extra_any(const typename type_converter_t<EXTRA_SELECTORS>::type_index&... selectors, const typename type_converter_t<N_ARY>::any&... args)
          {
             return selector_t(selectors..., std::type_index(args.type())...);

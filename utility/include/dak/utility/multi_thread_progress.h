@@ -9,6 +9,8 @@
 
 #include <atomic>
 #include <mutex>
+#include <utility>
+
 
 namespace dak::utility
 {
@@ -16,13 +18,16 @@ namespace dak::utility
    //
    // Wrap a non-thread-safe progress in a multi-thread-safe progress.
    //
-   // The progress can only be reported by a per-thread-progress referencing
-   // this multi-thread progress.
+   // The per-thread progress is reported by the per_thread_progress_t class,
+   // a per-thread-progress referencing this multi-thread progress. That is
+   // why this class does *not* derive from progress_t.
 
    struct multi_thread_progress_t
    {
       // Wrap a non-threas safe progress.
       multi_thread_progress_t() = default;
+      multi_thread_progress_t(size_t a_report_every)
+         : my_report_every(std::max(size_t(1), a_report_every)) {}
       multi_thread_progress_t(progress_t& a_non_thread_safe_progress)
          : my_non_thread_safe_progress(&a_non_thread_safe_progress), my_report_every(a_non_thread_safe_progress.my_report_every) {}
 

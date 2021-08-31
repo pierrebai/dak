@@ -9,7 +9,7 @@ namespace dak::ui
 {
    ////////////////////////////////////////////////////////////////////////////
    //
-   // For channel color: red, green, blue and alpha. 8-bit values.
+   // Four channels color: red, green, blue and alpha. 8-bit values.
 
    class color_t
    {

@@ -9,7 +9,7 @@ namespace dak::any_op
 {
    //////////////////////////////////////////////////////////////////////////
    //
-   // Comparison possible results.
+   // Comparison results.
    //
    // Note: incomparable should result in operator== returning false,
    //       operator!= returning true, and all relative operators

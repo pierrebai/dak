@@ -45,7 +45,7 @@ namespace dak::utility
    // that last commit. If there are not commit, nothing happens.
    //
    // The redo function awakens the data that was saved. It does nothing
-   // if the my_top_transaction the stack is reached.
+   // if the top of the stack is reached.
 
    class undo_stack_t
    {

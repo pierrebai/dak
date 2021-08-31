@@ -20,6 +20,9 @@ namespace dak::utility
    ////////////////////////////////////////////////////////////////////////////
    //
    // A dispatcher of work items to a thread pool.
+   // Execute functions taking WORK_ITEM and producing a RESULT.
+   // The function also receives the recursion depth so it can try to not
+   // recurse too deep and cause a stack overflow.
 
    template <class WORK_ITEM, class RESULT>
    struct threaded_work_t : work_provider_t
@@ -49,7 +52,7 @@ namespace dak::utility
          my_cond.notify_all();
       }
 
-      // Check if it is stopped.
+      // Check if this threaded work is stopped.
       bool is_stopped() const override { return my_stop; }
 
       // Wait for something to execute or execute something already in queue.
@@ -59,7 +62,7 @@ namespace dak::utility
          return internal_wait_or_execute(lock, 0);
       }
 
-      // Queue the the given function and work item to be executed in a thread.
+      // Queue the given function and work item to be executed in a thread.
       std::future<result_t> add_work(work_item_t a_work_item, size_t a_recursion_depth, function_t a_function)
       {
          if (my_stop)

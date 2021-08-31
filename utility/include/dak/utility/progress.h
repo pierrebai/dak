@@ -5,6 +5,8 @@
 
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 
+#include <utility>
+
 namespace dak::utility
 {
    struct multi_thread_progress_t;
@@ -21,7 +23,7 @@ namespace dak::utility
 
       // Create a progress reporter.
       progress_t() = default;
-      progress_t(size_t a_report_every) : my_report_every(a_report_every) {}
+      progress_t(size_t a_report_every) : my_report_every(std::max(size_t(1), a_report_every)) {}
 
       // Force to report the progress tally.
       void flush_progress();

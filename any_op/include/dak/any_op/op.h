@@ -13,21 +13,21 @@ namespace dak::any_op
 {
    //////////////////////////////////////////////////////////////////////////
    //
-   // Familiy of operations.
+   // Family of operations.
    //
    // To create a new operation family called foo:
    //
    //    Declare a class named foo_op_t deriving from op_t. This class can
-   //    be empty. It is only needed to identity the operation via its type.
+   //    be empty. It is only needed to identify the operation via its type.
    //    For our example:
    //
    //            class foo_op_t : public op_t<foo_op_t> {};
    //
    //    Right after the class, declare the function foo(). It will call
-   //    the call<>::op<> on the foo_op_t. This is the fnction that the
+   //    the call<>::op<> on the foo_op_t. This is the function that the
    //    users of your operation will call.
    //
-   // To implement the overload foo for type A returning RET:
+   // To implement an overload of foo for type A returning RET:
    //
    //    Register an overload by calling foo_op_t<foo>::make<>::op<RET, A>
    //    passing a function taking an A and returning a RET.
@@ -40,17 +40,17 @@ namespace dak::any_op
    //
    // The reasons there are two classes are:
    //
-   //    1. The base class necessary to provide the functions make::op
+   //    1. The base class is necessary to provide the functions make::op
    //       and call::op.
    //
-   //    2. The sub class is necessary as it is what identifies your
-   //       unique operation. It's your operation!
-   //
-   //    3. The make::op function wraps the specific implementation for
+   //    2. The make::op function wraps the specific implementation for
    //       specific types then registers the implementation.
    //       The call::op is a  convenience to automatically extract
    //       the correct types from std::any and write code without
    //       std::any.
+   //
+   //    3. The sub class is necessary as it is what identifies your
+   //       unique operation. It's your operation!
    //
    // The family of foo operations will be registered in the op_t<foo_op_t>
    // class.
@@ -71,7 +71,7 @@ namespace dak::any_op
    //      These are the EXTRA_SELECTORS variadic template arguments in the
    //      make and call intermediary templates. They are used to provide
    //      further selection of the implementation, in addition to the types
-   //      ar the arguments of the function itself.
+   //      of the arguments of the function itself.
 
    template <class OP, class... EXTRA_ARGS>
    struct op_t

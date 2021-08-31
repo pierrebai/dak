@@ -28,7 +28,7 @@ namespace dak::geometry
       // Invalid value used to fill invalid points.
       static constexpr double nan() { return 1e+300 * 1e+300 * 0.; }
 
-      // Statoc invalid point. Used in some return values.
+      // Static invalid point. Used in some return values.
       static const point_t invalid;
 
       // Point coordinates, invalid by default.

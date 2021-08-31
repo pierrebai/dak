@@ -9,6 +9,8 @@
 
 namespace dak::utility
 {
+   // Verify if a container contains a value.
+   // Impkemented for vector and set.
    template <class T>
    bool contains(const std::vector<T>& vec, const T& val)
    {
@@ -22,6 +24,7 @@ namespace dak::utility
       return set.count(val) > 0;
    }
 
+   // Find a value in a vector, without having to pass iterators.
    template <class T>
    typename std::vector<T>::const_iterator find(const std::vector<T>& vec, const T& val)
    {
@@ -34,6 +37,7 @@ namespace dak::utility
       return std::find(vec.begin(), vec.end(), val);
    }
 
+   // Remove the first occurence of a value in a vector.
    template <class T>
    bool remove(std::vector<T>& vec, const T& val)
    {

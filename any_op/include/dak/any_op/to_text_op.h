@@ -10,7 +10,7 @@ namespace dak::any_op
 
    //////////////////////////////////////////////////////////////////////////
    //
-   // The to-text operation returns a textual representation of the type.
+   // The to-text operation returns a textual representation of the value.
 
    struct to_text_op_t : op_t<to_text_op_t>
    {

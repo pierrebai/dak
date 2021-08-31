@@ -10,9 +10,11 @@ namespace dak::any_op
 
    //////////////////////////////////////////////////////////////////////////
    //
-   // The size operation returns the size of a container type.
+   // The size operation returns the size of a container value.
    //
    // That is, the number of elements it contains.
+   //
+   // Return zero if the value is not a known container.
 
    struct size_op_t : op_t<size_op_t>
    {

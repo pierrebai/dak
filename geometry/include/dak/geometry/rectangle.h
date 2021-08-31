@@ -15,7 +15,7 @@ namespace dak::geometry
 
    ////////////////////////////////////////////////////////////////////////////
    //
-   // A Rectangle based on const point&.
+   // A Rectangle, always axis-aligned.
 
    class rectangle_t
    {

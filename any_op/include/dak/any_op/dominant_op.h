@@ -15,9 +15,9 @@ namespace dak::any_op
    //
    // It is basically the automatic conversion rules of C++.
    //
-   // We will define only those case where the value is converted.
+   // We will define only those cases where the value is converted.
    // If the value would be the same, the operation will not be defined
-   // and this absence will mean the leave the value as-is.
+   // and this absence will leave the value as-is.
 
    struct dominant_op_t : op_t<dominant_op_t>
    {

@@ -9,7 +9,10 @@ namespace dak::any_op
 {
    //////////////////////////////////////////////////////////////////////////
    //
-   // The convert operation converts a type to another.
+   // The convert operation converts a value to another type.
+   //
+   // If the value could not be converted, a default-constructed value
+   // of the destination type is returned.
 
    struct convert_op_t : op_t<convert_op_t>
    {
