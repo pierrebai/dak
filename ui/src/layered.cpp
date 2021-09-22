@@ -27,6 +27,9 @@ namespace dak
             if (layer->is_moving)
                return layer->get_transform();
 
+         if (_layers.size() > 0)
+            return _layers[0]->get_transform();
+
          static const transform_t none = transform_t::identity();
          return none;
       }
