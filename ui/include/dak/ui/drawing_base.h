@@ -9,7 +9,8 @@ namespace dak::ui
 {
    ////////////////////////////////////////////////////////////////////////////
    //
-   // Base drawing implementation that manages color, stroke and transforms.
+   // A drawing interface common implementation that manages the color, stroke
+   // and the transform stack.
 
    class drawing_base_t : public ui::drawing_t
    {

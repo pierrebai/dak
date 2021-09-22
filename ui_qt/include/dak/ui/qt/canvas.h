@@ -13,8 +13,11 @@ namespace dak::ui::qt
 {
    ////////////////////////////////////////////////////////////////////////////
    //
-   // A QWidget that brings together a transformer and widget mouse emitter
-   // with some transformable object to be provided by a sub-class.
+   // A QWidget that uses a widget mouse emitter as a source of mouse inputs
+   // and feeds them to a transformer so that it can move a transformable.
+   // 
+   // The transformable object is provided by a sub-class and is kept in the
+   // transformer.
 
    class canvas_t : public QWidget
    {

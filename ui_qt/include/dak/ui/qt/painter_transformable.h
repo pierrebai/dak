@@ -14,7 +14,7 @@ namespace dak::ui::qt
 
    ////////////////////////////////////////////////////////////////////////////
    //
-   // Enable editing the transform of a QPainter.
+   // Enable editing the transform of the QPainter held by the painter drawing.
 
    class painter_transformable : public painter_drawing_t, public transformable_t
    {

@@ -15,7 +15,7 @@ namespace dak::ui::qt
 
    ////////////////////////////////////////////////////////////////////////////
    //
-   // Draw on a QPainter.
+   // Implement the drawing interface on a QPainter.
 
    class painter_drawing_t : public qt_drawing_base_t
    {

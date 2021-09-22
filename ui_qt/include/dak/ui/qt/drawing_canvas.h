@@ -12,7 +12,13 @@ namespace dak::ui::qt
 
    ////////////////////////////////////////////////////////////////////////////
    //
-   // A widget canvas working with a transformable painter drawing.
+   // A canvas widget (that is using mouse input to play with a transformable)
+   // that knows of to convert Qt paint event into a draw() call that receives
+   // a drawing (that is an abtract drawing interface).
+   //
+   // It uses a painter drawing to bridges between the drawing interface and
+   // QPainter and also be the transformable. That is the drawing/painting is
+   // the thing being moved around.
 
    class drawing_canvas_t : public canvas_t
    {

@@ -408,13 +408,13 @@ namespace dak::geometry
       {
          if (e.p1 == e.p2)
          {
-            _snwprintf_s(error, sizeof(error)/sizeof(error[0]), L::t(L"Trivial edge_t %f/%f - %f/%f."), e.p1.x, e.p1.y, e.p2.x, e.p2.y);
+            _snwprintf_s(error, sizeof(error)/sizeof(error[0]), L::t(L"Trivial edge %f/%f - %f/%f."), e.p1.x, e.p1.y, e.p2.x, e.p2.y);
             errors.emplace_back(error);
          }
 
          if (e.p1.is_invalid() || e.p2.is_invalid())
          {
-            _snwprintf_s(error, sizeof(error) / sizeof(error[0]), L::t(L"Invalid edge_t %f/%f - %f/%f."), e.p1.x, e.p1.y, e.p2.x, e.p2.y);
+            _snwprintf_s(error, sizeof(error) / sizeof(error[0]), L::t(L"Invalid edge %f/%f - %f/%f."), e.p1.x, e.p1.y, e.p2.x, e.p2.y);
             errors.emplace_back(error);
          }
       }
@@ -428,7 +428,7 @@ namespace dak::geometry
             {
                if (e < prev)
                {
-                  _snwprintf_s(error, sizeof(error) / sizeof(error[0]), L::t(L"Canonical edges_t are not sorted."));
+                  _snwprintf_s(error, sizeof(error) / sizeof(error[0]), L::t(L"Canonical edges are not sorted."));
                   errors.emplace_back(error);
                }
             }

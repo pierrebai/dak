@@ -48,7 +48,7 @@ namespace dak::geometry
          const size_t exterior_edges = std::accumulate(exteriors.begin(), exteriors.end(), size_t(0), [](size_t val, const polygon_t& f) { return f.points.size() + val; });
          if (std::abs(long(white_edges - black_edges)) > red_edges + exterior_edges)
          {
-            _snwprintf_s(error, sizeof(error) / sizeof(error[0]), L::t(L"White faces_t contains more edges than black faces_t (%ld vs %ld vs %ld vs %ld)."),
+            _snwprintf_s(error, sizeof(error) / sizeof(error[0]), L::t(L"White faces contains more edges than black faces (%ld vs %ld vs %ld vs %ld)."),
                            long(white_edges), long(black_edges), long(red_edges), long(exterior_edges));
             errors.emplace_back(error);
          }

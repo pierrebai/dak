@@ -304,6 +304,9 @@ namespace dak
 
       void transformer_t::common_rotate(const point_t& from, const point_t& to)
       {
+         if (initial_point.is_invalid())
+            return;
+
          const point_t mid = screen_to_transformable(initial_point);
 
          double delta_angle = mid.sweep(from, to);
@@ -328,6 +331,9 @@ namespace dak
 
       double transformer_t::calculate_scaling(const point_t& p)
       {
+         if (initial_point.is_invalid() || p.is_invalid())
+            return 1.;
+
          const double dist = p.distance(initial_point);
          if (dist < rotate_oval_radius)
             return 1.;
@@ -339,6 +345,9 @@ namespace dak
 
       void transformer_t::common_scale(const point_t& from, const point_t& to)
       {
+         if (initial_point.is_invalid())
+            return;
+
          const double from_ratio = calculate_scaling(from);
          const double to_ratio = calculate_scaling(to);
          if (utility::near_zero(from_ratio) || utility::near_zero(to_ratio))
@@ -377,7 +386,7 @@ namespace dak
 
       void transformer_t::drag_move(const mouse::event_t& me)
       {
-         if (!last_point.is_invalid())
+         if (!last_point.is_invalid() && !me.position.is_invalid())
          {
             const point_t from = screen_to_transformable(last_point);
             const point_t to = screen_to_transformable(me.position);
@@ -398,6 +407,7 @@ namespace dak
       {
          if (has_moved_enough_to_interact)
          {
+            if (!last_point.is_invalid() && !me.position.is_invalid())
             {
                const point_t from = screen_to_transformable(last_point);
                const point_t to = screen_to_transformable(me.position);
@@ -418,9 +428,12 @@ namespace dak
 
       void transformer_t::drag_scale(const mouse::event_t& me)
       {
-         const point_t from = last_point;
-         const point_t to = me.position;
-         common_scale(from, to);
+         if (!last_point.is_invalid() && !me.position.is_invalid())
+         {
+            const point_t from = last_point;
+            const point_t to = me.position;
+            common_scale(from, to);
+         }
 
          last_point = me.position;
       }
@@ -487,7 +500,7 @@ namespace dak
       void transformer_t::mouse_pressed(const mouse::event_t& me)
       {
          update_tracked_position(me);
-         initial_point = me.position;
+         last_point = initial_point = me.position;
 
          switch (get_button_interaction_mode(me)) {
             default:
@@ -537,7 +550,7 @@ namespace dak
       void transformer_t::mouse_wheel(const mouse::event_t& me)
       {
          update_tracked_position(me);
-         initial_point = me.position;
+         last_point = initial_point = me.position;
 
          switch (get_wheel_interaction_mode(me)) {
             default:
