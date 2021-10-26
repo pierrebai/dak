@@ -28,6 +28,9 @@ namespace dak::ui
       std::shared_ptr<layer_t> clone() const override;
       void make_similar(const layer_t& other) override;
 
+      // Comparison.
+      virtual bool operator==(const layer_t& other) const override { return layer_t::operator==(other); }
+
    protected:
       // The internal draw is called with the layer transform already applied.
       void internal_draw(drawing_t& drw) override;

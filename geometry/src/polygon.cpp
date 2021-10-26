@@ -65,7 +65,7 @@ namespace dak::geometry
       return len;
    }
 
-   double polygon_t::area() const
+   double polygon_t::raw_double_area() const
    {
       double total = 0.0;
 
@@ -75,7 +75,12 @@ namespace dak::geometry
             (points[idx].y * points[(idx + 1) % size].x);
       }
 
-      return std::abs(total) * 0.5;
+      return total;
+   }
+
+   double polygon_t::area() const
+   {
+      return std::abs(raw_double_area()) * 0.5;
    }
 
    rectangle_t polygon_t::bounds() const
@@ -154,6 +159,18 @@ namespace dak::geometry
       }
 
       return outside;
+   }
+
+   bool polygon_t::is_clockwise() const
+   {
+      return (raw_double_area() > 0.);
+   }
+
+   polygon_t& polygon_t::make_clockwise()
+   {
+      if (!is_clockwise())
+         std::reverse(points.begin(), points.end());
+      return *this;
    }
 
    bool polygon_t::is_regular() const

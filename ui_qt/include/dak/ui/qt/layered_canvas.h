@@ -13,7 +13,7 @@ namespace dak::ui::qt
    //
    // A widget canvas working with a layers container.
 
-   class layered_canvas_t : public drawing_canvas_t
+   class layered_canvas_t : public drawing_canvas_t, public transformable_t
    {
    public:
       // This is the layered container to draw on the canvas.
@@ -22,9 +22,17 @@ namespace dak::ui::qt
       // Create a canvas with the given parent widget.
       layered_canvas_t(QWidget* parent);
 
+      // transformable implementation.
+      const transform_t& get_transform() const override;
+      layered_canvas_t& set_transform(const transform_t& t) override;
+      layered_canvas_t& compose(const transform_t& t) override;
+
    protected:
       // This will draw the layered container, if any, then the transformer drawings, if any.
       void draw(drawing_t& drw) override;
+
+   private:
+      transform_t my_trf = transform_t::identity();
    };
 }
 

@@ -7,13 +7,52 @@ namespace dak
    {
       void layered_t::set_layers(const layers_t& l)
       {
-         _layers = l;
+         my_layers = l;
+      }
+
+      bool layered_t::are_all_moving() const
+      {
+         for (const auto& layer : my_layers)
+            if (!layer->is_moving)
+               return false;
+
+         return true;
+      }
+
+      bool layered_t::are_not_moving() const
+      {
+         for (const auto& layer : my_layers)
+            if (layer->is_moving)
+               return false;
+
+         return true;
+      }
+
+      void layered_t::make_similar(const layered_t& other)
+      {
+         my_layers.clear();
+         my_layers.reserve(other.my_layers.size());
+
+         for (const auto& layer : other.my_layers)
+            my_layers.emplace_back(layer->clone());
+      }
+
+      bool layered_t::operator==(const layered_t& other) const
+      {
+         if (my_layers.size() != other.my_layers.size())
+            return false;
+
+         for (size_t i = 0; i < my_layers.size(); ++i)
+            if (*my_layers[i] != *other.my_layers[i])
+               return false;
+
+         return true;
       }
 
       void layered_t::draw(drawing_t& drw)
       {
-         const auto end = _layers.rend();
-         for (auto i = _layers.rbegin(); i != end; ++i)
+         const auto end = my_layers.rend();
+         for (auto i = my_layers.rbegin(); i != end; ++i)
          {
             drw.push_transform();
             (*i)->draw(drw);
@@ -23,12 +62,12 @@ namespace dak
 
       const transform_t& layered_t::get_transform() const
       {
-         for (const auto& layer : _layers)
+         for (const auto& layer : my_layers)
             if (layer->is_moving)
                return layer->get_transform();
 
-         if (_layers.size() > 0)
-            return _layers[0]->get_transform();
+         if (my_layers.size() > 0)
+            return my_layers[0]->get_transform();
 
          static const transform_t none = transform_t::identity();
          return none;
@@ -36,7 +75,7 @@ namespace dak
 
       layered_t& layered_t::set_transform(const transform_t& t)
       {
-         for (auto& layer : _layers)
+         for (auto& layer : my_layers)
             if (layer->is_moving)
                layer->set_transform(t);
 
@@ -45,7 +84,7 @@ namespace dak
 
       layered_t& layered_t::compose(const transform_t& t)
       {
-         for (auto& layer : _layers)
+         for (auto& layer : my_layers)
             if (layer->is_moving)
                layer->compose(t);
 

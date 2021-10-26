@@ -72,6 +72,12 @@ namespace dak::geometry
       // Verify if a point is inside the polygon.
       bool is_inside(const point_t& apt) const;
 
+      // Verify the points are clockwise.
+      bool is_clockwise() const;
+
+      // Make a clockwize version of this polygon.
+      polygon_t& make_clockwise();
+
       // Verify if the polygon is regular.
       bool is_regular() const;
 
@@ -83,6 +89,9 @@ namespace dak::geometry
       {
          return points.size() < 3;
       }
+
+   private:
+      double raw_double_area() const;
    };
 }
 

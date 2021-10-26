@@ -10,6 +10,11 @@ namespace dak
          trf = other.trf;
       }
 
+      bool layer_t::operator==(const layer_t& other) const
+      {
+         return trf == other.trf;
+      }
+
       void layer_t::draw(drawing_t& drw)
       {
          if (!is_drawn)

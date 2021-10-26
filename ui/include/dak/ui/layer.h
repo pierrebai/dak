@@ -33,6 +33,10 @@ namespace dak::ui
       virtual std::shared_ptr<layer_t> clone() const = 0;
       virtual void make_similar(const layer_t& other) = 0;
 
+      // Comparison.
+      virtual bool operator==(const layer_t& other) const = 0;
+      bool operator!=(const layer_t& other) const { return !(*this == other); }
+
       // Draw the transformed layer.
       void draw(drawing_t& drw);
 
