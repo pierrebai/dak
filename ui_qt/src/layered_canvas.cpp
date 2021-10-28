@@ -10,7 +10,6 @@ namespace dak::ui::qt
 
    layered_canvas_t::layered_canvas_t(QWidget* parent)
    : drawing_canvas_t(parent)
-   , layered(nullptr)
    {
       transformer.manipulated = this;
    }

@@ -57,7 +57,7 @@ namespace dak::ui
    //
    // Draw the layered transformable in the given drawing.
 
-   void draw_layered(drawing_t& drw, ui::layered_t* layered);
+   void draw_layered(drawing_t& drw, const std::shared_ptr<ui::layered_t>& layered);
 }
 
 #endif

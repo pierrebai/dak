@@ -17,7 +17,7 @@ namespace dak::ui::qt
    {
    public:
       // This is the layered container to draw on the canvas.
-      ui::layered_t* layered = nullptr;
+      std::shared_ptr<ui::layered_t> layered;
 
       // Create a canvas with the given parent widget.
       layered_canvas_t(QWidget* parent);

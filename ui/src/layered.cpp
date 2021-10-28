@@ -91,7 +91,7 @@ namespace dak
          return *this;
       }
 
-      void draw_layered(drawing_t& drw, layered_t* layered)
+      void draw_layered(drawing_t& drw, const std::shared_ptr<layered_t>& layered)
       {
          drw.set_color(color_t::white());
          drw.fill_rect(drw.get_bounds().apply(drw.get_transform().invert()));

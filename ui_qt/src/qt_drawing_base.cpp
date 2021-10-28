@@ -1,6 +1,5 @@
 #include <dak/ui/qt/qt_drawing_base.h>
 #include <dak/ui/qt/convert.h>
-#include <dak/ui/layered.h>
 
 #include <dak/geometry/utility.h>
 
@@ -19,20 +18,6 @@ namespace dak::ui::qt
    {
       const auto& co = get_color();
       return QBrush(convert(co));
-   }
-
-   void draw_layered(drawing_t& drw, ui::layered_t* layered)
-   {
-      drw.set_color(color_t::white());
-      drw.fill_rect(drw.get_bounds().apply(drw.get_transform().invert()));
-
-      if (!layered)
-         return;
-
-      drw.set_color(color_t::black());
-      drw.set_stroke(stroke_t(1.2));
-      layered->draw(drw);
-      drw.set_stroke(stroke_t(1));
    }
 }
 
