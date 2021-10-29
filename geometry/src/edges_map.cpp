@@ -42,10 +42,13 @@ namespace dak::geometry
 
    edges_map_t::range_t edges_map_t::outbounds(const point_t& p) const
    {
-      auto lower = std::lower_bound(_sorted_edges.begin(), _sorted_edges.end(), edge_t::lowest_edge(p));
-      auto upper = std::upper_bound(_sorted_edges.begin(), _sorted_edges.end(), edge_t::highest_edge(p));
-      while (lower != upper && lower->p1 != p)
+      const auto end = _sorted_edges.end();
+      auto lower = std::lower_bound(_sorted_edges.begin(), end, edge_t::lowest_edge(p));
+      while (lower != end && lower->p1 != p)
          ++lower;
+      auto upper = lower;
+      while (upper != end && upper->p1 == p)
+         ++upper;
       return range_t(lower, upper);
    }
 

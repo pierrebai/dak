@@ -85,7 +85,7 @@ namespace dak::geometry
          if (p2 < p1)
          {
             p1.swap(p2);
-            order = (order <= 0.) ? (order + PI) : (order - PI);
+            order = angle();
          }
          return *this;
       }
@@ -99,7 +99,7 @@ namespace dak::geometry
       // Create a copy that has the points swapped.
       edge_t twin() const
       {
-         return edge_t(p2, p1, (order <= 0.) ? (order + PI) : (order - PI));
+         return edge_t(p2, p1);
       }
 
       // Verify if the edge is canonical.
