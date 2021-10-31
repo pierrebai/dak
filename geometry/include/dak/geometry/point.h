@@ -130,6 +130,12 @@ namespace dak::geometry
          return x * other.x + y * other.y;
       }
 
+      // Sin dot product betwen two points.
+      constexpr double sin_dot(const point_t& other) const
+      {
+         return y * other.x - x * other.y;
+      }
+
       // Scale a point uniformly.
       constexpr point_t scale(double r) const
       {
