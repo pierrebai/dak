@@ -27,6 +27,8 @@ namespace dak::ui::qt
       layered_canvas_t& set_transform(const transform_t& t) override;
       layered_canvas_t& compose(const transform_t& t) override;
 
+      const transform_t& get_local_transform() const { return my_trf; }
+
    protected:
       // This will draw the layered container, if any, then the transformer drawings, if any.
       void draw(drawing_t& drw) override;
