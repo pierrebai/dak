@@ -76,7 +76,7 @@ namespace dak::geometry
       bool operator <(const edge_t& other) const
       {
          return (p1 < other.p1)
-               || (p1 == other.p1 && order < other.order - TOLERANCE);
+               || (p1 == other.p1 && utility::near_less(order,  other.order));
       }
 
       // Possibly swap the points of the edge to make the first point be less than the second.
