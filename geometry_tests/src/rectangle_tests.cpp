@@ -10,7 +10,7 @@
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace dak::geometry;
 
-namespace geometry::tests
+namespace dak::geometry::tests
 {
    TEST_CLASS(rect_tests)
    {

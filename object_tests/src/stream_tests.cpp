@@ -20,7 +20,7 @@ namespace dak::object::tests
          ss.clear();
          ss.str(L"");
          ss << voc::rock;
-         Assert::AreEqual(text_t(L"rock"), ss.str());
+         Assert::AreEqual(text_t(L"/\"rock\""), ss.str());
 
          ss.clear();
          ss.str(L"");
@@ -33,7 +33,7 @@ namespace dak::object::tests
          dict_t d2;
          d2[voc::rock] = 3;
          ss << d2;
-         Assert::AreEqual(text_t(L"{\nrock : 3 ,\n}"), ss.str());
+         Assert::AreEqual(text_t(L"{\n/\"rock\" : 3,\n}"), ss.str());
 
          ss.clear();
          ss.str(L"");
@@ -48,7 +48,7 @@ namespace dak::object::tests
          a2.grow() = 5;
          a2.grow() = 7;
          ss << a2;
-         Assert::AreEqual(text_t(L"[\n3 ,\n5 ,\n7 ,\n]"), ss.str());
+         Assert::AreEqual(text_t(L"[\n3,\n5,\n7,\n]"), ss.str());
 
          ss.clear();
          ss.str(L"");
@@ -70,7 +70,16 @@ namespace dak::object::tests
             tr1.commit(undo_redo);
          }
          ref_stream_t(ss) << o1;
-         Assert::AreEqual(text_t(L"ref 1 {\nchild : ref 2 {\nafter : [\n1 ,\nref -1 ,\n] ,\n} ,\n}"), ss.str());
+         Assert::AreEqual(text_t(
+            L"ref 1 {\n"
+            L"/\"child\" : ref 2 {\n"
+            L"/\"after\" : [\n"
+            L"1,\n"
+            L"ref -1,\n"
+            L"],\n"
+            L"},\n"
+            L"}"),
+            ss.str());
       }
    };
 }

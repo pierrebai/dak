@@ -3,7 +3,12 @@
 #ifndef DAK_OBJECT_REF_STREAM_H
 #define DAK_OBJECT_REF_STREAM_H
 
-#include <dak/object/stream.h>
+#include <dak/utility/types.h>
+#include <dak/object/array.h>
+#include <dak/object/dict.h>
+#include <dak/object/object.h>
+
+#include <iostream>
 
 namespace dak::object
 {
@@ -31,6 +36,7 @@ namespace dak::object
       const ref_stream_t& print(const array_t& a) const;
       const ref_stream_t& print(const dict_t& d) const;
       const ref_stream_t& print(const object_t& o) const;
+      const ref_stream_t& print(const name_t& n) const;
 
       // Retrieve the reference id of an object.
       int64_t get_object_id(const ref_t<object_t>& object) const;
@@ -60,6 +66,10 @@ namespace dak::object
       //       else if *not* compiled when a constexpr conditional matches,
       //       otherwise that else will get compiled and fail.
       if constexpr (std::is_base_of<element_t, T>())
+      {
+         return rstr.print(value);
+      }
+      else if constexpr (std::is_base_of<name_t, T>())
       {
          return rstr.print(value);
       }

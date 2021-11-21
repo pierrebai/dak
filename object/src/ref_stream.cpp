@@ -1,5 +1,6 @@
 #include "dak/object/ref_stream.h"
-#include "dak/object/stream.h"
+
+#include <iomanip>
 
 namespace dak::object
 {
@@ -23,6 +24,12 @@ namespace dak::object
       my_object_ids.clear();
    }
 
+   const ref_stream_t& ref_stream_t::print(const name_t& n) const
+   {
+      get_stream() << L"/" << std::quoted(n.to_text());
+      return *this;
+   }
+
    const ref_stream_t& ref_stream_t::print(const ref_t<object_t>& o) const
    {
       const auto id = get_object_id(o);
@@ -36,7 +43,7 @@ namespace dak::object
    {
       *this << L"[\n";
       for (const element_t& e : a)
-         *this << e << L" ,\n";
+         *this << e << L",\n";
       *this << L"]";
       return *this;
    }
@@ -45,7 +52,7 @@ namespace dak::object
    {
       *this << L"{\n";
       for (const auto& [n, e] : d)
-         *this << n << L" : " << e << L" ,\n";
+         *this << n << L" : " << e << L",\n";
       *this << L"}";
       return *this;
    }
@@ -54,7 +61,7 @@ namespace dak::object
    {
       *this << L"{\n";
       for (const auto& [n, e] : o)
-         *this << n << L" : " << e << L" ,\n";
+         *this << n << L" : " << e << L",\n";
       *this << L"}";
       return *this;
    }
@@ -71,7 +78,7 @@ namespace dak::object
          case datatype_t::real:     return *this << (double)e;
          case datatype_t::array:    return *this << (const array_t&)e;
          case datatype_t::dict:     return *this << (const dict_t&)e;
-         case datatype_t::text:     return *this << (str_ptr_t)e;
+         case datatype_t::text:     return *this << std::quoted((str_ptr_t)e);
          default:                   return *this;
       }
 }
