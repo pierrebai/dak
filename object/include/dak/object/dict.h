@@ -1,4 +1,3 @@
-#pragma once
 
 #ifndef DAK_OBJECT_DICT_H
 #define DAK_OBJECT_DICT_H
@@ -19,7 +18,7 @@ namespace dak::object
    //
    // Automatically adds elements when referenced via the [] operator.
 
-   struct dict_t : private ref_counted_t
+   struct dict_t
    {
       // Types used by the dictionary: data container and iterators.
       typedef std::map<name_t, element_t> elements_t;
@@ -35,10 +34,6 @@ namespace dak::object
 
       // Append the given dictionary.
       dict_t& operator +=(const dict_t &);
-
-      // Make a ref-counted instance.
-      static ref_t<dict_t> make();
-      static ref_t<dict_t> make(const dict_t &);
 
       // Empty dictionary.
       static const dict_t empty;

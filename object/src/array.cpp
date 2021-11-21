@@ -4,16 +4,6 @@ namespace dak::object
 {
    const array_t array_t::empty;
 
-   ref_t<array_t> array_t::make()
-   {
-      return ref_t<array_t>(new array_t);
-   }
-
-   ref_t<array_t> array_t::make(const array_t & a)
-   {
-      return ref_t<array_t>(new array_t(a));
-   }
-
    array_t& array_t::operator +=(const array_t & a)
    {
       append(a);

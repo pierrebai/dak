@@ -20,7 +20,7 @@ namespace dak::object
          case datatype_t::integer:
          case datatype_t::real:  my_i = 0;                                 break;
          case datatype_t::ref:   if (my_o) my_o->unref(); my_o = nullptr;  break;
-         case datatype_t::name:  if (my_n) my_n->unref(); my_n = nullptr;  break;
+         case datatype_t::name:  my_n = nullptr;                           break;
          case datatype_t::array: delete my_a; my_a = nullptr;              break;
          case datatype_t::dict:  delete my_d; my_d = nullptr;              break;
          case datatype_t::text:  delete my_t; my_t = nullptr;              break;
@@ -214,13 +214,8 @@ namespace dak::object
       *this = n;
    }
 
-   element_t::element_t(const ref_t<const object_t>& o)
-   : element_t(o.operator const dak::object::object_t* ())
-   {
-   }
-
-   element_t::element_t(const object_t* o)
-   : my_o(0), my_type(datatype_t::ref)
+   element_t::element_t(const valid_ref_t<object_t>& o)
+   : my_i(0), my_type(datatype_t::unknown)
    {
       *this = o;
    }
@@ -345,29 +340,17 @@ namespace dak::object
    element_t& element_t::operator =(const name_t& aValue)
    {
       reset(datatype_t::name);
-      {
-         const name_t::rc_sub_names_t* d = aValue.my_sub_names;
-         my_n = const_cast<name_t::rc_sub_names_t*>(d);
-         if (my_n)
-            my_n->addref();
-      }
+      my_n = aValue.my_name;
 
       return *this;
    }
 
-   element_t& element_t::operator =(const ref_t<const object_t>& o)
-   {
-      return *this = o.operator const dak::object::object_t * ();
-   }
-
-   element_t& element_t::operator =(const object_t* o)
+   element_t& element_t::operator =(const valid_ref_t<object_t>& o)
    {
       reset(datatype_t::ref);
-      {
-         my_o = o;
-         if (my_o)
-            my_o->addref();
-      }
+      my_o = o;
+      if (my_o)
+         my_o->addref();
 
       return *this;
    }
@@ -536,15 +519,16 @@ namespace dak::object
       if (compatible(datatype_t::name))
          return name_t(my_n);
 
-      return name_t(nullptr);
+      return name_t();
    }
 
-   element_t::operator ref_t<const object_t>() const
+   element_t::operator valid_ref_t<object_t>() const
    {
       if (compatible(datatype_t::ref))
-         return ref_t<const object_t>(my_o);
+         return valid_ref_t<object_t>(my_o);
 
-      return ref_t<const object_t>();
+      static auto empty = object_t::make();
+      return empty;
    }
 
    // Modifiable data access. Change the type if needed.
@@ -674,7 +658,7 @@ namespace dak::object
          case datatype_t::boolean: 
          case datatype_t::integer: return my_i == e.my_i;
          case datatype_t::real:    return my_r == e.my_r;
-         case datatype_t::ref:     return my_o == e.my_o; // TODO: or use full-object equality?
+         case datatype_t::ref:     return my_o == e.my_o;
          case datatype_t::name:    return my_n == e.my_n;
          case datatype_t::array:   return *my_a == *e.my_a;
          case datatype_t::dict:    return *my_d == *e.my_d;

@@ -10,14 +10,14 @@ namespace dak::object
       transaction_t undo_transaction;
       for (const auto& [dest, saved] : objects)
       {
-         object_t* mod_dest = dest->modify(undo_transaction);
-         object_t* mod_saved = saved->modify(undo_transaction);
-         mod_dest->swap(*mod_saved);
+         object_t& mod_dest = dest->modify(undo_transaction);
+         object_t& mod_saved = saved->modify(undo_transaction);
+         mod_dest.swap(mod_saved);
       }
       undo_transaction.forget();
    }
 
-   void transaction_t::add(const ref_t<const object_t>& an_object)
+   void transaction_t::add(const valid_ref_t<object_t>& an_object)
    {
       if (!an_object)
          return;
@@ -26,7 +26,7 @@ namespace dak::object
       if (pos == my_modified_objects.end())
       {
          auto saved_copy = object_t::make(*an_object);
-         my_modified_objects[an_object] = saved_copy;
+         my_modified_objects.insert(std::pair(an_object, saved_copy));
       }
    }
 

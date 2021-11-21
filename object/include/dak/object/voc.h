@@ -12,13 +12,11 @@ namespace dak::object::voc
    // Create a vocabulary of names.
    // Given as an example of how to create names.
    //
-   // The vocuabulary is kept here, in a namespace to avoid conflicting
+   // The vocabulary is kept here, in a namespace to avoid conflicting
    // with other variables using the same words.
    //
    // The types of names is kept in its own namespace to avoid contaminating
    // the outer namespaces with common words.
-
-   name_t& get_root();
 
    #define DAK_OBJECT_VOC_MAKE_NAME(n) extern const name_t n
 

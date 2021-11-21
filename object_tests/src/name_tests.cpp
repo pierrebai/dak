@@ -18,22 +18,18 @@ namespace dak::object::tests
 		{
          name_t n;
 
-         // Root is valid.
-         Assert::IsTrue(n.is_valid());
+         Assert::IsFalse(n.is_valid());
 
-         // Note: two roots are not equal.
-         Assert::AreNotEqual(n, name_t());
+         Assert::AreEqual(n, name_t());
          Assert::AreNotEqual(n, (const name_t&)rock);
 
-         // Note: two roots are not equal.
-         Assert::IsFalse(n == name_t());
-         Assert::IsTrue( n != name_t());
+         Assert::IsTrue(n == name_t());
+         Assert::IsFalse(n != name_t());
 
-         // We cannot predict the address the sub-names will be.
-         //Assert::IsFalse(n <  name_t());
-         //Assert::IsTrue( n <= name_t());
-         //Assert::IsFalse(n >  name_t());
-         //Assert::IsTrue( n >= name_t());
+         Assert::IsFalse(n <  name_t());
+         Assert::IsTrue( n <= name_t());
+         Assert::IsFalse(n >  name_t());
+         Assert::IsTrue( n >= name_t());
 
          Assert::IsFalse(n == rock);
          Assert::IsTrue( n != rock);
@@ -41,21 +37,20 @@ namespace dak::object::tests
 
       TEST_METHOD(name_derived)
       {
-         rock_n r;
+         const name_t r = rock;
 
          Assert::IsTrue(r.is_valid());
 
-         Assert::AreNotEqual((const name_t&)r, name_t());
+         Assert::AreNotEqual(r, name_t());
          Assert::AreEqual<name_t>(r, rock);
 
          Assert::IsTrue( r == rock);
          Assert::IsFalse(r != rock);
 
-         // We cannot predict the address the sub-names will be.
-         //Assert::IsFalse(r < rock);
-         //Assert::IsTrue( r <= rock);
-         //Assert::IsFalse(r > rock);
-         //Assert::IsTrue( r >= rock);
+         Assert::IsFalse(r < rock);
+         Assert::IsTrue( r <= rock);
+         Assert::IsFalse(r > rock);
+         Assert::IsTrue( r >= rock);
 
          Assert::IsFalse(r == name_t());
          Assert::IsTrue(r != name_t());

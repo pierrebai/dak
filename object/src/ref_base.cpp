@@ -4,7 +4,7 @@
 
 namespace dak::object
 {
-   ref_base_t::ref_base_t(ref_counted_t* an_object)
+   ref_base_t::ref_base_t(const ref_counted_t* an_object)
    : my_object(an_object)
    {
       if (an_object)
@@ -18,7 +18,7 @@ namespace dak::object
          my_object->addref();
    }
 
-   ref_base_t& ref_base_t::operator =(ref_counted_t* an_object)
+   ref_base_t& ref_base_t::operator =(const ref_counted_t* an_object)
    {
       if (my_object != an_object)
       {

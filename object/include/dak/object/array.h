@@ -21,7 +21,7 @@ namespace dak::object
    // Indexing with negative index_t starts from the end of the array,
    // minus one being the last item.
 
-   struct array_t : private ref_counted_t
+   struct array_t
    {
       // Types used by the array: data container and iterators.
       typedef std::vector<element_t> elements_t;
@@ -37,10 +37,6 @@ namespace dak::object
 
       // Append the given array.
       array_t& operator +=(const array_t &);
-
-      // Make a ref_t-counted instance.
-      static ref_t<array_t> make();
-      static ref_t<array_t> make(const array_t &);
 
       // Empty array.
       static const array_t empty;

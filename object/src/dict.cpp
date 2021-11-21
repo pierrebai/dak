@@ -4,16 +4,6 @@ namespace dak::object
 {
    const dict_t dict_t::empty;
 
-   ref_t<dict_t> dict_t::make()
-   {
-      return ref_t<dict_t>(new dict_t);
-   }
-
-   ref_t<dict_t> dict_t::make(const dict_t & d)
-   {
-      return ref_t<dict_t>(new dict_t(d));
-   }
-
    dict_t& dict_t::operator +=(const dict_t & d)
    {
       append(d);

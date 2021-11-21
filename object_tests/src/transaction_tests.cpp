@@ -25,7 +25,7 @@ namespace dak::object::tests
          {
             transaction_t t1;
 
-            auto& o1 = *ro1->modify(t1);
+            auto& o1 = ro1->modify(t1);
 
             o1[rock] = 3;
             o1[pebble] = 4;
@@ -51,7 +51,7 @@ namespace dak::object::tests
       }
 
    private:
-      void verify_object(const ref_t<const object_t>& object)
+      void verify_object(const valid_ref_t<object_t>& object)
       {
          Assert::AreEqual<int32_t>(3, object[rock]);
          Assert::AreEqual<int64_t>(4, object[pebble]);

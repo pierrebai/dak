@@ -3,21 +3,19 @@
 
 namespace dak::object
 {
-   const object_t object_t::empty;
-
-   ref_t<const object_t> object_t::make()
+   valid_ref_t<object_t> object_t::make()
    {
-      return ref_t<const object_t>(new object_t);
+      return valid_ref_t<object_t>(new object_t);
    }
 
-   ref_t<const object_t> object_t::make(const object_t& an_obj)
+   valid_ref_t<object_t> object_t::make(const object_t& an_obj)
    {
-      return ref_t<const object_t>(new object_t(an_obj));
+      return valid_ref_t<object_t>(new object_t(an_obj));
    }
 
-   ref_t<const object_t> object_t::make(ref_t<const object_t> & an_obj)
+   valid_ref_t<object_t> object_t::make(valid_ref_t<object_t> & an_obj)
    {
-      return ref_t<const object_t>(new object_t(*an_obj));
+      return valid_ref_t<object_t>(new object_t(*an_obj));
    }
 
    object_t& object_t::operator +=(const object_t & an_obj)
@@ -91,9 +89,9 @@ namespace dak::object
       return my_elements.end();
    }
 
-   ref_t<object_t> object_t::modify(transaction_t& a_trans) const
+   object_t& object_t::modify(transaction_t& a_trans) const
    {
-      a_trans.add(ref_t<const object_t>(this));
-      return ref_t<object_t>(const_cast<object_t*>(this));
+      a_trans.add(valid_ref_t<object_t>(this));
+      return const_cast<object_t&>(*this);
    }
 }

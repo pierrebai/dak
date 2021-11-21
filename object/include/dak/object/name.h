@@ -16,63 +16,31 @@ namespace dak::object
    //////////////////////////////////////////////////////////////////////////
    //
    // Name. Efficient when used as key.
-   //
-   // Names form a tree. In other words, a namespace.
-   //
-   // Anonymous names are roots, other are rooted (attached) to some root.
-   //
-   // Each root is different for comparison purpose, and so are identical names
-   // with different roots. (i.e. root1/"foo" != root2/"foo".)
 
    struct name_t
    {
-      typedef std::map<text_t, name_t> sub_names_t;
-      typedef sub_names_t::iterator iterator;
-      typedef sub_names_t::const_iterator const_iterator;
+      // Emptu name constructor.
+      name_t() = default;
 
-      // Name root constructor.
-      name_t();
-
-      // Rooted constructors.
-      name_t(name_t& root, const text_t& a_label);
-      name_t(name_t& root, str_ptr_t a_label);
+      // Valid name constructors.
+      name_t(str_ptr_t a_label) : my_name(a_label) {}
 
       // Destructor.
-      ~name_t();
+      ~name_t() = default;
 
-      // Access rooted name.
-      name_t operator/(const text_t& a_label);
-      name_t operator/(str_ptr_t a_label);
-
-      iterator begin();
-      iterator end();
-      const_iterator begin() const;
-      const_iterator end() const;
+      // Return the text of the name.
+      str_ptr_t to_text() const { return my_name ? my_name : L""; }
 
       // Validity.
-      bool is_valid() const;
+      bool is_valid() const { return my_name != nullptr; }
 
-      // Comparison methods.
-      bool operator ==(const name_t&) const;
-      bool operator !=(const name_t&) const;
-      bool operator  <(const name_t&) const;
-      bool operator <=(const name_t&) const;
-      bool operator  >(const name_t&) const;
-      bool operator >=(const name_t&) const;
+      // Comparison method.
+      auto operator <=>(const name_t&) const = default;
 
-      uint64_t hash() const;
+      uint64_t hash() const { return reinterpret_cast<uint64_t>(this); }
 
    protected:
-      struct rc_sub_names_t : ref_counted_t, sub_names_t
-      {
-         static ref_t<rc_sub_names_t> make();
-         static ref_t<rc_sub_names_t> make(const rc_sub_names_t&);
-      };
-
-      // Internal constructor.
-      name_t(rc_sub_names_t* d);
-
-      ref_t<rc_sub_names_t> my_sub_names;
+      str_ptr_t my_name = nullptr;
 
       friend struct element_t;
       friend struct dict_t;
