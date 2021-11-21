@@ -1,7 +1,7 @@
 #include "CppUnitTest.h"
 
 #include "dak/object/object.h"
-#include "dak/object/transaction.h"
+#include "dak/object/timeline.h"
 #include "dak/object/voc.h"
 #include "dak/object/tests/helpers.h"
 
@@ -115,7 +115,7 @@ namespace dak::object::tests
          auto ro1 = object_t::make();
          Assert::AreEqual<index_t>(0, ro1->size());
 
-         commited_transactions_t undo_redo;
+         timeline_t undo_redo;
 
          {
             transaction_t t1;

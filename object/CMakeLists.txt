@@ -8,7 +8,9 @@ add_library(object
    include/dak/object/object.h                  src/object.cpp
    include/dak/object/ref.h                     src/ref_base.cpp
    include/dak/object/ref_counted.h             src/ref_counted.cpp
+   include/dak/object/ref_stream.h              src/ref_stream.cpp
    include/dak/object/stream.h                  src/stream.cpp
+   include/dak/object/timeline.h
    include/dak/object/transaction.h             src/transaction.cpp
    include/dak/object/voc.h                     src/voc.cpp
    include/dak/object/voc_internal.h

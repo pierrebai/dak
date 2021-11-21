@@ -1,8 +1,9 @@
 #include "CppUnitTest.h"
 
 #include "dak/object/object.h"
-#include "dak/object/transaction.h"
+#include "dak/object/timeline.h"
 #include "dak/object/voc.h"
+
 #include "dak/object/tests/helpers.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -20,7 +21,7 @@ namespace dak::object::tests
       {
          auto ro1 = object_t::make();
 
-         commited_transactions_t undo_redo;
+         timeline_t undo_redo;
 
          {
             transaction_t t1;

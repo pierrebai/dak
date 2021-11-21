@@ -85,13 +85,13 @@ namespace dak::object
    {
       // Constructors.
       valid_ref_t(const valid_ref_t<T>& other) : ref_t<T>(other) {}
-      valid_ref_t(const ref_t<T>& other) : ref_t<T>(other) { if (ref_base_t::is_null()) throw std::exception("invalid valid ref"); }
+      explicit valid_ref_t(const ref_t<T>& other) : ref_t<T>(other) { if (ref_base_t::is_null()) throw std::exception("invalid valid ref"); }
 
       template <class OTHER>
       valid_ref_t(const valid_ref_t<OTHER>& other) : ref_t<T>(other) {}
 
       template <class OTHER>
-      valid_ref_t(const ref_t<OTHER>& other) : ref_t<T>(other) { if (ref_base_t::is_null()) throw std::exception("invalid valid ref"); }
+      explicit valid_ref_t(const ref_t<OTHER>& other) : ref_t<T>(other) { if (ref_base_t::is_null()) throw std::exception("invalid valid ref"); }
 
       // Copy.
       valid_ref_t<T>& operator =(const valid_ref_t<T>& other) { ref_t<T>::operator =(other); return *this; }

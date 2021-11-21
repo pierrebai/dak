@@ -1,9 +1,12 @@
 #include "dak/object/transaction.h"
-
-#include <deque>
+#include "dak/object/timeline.h"
 
 namespace dak::object
 {
+   //////////////////////////////////////////////////////////////////////////
+   //
+   // transaction
+
    //static
    void transaction_t::undo_redo_objects(const modified_objects_t& objects)
    {
@@ -36,7 +39,7 @@ namespace dak::object
    }
 
    // Commit and cancel.
-   void transaction_t::commit(commited_transactions_t& commited)
+   void transaction_t::commit(timeline_t& commited)
    {
       commited.commit(std::move(my_modified_objects));
       forget();
@@ -48,14 +51,18 @@ namespace dak::object
       forget();
    }
 
-   commited_transactions_t::commited_transactions_t()
+   //////////////////////////////////////////////////////////////////////////
+   //
+   // timeline.
+
+   timeline_t::timeline_t()
    : my_top_commit(my_commits.end())
    {
 
    }
 
    // Commmit modified objects.
-   void commited_transactions_t::commit(modified_objects_t&& objects)
+   void timeline_t::commit(modified_objects_t&& objects)
    {
       if (has_redo())
          my_commits.erase(my_top_commit + 1, my_commits.end());
@@ -65,7 +72,7 @@ namespace dak::object
       my_top_commit = my_commits.end();
    }
 
-   void commited_transactions_t::undo()
+   void timeline_t::undo()
    {
       if (!has_undo())
          return;
@@ -74,7 +81,7 @@ namespace dak::object
       transaction_t::undo_redo_objects(*my_top_commit);
    }
 
-   void commited_transactions_t::redo()
+   void timeline_t::redo()
    {
       if (!has_redo())
          return;

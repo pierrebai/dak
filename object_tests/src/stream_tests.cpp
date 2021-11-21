@@ -1,7 +1,7 @@
 #include "CppUnitTest.h"
 
-#include "dak/object/stream.h"
-#include "dak/object/transaction.h"
+#include "dak/object/ref_stream.h"
+#include "dak/object/timeline.h"
 #include "dak/object/tests/helpers.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -55,7 +55,7 @@ namespace dak::object::tests
          auto o1 = object_t::make();
          auto o2 = object_t::make();
          {
-            commited_transactions_t undo_redo;
+            timeline_t undo_redo;
             transaction_t tr1;
 
             auto& mo1 = o1->modify(tr1);
@@ -69,8 +69,8 @@ namespace dak::object::tests
 
             tr1.commit(undo_redo);
          }
-         //ss << *o1;
-         //Assert::AreEqual(text_t(L"{\nchild : {\nafter : [\n1 ,\nref -1 ,\nref 0 ,\n] ,\n} ,\n}"), ss.str());
+         ref_stream_t(ss) << o1;
+         Assert::AreEqual(text_t(L"ref 1 {\nchild : ref 2 {\nafter : [\n1 ,\nref -1 ,\n] ,\n} ,\n}"), ss.str());
       }
    };
 }

@@ -70,7 +70,7 @@ namespace dak::object
       element_t(const array_t &);
       element_t(const dict_t &);
       element_t(const name_t &);
-      element_t(const valid_ref_t<object_t>&);
+      explicit element_t(const valid_ref_t<object_t>&);
       ~element_t();
 
       static const element_t empty;
