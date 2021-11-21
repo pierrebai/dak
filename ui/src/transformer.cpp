@@ -493,8 +493,6 @@ namespace dak
       void transformer_t::mouse_exited(const mouse::event_t& me)
       {
          update_tracked_position(me);
-         // TODO: should we keep interacting when exiting?
-         end_interaction();
       }
 
       void transformer_t::mouse_pressed(const mouse::event_t& me)
