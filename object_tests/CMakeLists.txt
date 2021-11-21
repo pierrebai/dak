@@ -1,0 +1,25 @@
+
+add_library(object_tests SHARED
+   src/array_tests.cpp
+   src/dict_tests.cpp
+   src/element_tests.cpp
+   src/name_tests.cpp
+   src/object_tests.cpp
+   src/stream_tests.cpp
+   src/transaction_tests.cpp
+   include/dak/object/tests/helpers.h
+)
+
+target_link_libraries(object_tests PUBLIC
+   object
+   utility
+)
+
+set_property(TARGET object_tests PROPERTY CXX_STANDARD 20)
+
+target_include_directories(object_tests PUBLIC
+   include
+   "${CMAKE_CURRENT_SOURCE_DIR}/../utility/include"
+   "${CMAKE_CURRENT_SOURCE_DIR}/../object/include"
+)
+
