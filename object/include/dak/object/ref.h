@@ -4,6 +4,7 @@
 #include <dak/utility/types.h>
 #include <dak/object/name.h>
 #include <dak/object/ref_counted.h>
+#include <dak/object/transaction.h>
 
 #include <exception>
 
@@ -11,6 +12,7 @@ namespace dak::object
 {
    struct element_t;
    struct name_t;
+   struct transaction_t;
 
    //////////////////////////////////////////////////////////////////////////
    //
@@ -57,22 +59,28 @@ namespace dak::object
 
    template<class T> struct ref_t : ref_base_t
    {
-      // Constructors.
+      // Invalid ref constructors.
       ref_t() : ref_base_t() {}
+
+      // Copy constructors.
       ref_t(const ref_t<T>& other) : ref_base_t(other) {}
 
-      template <class OTHER>
-      ref_t(const ref_t<OTHER>& other) : ref_t(static_cast<const OTHER *>(other.my_object)) {}
+      // Copy from similar ref constructors.
+      template <class O>
+      ref_t(const ref_t<O>& other) : ref_t(static_cast<const O *>(other.my_object)) {}
 
-      // Copy.
+      // Copy from other ref.
       ref_t<T>& operator =(const ref_t<T>& other) { ref_base_t::operator =(other); return *this; }
 
-   private:
+      // Copy from similar ref.
+      template <class O>
+      ref_t<T>& operator =(const ref_t<O>& other) { return operator =(static_cast<const O*>(other.my_object)); }
+
+   protected:
       ref_t(const T* t) : ref_base_t(t) {}
       ref_t<T>& operator =(const T* t) { ref_base_t::operator =(t); return *this; }
 
       friend T;
-      friend struct name_t;
       friend struct element_t;
    };
 
@@ -83,19 +91,33 @@ namespace dak::object
 
    template<class T> struct valid_ref_t : ref_t<T>
    {
-      // Constructors.
+      // Copy constructors.
       valid_ref_t(const valid_ref_t<T>& other) : ref_t<T>(other) {}
+
+      // Constructors from possibly invalid ref.
       explicit valid_ref_t(const ref_t<T>& other) : ref_t<T>(other) { if (ref_base_t::is_null()) throw std::exception("invalid valid ref"); }
 
-      template <class OTHER>
-      valid_ref_t(const valid_ref_t<OTHER>& other) : ref_t<T>(other) {}
+      // Constructors from similar valid ref.
+      template <class O>
+      valid_ref_t(const valid_ref_t<O>& other) : ref_t<T>(other) {}
 
-      template <class OTHER>
-      explicit valid_ref_t(const ref_t<OTHER>& other) : ref_t<T>(other) { if (ref_base_t::is_null()) throw std::exception("invalid valid ref"); }
+      // Constructors from similar possibly invalid ref.
+      template <class O>
+      explicit valid_ref_t(const ref_t<O>& other) : ref_t<T>(other) { if (ref_base_t::is_null()) throw std::exception("invalid valid ref"); }
 
-      // Copy.
+      // Copy from other valid ref.
       valid_ref_t<T>& operator =(const valid_ref_t<T>& other) { ref_t<T>::operator =(other); return *this; }
+
+      // Copy from possibly invalid ref.
       valid_ref_t<T>& operator =(const ref_t<T>& other) { if (other.is_null()) throw std::exception("invalid valid ref"); ref_t<T>::operator =(other); return *this; }
+
+      // Copy from similar valid ref.
+      template <class O>
+      valid_ref_t<T>& operator =(const valid_ref_t<O>& other) { ref_t<T>::operator =(other); return *this; }
+
+      // Copy from similar possibly invalid ref.
+      template <class O>
+      valid_ref_t<T>& operator =(const ref_t<O>& other) { if (other.is_null()) throw std::exception("invalid valid ref"); ref_t<T>::operator =(other); return *this; }
 
       // Access to the referenced object.
       operator const T* () const { return static_cast<const T*>(this->my_object); }
@@ -105,6 +127,63 @@ namespace dak::object
       // Element retrieval.
       // Non-const version inserts when the name is not found.
       const element_t& operator [](const name_t& n) const;
+
+   protected:
+      valid_ref_t(const T* t) : ref_t<T>(t) {}
+
+      friend T;
+      friend struct element_t;
+   };
+
+
+   //////////////////////////////////////////////////////////////////////////
+   //
+   // A non-null smart reference-counted pointer to a modifiable ref_counted_t object.
+
+   template<class T> struct edit_ref_t : valid_ref_t<T>
+   {
+      // Copy constructors.
+      edit_ref_t(const edit_ref_t<T>& other) : valid_ref_t<T>(other) {}
+
+      // Constructors from valid ref and transaction.
+      explicit edit_ref_t(const valid_ref_t<T>& other, transaction_t& trans) : valid_ref_t<T>(other) { trans.add(*this); }
+
+      // Constructors from possibly invalid ref and transaction.
+      explicit edit_ref_t(const ref_t<T>& other, transaction_t& trans) : valid_ref_t<T>(other) { trans.add(*this); }
+
+      // Constructors from similar edit ref.
+      template <class O>
+      edit_ref_t(const edit_ref_t<O>& other) : valid_ref_t<T>(other) {}
+
+      // Constructors from similar valid ref and transaction.
+      template <class O>
+      explicit edit_ref_t(const valid_ref_t<O>& other, transaction_t& trans) : valid_ref_t<T>(other) { trans.add(*this); }
+
+      // Constructors from similar possibly invalid ref and transaction.
+      template <class O>
+      explicit edit_ref_t(const ref_t<O>& other, transaction_t& trans) : valid_ref_t<T>(other) { trans.add(*this); }
+
+      // Copy from edit ref.
+      edit_ref_t<T>& operator =(const edit_ref_t<T>& other) { valid_ref_t<T>::operator =(other); return *this; }
+
+      // Copy from similar edit ref.
+      template <class O>
+      edit_ref_t<T>& operator =(const edit_ref_t<O>& other) { valid_ref_t<T>::operator =(other); return *this; }
+
+      // Access to the referenced object.
+      operator T* () const { return const_cast<T*>(static_cast<const T*>(this->my_object)); }
+      T* operator ->() const { return const_cast<T*>(static_cast<const T*>(this->my_object)); }
+      T& operator *() const { return const_cast<T&>(static_cast<const T&>(*this->my_object)); }
+
+      // Element retrieval.
+      // Non-const version inserts when the name is not found.
+      element_t& operator [](const name_t& n) const;
+
+   protected:
+      edit_ref_t(T* t) : valid_ref_t<T>(t) {}
+
+      friend T;
+      friend struct element_t;
    };
 }
 

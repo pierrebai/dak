@@ -4,7 +4,6 @@
 #define DAK_OBJECT_TRANSACTION_H
 
 #include <dak/utility/types.h>
-#include <dak/object/object.h>
 
 #include <map>
 
@@ -12,6 +11,8 @@ namespace dak::object
 {
    USING_DAK_UTILITY_TYPES;
    struct timeline_t;
+   struct object_t;
+   template <class T> struct edit_ref_t;
 
    //////////////////////////////////////////////////////////////////////////
    //
@@ -20,18 +21,18 @@ namespace dak::object
 
    struct transaction_t
    {
-      using modified_objects_t = std::map<valid_ref_t<object_t>, valid_ref_t<object_t>>;
+      using modified_objects_t = std::map<edit_ref_t<object_t>, object_t>;
 
       // Constructors.
       transaction_t() = default;
-      transaction_t(const transaction_t &) = delete;
+      transaction_t(const transaction_t&) = delete;
 
       // Assignment. Copy the whole transaction.
-      transaction_t& operator =(const transaction_t &) = delete;
+      transaction_t& operator =(const transaction_t&) = delete;
 
       // Add an object to the transaction.
       // Automatically done when an object is modified.
-      void add(const valid_ref_t<object_t>& an_object);
+      void add(const edit_ref_t<object_t>& an_object);
 
       // Commit and cancel. Both empty the tracked modified objects.
       void commit(struct timeline_t&);
@@ -41,7 +42,7 @@ namespace dak::object
       void forget();
 
       // Swaps saved objects with current objects, implements undo/redo.
-      static void undo_redo_objects(const modified_objects_t& objects);
+      static void undo_redo_objects(modified_objects_t& objects);
 
       modified_objects_t my_modified_objects;
 

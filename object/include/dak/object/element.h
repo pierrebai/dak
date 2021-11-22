@@ -54,22 +54,22 @@ namespace dak::object
       // Copy the given element.
       element_t(const element_t &);
 
-      element_t(const text_t &);
-      element_t(wchar_t);
-      element_t(char);
-      element_t(str_ptr_t);
-      element_t(bool);
-      element_t(int16_t);
-      element_t(int32_t);
-      element_t(int64_t);
-      element_t(uint16_t);
-      element_t(uint32_t);
-      element_t(uint64_t);
-      element_t(float);
-      element_t(double);
-      element_t(const array_t &);
-      element_t(const dict_t &);
-      element_t(const name_t &);
+      explicit element_t(const text_t &);
+      explicit element_t(wchar_t);
+      explicit element_t(char);
+      explicit element_t(str_ptr_t);
+      explicit element_t(bool);
+      explicit element_t(int16_t);
+      explicit element_t(int32_t);
+      explicit element_t(int64_t);
+      explicit element_t(uint16_t);
+      explicit element_t(uint32_t);
+      explicit element_t(uint64_t);
+      explicit element_t(float);
+      explicit element_t(double);
+      explicit element_t(const array_t &);
+      explicit element_t(const dict_t &);
+      explicit element_t(const name_t &);
       explicit element_t(const valid_ref_t<object_t>&);
       ~element_t();
 

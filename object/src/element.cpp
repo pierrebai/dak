@@ -231,9 +231,9 @@ namespace dak::object
       {
          default:
          case datatype_t::unknown: reset(); break;
-         case datatype_t::boolean:
+         case datatype_t::boolean: *this = bool(anOther.my_i); break;
          case datatype_t::integer: *this =  anOther.my_i; break;
-         case datatype_t::ref:     *this =  anOther.my_o; break;
+         case datatype_t::ref:     *this =  valid_ref_t<object_t>(anOther.my_o); break;
          case datatype_t::name:    *this =  name_t(anOther.my_n); break;
          case datatype_t::real:    *this =  anOther.my_r; break;
          case datatype_t::array:   *this = *anOther.my_a; break;

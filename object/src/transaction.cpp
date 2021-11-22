@@ -1,4 +1,6 @@
 #include "dak/object/transaction.h"
+#include "dak/object/ref.h"
+#include "dak/object/object.h"
 #include "dak/object/timeline.h"
 
 namespace dak::object
@@ -8,28 +10,23 @@ namespace dak::object
    // transaction
 
    //static
-   void transaction_t::undo_redo_objects(const modified_objects_t& objects)
+   void transaction_t::undo_redo_objects(modified_objects_t& objects)
    {
       transaction_t undo_transaction;
-      for (const auto& [dest, saved] : objects)
+      for (auto& [dest, saved] : objects)
       {
          object_t& mod_dest = dest->modify(undo_transaction);
-         object_t& mod_saved = saved->modify(undo_transaction);
-         mod_dest.swap(mod_saved);
+         mod_dest.swap(saved);
       }
       undo_transaction.forget();
    }
 
-   void transaction_t::add(const valid_ref_t<object_t>& an_object)
+   void transaction_t::add(const edit_ref_t<object_t>& an_object)
    {
-      if (!an_object)
-         return;
-
       const auto pos = my_modified_objects.find(an_object);
       if (pos == my_modified_objects.end())
       {
-         auto saved_copy = object_t::make(*an_object);
-         my_modified_objects.insert(std::pair(an_object, saved_copy));
+         my_modified_objects.insert(std::pair(an_object, object_t(*an_object)));
       }
    }
 

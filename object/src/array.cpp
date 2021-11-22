@@ -23,6 +23,11 @@ namespace dak::object
       }
    }
 
+   void array_t::append(const element_t& e)
+   {
+      grow() = e;
+   }
+
    index_t array_t::make_fit(index_t index_t)
    {
       if (index_t < 0)

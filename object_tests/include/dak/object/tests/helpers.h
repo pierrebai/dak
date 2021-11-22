@@ -14,7 +14,7 @@
 
 namespace Microsoft::VisualStudio::CppUnitTestFramework
 {
-   #define RETURN_REF_STREAM_WIDE_STRING(x) std::wstringstream ss; dak::object::ref_stream_t(ss) << x; return ss.str()
+   #define RETURN_REF_STREAM_WIDE_STRING(x) std::wstringstream ss; dak::object::ref_ostream_t(ss) << x; return ss.str()
 
    template<> inline std::wstring ToString<dak::object::name_t>(const dak::object::name_t& n)
    {

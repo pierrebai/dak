@@ -31,9 +31,9 @@ namespace dak::object
       typedef elements_t::const_iterator const_iterator;
 
       // Make a ref-counted instance.
-      static valid_ref_t<object_t> make();
-      static valid_ref_t<object_t> make(const object_t&);
-      static valid_ref_t<object_t> make(valid_ref_t<object_t>&);
+      static edit_ref_t<object_t> make();
+      static edit_ref_t<object_t> make(const object_t&);
+      static edit_ref_t<object_t> make(valid_ref_t<object_t>&);
 
       // Constructors.
       object_t() = default;
@@ -80,6 +80,7 @@ namespace dak::object
 
       friend struct ref_t<object_t>;
       friend struct valid_ref_t<object_t>;
+      friend struct edit_ref_t<object_t>;
       friend struct element_t;
    };
 }
@@ -87,7 +88,10 @@ namespace dak::object
 namespace dak::object
 {
    template<class T>
-   inline const element_t& valid_ref_t<T>::operator [](const name_t& n) const { return ((const T&)(*this->my_object))[n]; }
+   inline const element_t& valid_ref_t<T>::operator [](const name_t& n) const { return (**this)[n]; }
+
+   template<class T>
+   inline element_t& edit_ref_t<T>::operator [](const name_t& n) const { return (**this)[n]; }
 }
 
 #endif /* DAK_OBJECT_OBJECT_H */

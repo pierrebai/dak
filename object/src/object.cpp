@@ -3,19 +3,19 @@
 
 namespace dak::object
 {
-   valid_ref_t<object_t> object_t::make()
+   edit_ref_t<object_t> object_t::make()
    {
-      return valid_ref_t<object_t>(new object_t);
+      return edit_ref_t<object_t>(new object_t);
    }
 
-   valid_ref_t<object_t> object_t::make(const object_t& an_obj)
+   edit_ref_t<object_t> object_t::make(const object_t& an_obj)
    {
-      return valid_ref_t<object_t>(new object_t(an_obj));
+      return edit_ref_t<object_t>(new object_t(an_obj));
    }
 
-   valid_ref_t<object_t> object_t::make(valid_ref_t<object_t> & an_obj)
+   edit_ref_t<object_t> object_t::make(valid_ref_t<object_t> & an_obj)
    {
-      return valid_ref_t<object_t>(new object_t(*an_obj));
+      return edit_ref_t<object_t>(new object_t(*an_obj));
    }
 
    object_t& object_t::operator +=(const object_t & an_obj)
@@ -91,7 +91,7 @@ namespace dak::object
 
    object_t& object_t::modify(transaction_t& a_trans) const
    {
-      a_trans.add(valid_ref_t<object_t>(this));
+      a_trans.add(edit_ref_t<object_t>(const_cast<object_t*>(this)));
       return const_cast<object_t&>(*this);
    }
 }

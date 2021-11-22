@@ -46,6 +46,7 @@ namespace dak::object
 
       // Modifications to the array.
       void append(const array_t &);
+      void append(const element_t&);
       bool erase(index_t anIndex);
       element_t & insert(index_t anIndex);
       element_t & grow();

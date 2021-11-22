@@ -5,7 +5,7 @@ add_library(object_tests SHARED
    src/element_tests.cpp
    src/name_tests.cpp
    src/object_tests.cpp
-   src/stream_tests.cpp
+   src/ref_stream_tests.cpp
    src/transaction_tests.cpp
    include/dak/object/tests/helpers.h
 )

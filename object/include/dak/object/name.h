@@ -4,10 +4,6 @@
 #define DAK_OBJECT_NAME_H
 
 #include <dak/utility/types.h>
-#include <dak/object/ref_counted.h>
-#include <dak/object/ref.h>
-
-#include <map>
 
 namespace dak::object
 {
@@ -24,6 +20,7 @@ namespace dak::object
 
       // Valid name constructors.
       name_t(str_ptr_t a_label) : my_name(a_label) {}
+      name_t(const text_t& a_label);
 
       // Destructor.
       ~name_t() = default;
