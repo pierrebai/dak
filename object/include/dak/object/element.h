@@ -6,6 +6,7 @@
 #include <dak/utility/types.h>
 #include <dak/object/name.h>
 #include <dak/object/ref.h>
+#include <dak/object/similar.h>
 
 namespace dak::object
 {
@@ -161,6 +162,8 @@ namespace dak::object
       // Comparison.
       bool operator == (const element_t&) const;
       bool operator != (const element_t&) const;
+
+      bool is_similar(const element_t& other, const visited_refs_t& visited) const;
 
    protected:
       element_t(datatype_t);

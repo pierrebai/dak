@@ -1,6 +1,7 @@
 #include "CppUnitTest.h"
 
 #include "dak/object/ref_stream.h"
+#include "dak/object/similar.h"
 #include "dak/object/timeline.h"
 #include "dak/object/tests/helpers.h"
 
@@ -184,21 +185,7 @@ namespace dak::object::tests
          ref_istream_t(ss) >> received;
 
          Assert::IsTrue(received.is_valid());
-         
-         valid_ref_t<object_t> valid_received(received);
-
-         Assert::IsTrue(valid_received->contains(child));
-
-         valid_ref_t<object_t> child_obj = valid_received->get(child);
-         Assert::IsTrue(child_obj.is_valid());
-
-         Assert::IsTrue(child_obj->contains(after));
-
-         array_t arr = child_obj->get(after);
-
-         Assert::AreEqual<index_t>(2, arr.size());
-         Assert::AreEqual<bool>(true, arr[0]);
-         Assert::AreEqual<valid_ref_t<object_t>>(valid_received, arr[1]);
+         Assert::IsTrue(are_similar(valid_ref_t<object_t>(received), expected));
       }
    };
 }
