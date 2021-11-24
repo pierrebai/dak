@@ -93,6 +93,43 @@ namespace dak::object
    //
    // Input stream wrapper to input object into a stream.
 
+   namespace
+   {
+      bool parse_sigil(std::wistream& istr, const wchar_t expected_sigil)
+      {
+         wchar_t sigil = 0;
+         istr >> std::ws >> sigil;
+         if (expected_sigil == sigil)
+            return true;
+
+         istr.putback(sigil);
+         istr.setstate(std::ios::failbit);
+         return false;
+      }
+
+      bool parse_sigil(std::wistream& istr, const str_ptr_t expected_sigil)
+      {
+         text_t sigil;
+         istr >> std::ws >> sigil;
+         if (sigil == expected_sigil)
+            return true;
+
+         istr.setstate(std::ios::failbit);
+         return false;
+      }
+
+      bool is_end(std::wistream& istr, const wchar_t possible_end)
+      {
+         wchar_t c = 0;
+         istr >> std::ws >> c;
+         if (possible_end == c)
+            return true;
+
+         istr.putback(c);
+         return false;
+      }
+   }
+
    void ref_istream_t::add_object_with_id(const valid_ref_t<object_t>& obj, int64_t id) const
    {
       my_object_with_ids[std::abs(id)] = obj;
@@ -110,24 +147,31 @@ namespace dak::object
    void ref_istream_t::clear()
    {
       my_object_with_ids.clear();
+      get_stream().clear();
    }
 
    const ref_istream_t& ref_istream_t::parse(name_t& n) const
    {
-      // TODO: validate slash.
-      wchar_t slash;
+      auto& istr = get_stream();
+
+      if (!parse_sigil(istr, L'/'))
+         return *this;
+
       text_t text;
-      get_stream() >> std::ws >> slash >> std::quoted(text);
+      istr >> std::quoted(text);
       n = name_t(text);
       return *this;
    }
 
    const ref_istream_t& ref_istream_t::parse(ref_t<object_t>& o) const
    {
-      // TODO: validate sigil.
-      text_t ref_sigil;
+      auto& istr = get_stream();
+
+      if (!parse_sigil(istr, L"ref"))
+         return *this;
+
       int64_t id = 0;
-      get_stream() >> std::ws >> ref_sigil >> std::ws >> id;
+      istr >> std::ws >> id;
       if (id > 0)
       {
          edit_ref_t<object_t> new_obj = object_t::make();
@@ -146,31 +190,20 @@ namespace dak::object
    {
       auto& istr = get_stream();
 
-      wchar_t sigil;
-      istr >> std::ws >> sigil;
-      if (sigil != L'[')
-      {
-         istr.putback(sigil);
+      if (!parse_sigil(istr, L'['))
          return *this;
-      }
 
-      wchar_t sep;
       while (istr.good()) {
-         istr >> std::ws >> sep;
-         if (sep == L']')
+         if (is_end(istr, L']'))
             break;
-         istr.putback(sep);
 
          element_t e;
+         istr >> std::ws;
          *this >> e;
          a.append(e);
 
-         istr >> std::ws >> sep;
-         if (sep != L',')
-         {
-            istr.putback(sep);
+         if (!parse_sigil(istr, L','))
             break;
-         }
       }
 
       return *this;
@@ -180,43 +213,28 @@ namespace dak::object
    {
       auto& istr = get_stream();
 
-      wchar_t sigil;
-      istr >> std::ws >> sigil;
-      if (sigil != L'{')
-      {
-         istr.putback(sigil);
+      if (!parse_sigil(istr, L'{'))
          return *this;
-      }
 
-      wchar_t sep;
       while (istr.good()) {
-         istr >> std::ws >> sep;
-         if (sep == L'}')
-            break;
-         istr.putback(sep);
 
-         istr >> std::ws;
+         if (is_end(istr, L'}'))
+            break;
+
          name_t n;
+         istr >> std::ws;
          *this >> n;
 
-         istr >> std::ws >> sep;
-         if (sep != ':')
-         {
-            istr.putback(sep);
+         if (!parse_sigil(istr, L':'))
             break;
-         }
 
-         istr >> std::ws;
          element_t e;
+         istr >> std::ws;
          *this >> e;
          d[n] = e;
 
-         istr >> std::ws >> sep;
-         if (sep != ',')
-         {
-            istr.putback(sep);
+         if (!parse_sigil(istr, L','))
             break;
-         }
       }
 
       return *this;
@@ -226,43 +244,28 @@ namespace dak::object
    {
       auto& istr = get_stream();
 
-      wchar_t sigil;
-      istr >> std::ws >> sigil;
-      if (sigil != L'{')
-      {
-         istr.putback(sigil);
+      if (!parse_sigil(istr, L'{'))
          return *this;
-      }
 
-      wchar_t sep;
       while (istr.good()) {
-         istr >> std::ws >> sep;
-         if (sep == L'}')
-            break;
-         istr.putback(sep);
 
-         istr >> std::ws;
+         if (is_end(istr, L'}'))
+            break;
+
          name_t n;
+         istr >> std::ws;
          *this >> n;
 
-         istr >> std::ws >> sep;
-         if (sep != ':')
-         {
-            istr.putback(sep);
+         if (!parse_sigil(istr, L':'))
             break;
-         }
 
-         istr >> std::ws;
          element_t e;
+         istr >> std::ws;
          *this >> e;
          o[n] = e;
 
-         istr >> std::ws >> sep;
-         if (sep != ',')
-         {
-            istr.putback(sep);
+         if (!parse_sigil(istr, L','))
             break;
-         }
       }
 
       return *this;
@@ -270,77 +273,85 @@ namespace dak::object
 
    const ref_istream_t& ref_istream_t::parse(element_t& e) const
    {
+      auto& istr = get_stream();
+
       wchar_t type_sigil;
-      *this >> type_sigil;
+      istr >> std::ws >> type_sigil >> std::ws;
 
       switch (type_sigil)
       {
-      case L'u':
-      {
-         e.reset();
-         break;
-      }
-      case L'b':
-      {
-         bool b;
-         get_stream() >> b;
-         e = b;
-         break;
-      }
-      case L'i':
-      {
-         int64_t i;
-         get_stream() >> i;
-         e = i;
-         break;
-      }
-      case L'r':
-      {
-         ref_t<object_t> r;
-         *this >> r;
-         if (r.is_valid())
-            e = valid_ref_t<object_t>(r);
-         else
+         case L'u':
+         {
             e.reset();
-         break;
-      }
-      case L'n':
-      {
-         name_t n;
-         *this >> n;
-         e = n;
-         break;
-      }
-      case L'f':
-      {
-         double f;
-         get_stream() >> f;
-         e = f;
-         break;
-      }
-      case L'a':
-      {
-         array_t a;
-         *this >> a;
-         e = a;
-         break;
-      }
-      case L'd':
-      {
-         dict_t d;
-         *this >> d;
-         e = d;
-         break;
-      }
-      case L't':
-      {
-         text_t t;
-         get_stream() >> std::quoted(t);
-         e = t;
-         break;
-      }
-      default:
-         break;
+            break;
+         }
+         case L'b':
+         {
+            bool b;
+            istr >> b;
+            e = b;
+            break;
+         }
+         case L'i':
+         {
+            int64_t i;
+            istr >> i;
+            e = i;
+            break;
+         }
+         case L'r':
+         {
+            ref_t<object_t> r;
+            *this >> r;
+            if (r.is_valid())
+            {
+               e = valid_ref_t<object_t>(r);
+            }
+            else
+            {
+               istr.setstate(std::ios::failbit);
+               e.reset();
+            }
+            break;
+         }
+         case L'n':
+         {
+            name_t n;
+            *this >> n;
+            e = n;
+            break;
+         }
+         case L'f':
+         {
+            double f;
+            istr >> f;
+            e = f;
+            break;
+         }
+         case L'a':
+         {
+            array_t a;
+            *this >> a;
+            e = a;
+            break;
+         }
+         case L'd':
+         {
+            dict_t d;
+            *this >> d;
+            e = d;
+            break;
+         }
+         case L't':
+         {
+            text_t t;
+            istr >> std::quoted(t);
+            e = t;
+            break;
+         }
+         default:
+            istr.setstate(std::ios::failbit);
+            break;
       }
 
       return *this;
