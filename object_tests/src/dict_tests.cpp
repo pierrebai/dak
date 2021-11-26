@@ -42,6 +42,30 @@ namespace dak::object::tests
          Assert::AreEqual<index_t>(0, d1.size());
       }
 
+      TEST_METHOD(dict_const)
+      {
+         dict_t d1;
+
+         Assert::AreEqual<index_t>(0, d1.size());
+
+         d1[voc::rock] = 3;
+         d1[voc::pebble] = 4;
+         d1[voc::sand] = 5.0;
+         d1[voc::hello] = L"6";
+         d1[voc::world] = voc::rock;
+
+         const dict_t& const_d1 = d1;
+
+         Assert::AreEqual<index_t>(5, d1.size());
+
+         Assert::AreEqual<int32_t>(3, const_d1[rock]);
+         Assert::AreEqual<int64_t>(4, const_d1[pebble]);
+         Assert::AreEqual<double>(5.0, const_d1[sand]);
+         Assert::AreEqual<text_t>(L"6", const_d1[hello]);
+         Assert::AreEqual<name_t>(rock, const_d1[world]);
+         Assert::AreEqual<datatype_t>(datatype_t::unknown, const_d1[absent].type());
+      }
+
       TEST_METHOD(dict_append)
       {
          dict_t d1;

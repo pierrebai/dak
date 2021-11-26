@@ -36,6 +36,8 @@ namespace dak::object::tests
          Assert::IsTrue(a.erase(0));
 
          Assert::AreEqual<index_t>(0, a.size());
+
+         Assert::AreEqual(datatype_t::unknown, a[-1000].type());
       }
 
       TEST_METHOD(array_append)

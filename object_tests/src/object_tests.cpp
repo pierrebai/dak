@@ -44,6 +44,14 @@ namespace dak::object::tests
          Assert::IsFalse(o1.erase(rock));
 
          Assert::AreEqual<index_t>(0, o1.size());
+
+         auto ro2 = object_t::make(ro1);
+
+         Assert::AreEqual(*ro2, *ro1);
+
+         auto ro3 = object_t::make(*ro1);
+
+         Assert::AreEqual(*ro3, *ro1);
       }
 
       TEST_METHOD(object_append)
@@ -112,7 +120,7 @@ namespace dak::object::tests
 
       TEST_METHOD(object_const)
       {
-         auto ro1 = object_t::make();
+         valid_ref_t<object_t> ro1 = object_t::make();
          Assert::AreEqual<index_t>(0, ro1->size());
 
          timeline_t undo_redo;
@@ -144,6 +152,7 @@ namespace dak::object::tests
          Assert::AreEqual<double>(5.0, ro1->get(sand));
          Assert::AreEqual<text_t>(L"6", ro1->get(hello));
          Assert::AreEqual<name_t>(rock, ro1->get(world));
+         Assert::AreEqual<datatype_t>(datatype_t::unknown, ro1->get(absent).type());
 
          {
             transaction_t t2;

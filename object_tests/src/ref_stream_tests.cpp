@@ -159,6 +159,7 @@ namespace dak::object::tests
       {
          const text_t child(L"child");
          const text_t after(L"after");
+         const text_t date(L"date");
 
          wstringstream ss;
          auto expected = object_t::make();
@@ -177,6 +178,9 @@ namespace dak::object::tests
             a3[0] = true;
             a3[1] = expected;
 
+            dict_t& d32 = a3[2];
+            d32[date] = 55;
+
             tr1.commit(undo_redo);
          }
          ref_ostream_t(ss) << expected;
@@ -186,6 +190,17 @@ namespace dak::object::tests
 
          Assert::IsTrue(received.is_valid());
          Assert::IsTrue(are_similar(valid_ref_t<object_t>(received), expected));
+
+         ss.clear();
+         ref_ostream_t rostr(ss);
+         Assert::AreEqual<int64_t>(0, rostr.get_object_id(ref_t<object_t>()));
+
+         const int64_t reserved_id = rostr.get_object_id(expected);
+         Assert::AreNotEqual<int64_t>(0, reserved_id);
+         Assert::AreEqual<int64_t>(-reserved_id, rostr.get_object_id(expected));
+
+         rostr.clear();
+         Assert::AreEqual<int64_t>(reserved_id, rostr.get_object_id(expected));
       }
    };
 }

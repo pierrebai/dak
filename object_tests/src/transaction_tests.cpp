@@ -49,6 +49,53 @@ namespace dak::object::tests
 
             verify_object(ro1);
          }
+
+         undo_redo.undo();
+
+         Assert::AreEqual<index_t>(0, ro1->size());
+
+         undo_redo.undo();
+
+         Assert::AreEqual<index_t>(0, ro1->size());
+
+         undo_redo.undo();
+
+         Assert::AreEqual<index_t>(0, ro1->size());
+
+         undo_redo.redo();
+
+         verify_object(ro1);
+
+         undo_redo.redo();
+
+         verify_object(ro1);
+
+         undo_redo.redo();
+
+         verify_object(ro1);
+      }
+
+      TEST_METHOD(transaction_cancel)
+      {
+         auto ro1 = object_t::make();
+
+         timeline_t undo_redo;
+
+         {
+            transaction_t t1;
+
+            auto& o1 = ro1->modify(t1);
+
+            o1[rock] = 3;
+            o1[pebble] = 4;
+            o1[sand] = 5.0;
+            o1[hello] = L"6";
+            o1[world] = voc::rock;
+
+            t1.cancel();
+         }
+
+         Assert::AreEqual<index_t>(0, ro1->size());
       }
 
    private:
