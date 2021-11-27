@@ -1,29 +1,35 @@
 #include "dak/object/name.h"
-
-#include <unordered_set>
-#include <mutex>
+#include "dak/object/name_stuff.h"
 
 namespace dak::object
 {
-   namespace
-   {
-      str_ptr_t intern(const text_t& a_label)
-      {
-         static std::unordered_set<text_t> known_names;
-         static std::mutex mutex;
-
-         std::lock_guard lock(mutex);
-         const auto iter = known_names.find(a_label);
-         if (iter != known_names.end())
-            return iter->c_str();
-
-         auto iter_and_result = known_names.insert(a_label);
-         return iter_and_result.first->c_str();
-      }
-   }
-
-   name_t::name_t(const text_t& a_label)
-      : my_name(intern(a_label))
+   name_t::name_t(const edit_ref_t<namespace_t>& a_namespace, str_ptr_t a_label)
+      : my_stuff(name_stuff_t::make(a_namespace, a_label))
    {
    }
+
+   name_t::name_t(const edit_ref_t<namespace_t>& a_namespace, const text_t& a_label)
+      : my_stuff(name_stuff_t::make(a_namespace, a_label))
+   {
+   }
+
+   name_t::name_t(const edit_ref_t<namespace_t>& a_namespace, const name_t& a_basename)
+      : my_stuff(a_basename.my_stuff.is_valid()
+         ? name_stuff_t::make(a_namespace, valid_ref_t< name_stuff_t>(a_basename.my_stuff))
+         : ref_t<name_stuff_t>())
+   {
+   }
+
+   name_t::name_t(const ref_t<name_stuff_t>& stuff)
+      : my_stuff(stuff)
+   {
+   }
+
+   str_ptr_t name_t::to_text() const
+   {
+      return my_stuff.is_valid()
+         ? valid_ref_t<name_stuff_t>(my_stuff)->my_label->first.c_str()
+         : L"";
+   }
+
 }

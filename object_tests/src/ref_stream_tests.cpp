@@ -95,11 +95,11 @@ namespace dak::object::tests
       {
          wstringstream ss;
 
-         name_t expected(text_t(L"expected"));
+         name_t expected(voc::hexagon);
          ss << expected;
 
          name_t received;
-         ss >> received;
+         ref_istream_t(ss, voc::get_namespace()) >> received;
          Assert::AreEqual(expected, received);
       }
 
@@ -111,7 +111,7 @@ namespace dak::object::tests
          ss << expected;
 
          dict_t received;
-         ss >> received;
+         ref_istream_t(ss, voc::get_namespace()) >> received;
          Assert::AreEqual(expected, received);
       }
 
@@ -120,11 +120,11 @@ namespace dak::object::tests
          wstringstream ss;
 
          dict_t expected;
-         expected[text_t(L"rock")] = 3;
+         expected[voc::rock] = 3;
          ss << expected;
 
          dict_t received;
-         ss >> received;
+         ref_istream_t(ss, voc::get_namespace()) >> received;
          Assert::AreEqual(expected, received);
       }
 
@@ -136,7 +136,7 @@ namespace dak::object::tests
          ss << expected;
 
          array_t received;
-         ss >> received;
+         ref_istream_t(ss, voc::get_namespace()) >> received;
          Assert::AreEqual(expected, received);
       }
 
@@ -151,16 +151,12 @@ namespace dak::object::tests
          ss << expected;
 
          array_t received;
-         ss >> received;
+         ref_istream_t(ss, voc::get_namespace()) >> received;
          Assert::AreEqual(expected, received);
       }
 
       TEST_METHOD(istream_complex_dict)
       {
-         const text_t child(L"child");
-         const text_t after(L"after");
-         const text_t date(L"date");
-
          wstringstream ss;
          auto expected = object_t::make();
          {
@@ -170,23 +166,23 @@ namespace dak::object::tests
             auto& mo1 = expected->modify(tr1);
 
             auto o2 = object_t::make();
-            mo1[child] = o2;
+            mo1[voc::child] = o2;
 
             auto& mo2 = o2->modify(tr1);
-            array_t& a3 = mo2[after];
+            array_t& a3 = mo2[voc::after];
 
             a3[0] = true;
             a3[1] = expected;
 
             dict_t& d32 = a3[2];
-            d32[date] = 55;
+            d32[voc::date] = 55;
 
             tr1.commit(undo_redo);
          }
          ref_ostream_t(ss) << expected;
 
          ref_t<object_t> received;
-         ref_istream_t(ss) >> received;
+         ref_istream_t(ss, voc::get_namespace()) >> received;
 
          Assert::IsTrue(received.is_valid());
          Assert::IsTrue(are_similar(valid_ref_t<object_t>(received), expected));

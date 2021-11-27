@@ -1,0 +1,66 @@
+#pragma once
+
+#ifndef DAK_OBJECT_NAME_PRIVATE_H
+#define DAK_OBJECT_NAME_PRIVATE_H
+
+#include <dak/object/namespace.h>
+#include <dak/object/ref.h>
+
+#include <unordered_set>
+
+namespace dak::object
+{
+   USING_DAK_UTILITY_TYPES;
+
+   struct element_t;
+   struct name_t;
+
+   //////////////////////////////////////////////////////////////////////////
+   //
+   // Name internal guts. Internal information about a single name.
+
+   struct name_stuff_t : private ref_counted_t
+   {
+   private:
+      using metadata_t = std::unordered_set<valid_ref_t<name_stuff_t>>;
+      using basename_t = ref_t<name_stuff_t>;
+
+      // Make a new name with the given label in the given namespace.
+      static edit_ref_t<name_stuff_t> make(const edit_ref_t<namespace_t>& a_namespace, const text_t& a_label);
+
+      // Make a new derived name of the given name, in the same namespace.
+      static edit_ref_t<name_stuff_t> make(const valid_ref_t<name_stuff_t>& a_basename);
+
+      // Make a new derived name of the given name, in the given namespace.
+      static edit_ref_t<name_stuff_t> make(const edit_ref_t<namespace_t>& a_namespace, const valid_ref_t<name_stuff_t>& a_basename);
+
+      // Constructor for a name with the given label in the given namespace.
+      name_stuff_t(const edit_ref_t<namespace_t>& a_namespace, const text_t& a_label);
+
+      // Constructor for a derived name of the given name, in the same namespace.
+      name_stuff_t(const valid_ref_t<name_stuff_t>& a_basename);
+
+      // Constructor for a derived name of the given name, in the given namespace.
+      name_stuff_t(const edit_ref_t<namespace_t>& a_namespace, const valid_ref_t<name_stuff_t>& a_basename);
+
+      // TODO: name metadata.
+
+      // Comparison and hash.
+      auto operator <=>(const name_stuff_t& other) const;
+      uint64_t hash() const;
+
+   private:
+      valid_ref_t<namespace_t> my_namespace;
+      namespace_t::names_t::const_iterator my_label;
+      basename_t my_basename;
+      //metadata_t my_metadata;
+
+      friend struct ref_t<name_stuff_t>;
+      friend struct valid_ref_t<name_stuff_t>;
+      friend struct edit_ref_t<name_stuff_t>;
+      friend struct name_t;
+      friend struct element_t;
+   };
+}
+
+#endif /* DAK_OBJECT_NAME */

@@ -7,6 +7,7 @@
 #include <dak/object/array.h>
 #include <dak/object/dict.h>
 #include <dak/object/object.h>
+#include <dak/object/namespace.h>
 
 #include <iostream>
 
@@ -104,10 +105,13 @@ namespace dak::object
    struct ref_istream_t
    {
       // Wrap an input stream to handle object refs.
-      ref_istream_t(std::wistream& s) : my_stream(s) {}
+      ref_istream_t(std::wistream& s, const valid_ref_t<namespace_t>& ns) : my_stream(s), my_namespace(ns) {}
 
       // Get the underlying stream.
       std::wistream& get_stream() const { return my_stream; }
+
+      // Get the underlying namespace.
+      const valid_ref_t<namespace_t>& get_namespace() const { return my_namespace; }
 
       // Parse an object through its reference.
       //
@@ -136,6 +140,7 @@ namespace dak::object
       mutable std::map<int64_t, ref_t<object_t>> my_object_with_ids;
 
       std::wistream& my_stream;
+      valid_ref_t<namespace_t> my_namespace;
    };
 
 

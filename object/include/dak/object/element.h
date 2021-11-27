@@ -5,6 +5,7 @@
 
 #include <dak/utility/types.h>
 #include <dak/object/name.h>
+#include <dak/object/name_stuff.h>
 #include <dak/object/ref.h>
 #include <dak/object/similar.h>
 
@@ -181,7 +182,7 @@ namespace dak::object
          dict_t *                my_d;
          array_t *               my_a;
          text_t *                my_t;
-         str_ptr_t               my_n;
+         const name_stuff_t *    my_n;
          const object_t *        my_o;
       };
       datatype_t my_type = datatype_t::unknown;

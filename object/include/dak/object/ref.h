@@ -2,7 +2,6 @@
 #define DAK_OBJECT_REF_H
 
 #include <dak/utility/types.h>
-#include <dak/object/name.h>
 #include <dak/object/ref_counted.h>
 #include <dak/object/transaction.h>
 
@@ -23,17 +22,21 @@ namespace dak::object
 
    struct ref_base_t
    {
-      void clear();
-      bool is_valid() const;
-      bool is_null() const;
+      // Verifies if the reference is valid.
+      bool is_valid() const { return my_object != 0; }
 
+      // Verifies if the reference is null, or invalid.
+      bool is_null() const { return my_object == 0; }
+
+      // Comparison and hashing.
       auto operator<=>(const ref_base_t&) const = default;
+      uint64_t hash() const { return reinterpret_cast<uint64_t>(my_object); }
 
    protected:
-      // Constructors.
+      // Default constructor.
       ref_base_t() = default;
 
-      // Copy.
+      // Copy constructors and assignments.
       ref_base_t(const ref_counted_t*);
       ref_base_t(const ref_base_t&);
       ref_base_t& operator =(const ref_counted_t*);
@@ -46,6 +49,13 @@ namespace dak::object
       const ref_counted_t* my_object = nullptr;
 
       friend struct name_t;
+      friend struct element_t;
+
+   private:
+      // Clear the reference. Private because some derived
+      // classes guarantee that the reference is valid.
+      // Only used to implement common code of op= and destructor.
+      void clear();
    };
 
    //////////////////////////////////////////////////////////////////////////
@@ -184,6 +194,18 @@ namespace dak::object
 
       friend T;
       friend struct element_t;
+   };
+}
+
+namespace std
+{
+   template <>
+   struct hash<dak::object::ref_base_t>
+   {
+      size_t operator()(const dak::object::ref_base_t& r) const
+      {
+         return static_cast<size_t>(r.hash());
+      }
    };
 }
 

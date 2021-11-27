@@ -159,7 +159,7 @@ namespace dak::object
 
       text_t text;
       istr >> std::quoted(text);
-      n = name_t(text);
+      n = my_namespace->find_name(text);
       return *this;
    }
 

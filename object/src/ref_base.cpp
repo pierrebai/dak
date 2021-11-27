@@ -45,19 +45,12 @@ namespace dak::object
       if (!my_object)
          return;
 
+      // Note: clears the pointer before unreferencing the object
+      //       in case th eobject destructor ends-up accesing this
+      //       reference. Can happens in object cycles.
       auto oldmy_object = my_object;
       my_object = nullptr;
       oldmy_object->unref();
-   }
-
-   bool ref_base_t::is_valid() const
-   {
-      return my_object != 0;
-   }
-
-   bool ref_base_t::is_null() const
-   {
-      return my_object == 0;
    }
 }
 

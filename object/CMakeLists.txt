@@ -5,6 +5,8 @@ add_library(object
    include/dak/object/dict.h                    src/dict.cpp
    include/dak/object/element.h                 src/element.cpp
    include/dak/object/name.h                    src/name.cpp
+   include/dak/object/name_stuff.h              src/name_stuff.cpp
+   include/dak/object/namespace.h               src/namespace.cpp
    include/dak/object/object.h                  src/object.cpp
    include/dak/object/ref.h                     src/ref_base.cpp
    include/dak/object/ref_counted.h             src/ref_counted.cpp

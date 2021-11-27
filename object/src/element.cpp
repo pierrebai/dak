@@ -20,7 +20,7 @@ namespace dak::object
          case datatype_t::integer:
          case datatype_t::real:  my_i = 0;                                 break;
          case datatype_t::ref:   if (my_o) my_o->unref(); my_o = nullptr;  break;
-         case datatype_t::name:  my_n = nullptr;                           break;
+         case datatype_t::name:  if (my_n) my_n->unref(); my_n = nullptr;  break;
          case datatype_t::array: delete my_a; my_a = nullptr;              break;
          case datatype_t::dict:  delete my_d; my_d = nullptr;              break;
          case datatype_t::text:  delete my_t; my_t = nullptr;              break;
@@ -249,14 +249,14 @@ namespace dak::object
       return element_t::operator =(sometext.c_str());
    }
 
-   element_t& element_t::operator =(char aValue)
+   element_t& element_t::operator =(char a_value)
    {
-      return element_t::operator =((int64_t) aValue);
+      return element_t::operator =((int64_t) a_value);
    }
 
-   element_t& element_t::operator =(wchar_t aValue)
+   element_t& element_t::operator =(wchar_t a_value)
    {
-      return element_t::operator =((int64_t) aValue);
+      return element_t::operator =((int64_t) a_value);
    }
 
    element_t& element_t::operator =(str_ptr_t sometext)
@@ -267,80 +267,83 @@ namespace dak::object
       return *this;
    }
 
-   element_t& element_t::operator =(bool aValue)
+   element_t& element_t::operator =(bool a_value)
    {
       reset(datatype_t::boolean);
-      my_i = aValue;
+      my_i = a_value;
 
       return *this;
    }
 
-   element_t& element_t::operator =(int16_t aValue)
+   element_t& element_t::operator =(int16_t a_value)
    {
-      return element_t::operator =((int64_t) aValue);
+      return element_t::operator =((int64_t) a_value);
    }
 
-   element_t& element_t::operator =(int32_t aValue)
+   element_t& element_t::operator =(int32_t a_value)
    {
-      return element_t::operator =((int64_t) aValue);
+      return element_t::operator =((int64_t) a_value);
    }
 
-   element_t& element_t::operator =(int64_t aValue)
+   element_t& element_t::operator =(int64_t a_value)
    {
       reset(datatype_t::integer);
-      my_i = aValue;
+      my_i = a_value;
 
       return *this;
    }
 
-   element_t& element_t::operator =(uint16_t aValue)
+   element_t& element_t::operator =(uint16_t a_value)
    {
-      return element_t::operator =((int64_t) aValue);
+      return element_t::operator =((int64_t) a_value);
    }
 
-   element_t& element_t::operator =(uint32_t aValue)
+   element_t& element_t::operator =(uint32_t a_value)
    {
-      return element_t::operator =((int64_t) aValue);
+      return element_t::operator =((int64_t) a_value);
    }
 
-   element_t& element_t::operator =(uint64_t aValue)
+   element_t& element_t::operator =(uint64_t a_value)
    {
-	   return element_t::operator =((int64_t)aValue);
+	   return element_t::operator =((int64_t)a_value);
    }
 
-   element_t& element_t::operator =(float aValue)
+   element_t& element_t::operator =(float a_value)
    {
-      return element_t::operator =((double) aValue);
+      return element_t::operator =((double) a_value);
    }
 
-   element_t& element_t::operator =(double aValue)
+   element_t& element_t::operator =(double a_value)
    {
       reset(datatype_t::real);
-      my_r = aValue;
+      my_r = a_value;
 
       return *this;
    }
 
-   element_t& element_t::operator =(const array_t & anarray)
+   element_t& element_t::operator =(const array_t & an_array)
    {
       reset(datatype_t::array);
-      *my_a = anarray;
+      *my_a = an_array;
 
       return *this;
    }
 
-   element_t& element_t::operator =(const dict_t & aDict)
+   element_t& element_t::operator =(const dict_t & a_dict)
    {
       reset(datatype_t::dict);
-      *my_d = aDict;
+      *my_d = a_dict;
 
       return *this;
    }
 
-   element_t& element_t::operator =(const name_t& aValue)
+   element_t& element_t::operator =(const name_t& a_name)
    {
       reset(datatype_t::name);
-      my_n = aValue.my_name;
+      if (a_name.is_valid()) {
+         my_n = valid_ref_t<name_stuff_t>(a_name.my_stuff);
+         my_n->addref();
+      }
 
       return *this;
    }
