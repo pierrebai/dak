@@ -21,7 +21,7 @@ namespace dak::object
       undo_transaction.forget();
    }
 
-   void transaction_t::add(const edit_ref_t<object_t>& an_object)
+   void transaction_t::add_stuff(const edit_ref_t<object_t>& an_object)
    {
       const auto pos = my_modified_objects.find(an_object);
       if (pos == my_modified_objects.end())

@@ -32,7 +32,8 @@ namespace dak::object
 
       // Add an object to the transaction.
       // Automatically done when an object is modified.
-      void add(const edit_ref_t<object_t>& an_object);
+      template <class T>
+      void add(const edit_ref_t<T>& an_object);
 
       // Commit and cancel. Both empty the tracked modified objects.
       void commit(struct timeline_t&);
@@ -41,6 +42,9 @@ namespace dak::object
    private:
       void forget();
 
+      // Internal implementation of adding an object to the transaction.
+      void add_stuff(const edit_ref_t<object_t>& an_object);
+
       // Swaps saved objects with current objects, implements undo/redo.
       static void undo_redo_objects(modified_objects_t& objects);
 
@@ -48,6 +52,16 @@ namespace dak::object
 
       friend struct timeline_t;
    };
+
+   template <class T>
+   void transaction_t::add(const edit_ref_t<T>& an_object)
+   {
+      // TODO: support name_stuff_t and namespace_t.
+      if constexpr (std::is_base_of<object_t, T>())
+      {
+         return add_stuff(an_object);
+      }
+   }
 }
 
 #endif /* DAK_OBJECT_TRANSACTION_H */

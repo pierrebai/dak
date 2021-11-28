@@ -14,6 +14,7 @@ namespace dak::object
 
    struct element_t;
    struct name_t;
+   struct namespace_t;
 
    //////////////////////////////////////////////////////////////////////////
    //
@@ -22,7 +23,10 @@ namespace dak::object
    struct name_stuff_t : private ref_counted_t
    {
    private:
+      // Metadata on the name to allow customizing behaviour based on their presence.
       using metadata_t = std::unordered_set<valid_ref_t<name_stuff_t>>;
+
+      // Optional basename of the name: same name, but different metadata.
       using basename_t = ref_t<name_stuff_t>;
 
       // Make a new name with the given label in the given namespace.
@@ -43,8 +47,6 @@ namespace dak::object
       // Constructor for a derived name of the given name, in the given namespace.
       name_stuff_t(const edit_ref_t<namespace_t>& a_namespace, const valid_ref_t<name_stuff_t>& a_basename);
 
-      // TODO: name metadata.
-
       // Comparison and hash.
       auto operator <=>(const name_stuff_t& other) const;
       uint64_t hash() const;
@@ -53,7 +55,7 @@ namespace dak::object
       text_t my_label;
       valid_ref_t<namespace_t> my_namespace;
       basename_t my_basename;
-      //metadata_t my_metadata;
+      metadata_t my_metadata;
 
       friend struct ref_t<name_stuff_t>;
       friend struct valid_ref_t<name_stuff_t>;

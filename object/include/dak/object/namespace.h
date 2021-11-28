@@ -3,7 +3,7 @@
 #ifndef DAK_OBJECT_NAMESPACE_H
 #define DAK_OBJECT_NAMESPACE_H
 
-#include <dak/object/name.h>
+#include <dak/object/name_stuff.h>
 #include <dak/object/ref.h>
 #include <dak/object/ref_counted.h>
 

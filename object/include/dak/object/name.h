@@ -3,6 +3,7 @@
 #ifndef DAK_OBJECT_NAME_H
 #define DAK_OBJECT_NAME_H
 
+#include <dak/object/name_stuff.h>
 #include <dak/utility/types.h>
 #include <dak/object/ref.h>
 
@@ -12,6 +13,7 @@ namespace dak::object
 
    struct name_stuff_t;
    struct namespace_t;
+   struct transaction_t;
 
    //////////////////////////////////////////////////////////////////////////
    //
@@ -19,6 +21,9 @@ namespace dak::object
 
    struct name_t
    {
+      // Metadata on the name to allow customizing behaviour based on their presence.
+      using metadata_t = name_stuff_t::metadata_t;
+
       // Default constructor for an invalid name.
       name_t() = default;
 
@@ -38,8 +43,20 @@ namespace dak::object
       // Return the label of the name.
       str_ptr_t to_text() const;
 
-      // Retrieve the name namespace.
+      // Retrieves the name namespace.
       const valid_ref_t<namespace_t>& get_namespace() const;
+
+      // Adds metadata to the name.
+      void add_metadata(const name_t& a_metadata, transaction_t& tr);
+
+      // Removes metadata to the name.
+      void remove_metadata(const name_t& a_metadata, transaction_t& tr);
+
+      // Removes metadata to the name.
+      bool has_metadata(const name_t& a_metadata) const;
+
+      // Retrieves all metadata.
+      const metadata_t& get_metadata() const;
 
       // Validity.
       bool is_valid() const { return my_stuff.is_valid(); }

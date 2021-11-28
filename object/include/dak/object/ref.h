@@ -67,20 +67,23 @@ namespace dak::object
    // To create one, call the make() function on the type T.
    // See for example: object_t::make() in object.h.
 
-   template<class T> struct ref_t : ref_base_t
+   template<class T>
+   struct ref_t : ref_base_t
    {
       // Invalid ref constructors.
       ref_t() : ref_base_t() {}
 
       // Copy constructors.
-      ref_t(const ref_t<T>& other) : ref_base_t(other) {}
+      ref_t(const ref_t<T>& other) = default;
+      ref_t(ref_t<T>&& other) = default;
 
       // Copy from similar ref constructors.
       template <class O>
       ref_t(const ref_t<O>& other) : ref_t(static_cast<const O *>(other.my_object)) {}
 
       // Copy from other ref.
-      ref_t<T>& operator =(const ref_t<T>& other) { ref_base_t::operator =(other); return *this; }
+      ref_t<T>& operator =(const ref_t<T>& other) = default;
+      ref_t<T>& operator =(ref_t<T>&& other) = default;
 
       // Copy from similar ref.
       template <class O>
@@ -99,10 +102,12 @@ namespace dak::object
    //
    // A non-null smart reference-counted pointer to a ref_counted_t object.
 
-   template<class T> struct valid_ref_t : ref_t<T>
+   template<class T>
+   struct valid_ref_t : ref_t<T>
    {
       // Copy constructors.
-      valid_ref_t(const valid_ref_t<T>& other) : ref_t<T>(other) {}
+      valid_ref_t(const valid_ref_t<T>& other) = default;
+      valid_ref_t(valid_ref_t<T>&& other) = default;
 
       // Constructors from possibly invalid ref.
       explicit valid_ref_t(const ref_t<T>& other) : ref_t<T>(other) { if (ref_base_t::is_null()) throw std::exception("invalid valid ref"); }
@@ -116,7 +121,8 @@ namespace dak::object
       explicit valid_ref_t(const ref_t<O>& other) : ref_t<T>(other) { if (ref_base_t::is_null()) throw std::exception("invalid valid ref"); }
 
       // Copy from other valid ref.
-      valid_ref_t<T>& operator =(const valid_ref_t<T>& other) { ref_t<T>::operator =(other); return *this; }
+      valid_ref_t<T>& operator =(const valid_ref_t<T>& other) = default;
+      valid_ref_t<T>& operator =(valid_ref_t<T>&& other) = default;
 
       // Copy from possibly invalid ref.
       valid_ref_t<T>& operator =(const ref_t<T>& other) { if (other.is_null()) throw std::exception("invalid valid ref"); ref_t<T>::operator =(other); return *this; }
@@ -153,7 +159,8 @@ namespace dak::object
    template<class T> struct edit_ref_t : valid_ref_t<T>
    {
       // Copy constructors.
-      edit_ref_t(const edit_ref_t<T>& other) : valid_ref_t<T>(other) {}
+      edit_ref_t(const edit_ref_t<T>& other) = default;
+      edit_ref_t(edit_ref_t<T> && other) = default;
 
       // Constructors from valid ref and transaction.
       explicit edit_ref_t(const valid_ref_t<T>& other, transaction_t& trans) : valid_ref_t<T>(other) { trans.add(*this); }
@@ -174,7 +181,8 @@ namespace dak::object
       explicit edit_ref_t(const ref_t<O>& other, transaction_t& trans) : valid_ref_t<T>(other) { trans.add(*this); }
 
       // Copy from edit ref.
-      edit_ref_t<T>& operator =(const edit_ref_t<T>& other) { valid_ref_t<T>::operator =(other); return *this; }
+      edit_ref_t<T>& operator =(const edit_ref_t<T>& other) = default;
+      edit_ref_t<T>& operator =(edit_ref_t<T>&& other) = default;
 
       // Copy from similar edit ref.
       template <class O>
@@ -203,6 +211,33 @@ namespace std
    struct hash<dak::object::ref_base_t>
    {
       size_t operator()(const dak::object::ref_base_t& r) const
+      {
+         return static_cast<size_t>(r.hash());
+      }
+   };
+
+   template <class T>
+   struct hash<dak::object::ref_t<T>>
+   {
+      size_t operator()(const dak::object::ref_t<T>& r) const
+      {
+         return static_cast<size_t>(r.hash());
+      }
+   };
+
+   template <class T>
+   struct hash<dak::object::valid_ref_t<T>>
+   {
+      size_t operator()(const dak::object::valid_ref_t<T>& r) const
+      {
+         return static_cast<size_t>(r.hash());
+      }
+   };
+
+   template <class T>
+   struct hash<dak::object::edit_ref_t<T>>
+   {
+      size_t operator()(const dak::object::edit_ref_t<T>& r) const
       {
          return static_cast<size_t>(r.hash());
       }

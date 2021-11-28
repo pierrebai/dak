@@ -1,4 +1,5 @@
 #include "dak/object/name.h"
+#include "dak/object/transaction.h"
 #include "dak/object/name_stuff.h"
 
 namespace dak::object
@@ -31,7 +32,7 @@ namespace dak::object
 
    //////////////////////////////////////////////////////////////////////////
    //
-   // Name data access.
+   // Name text conversion.
 
    str_ptr_t name_t::to_text() const
    {
@@ -39,6 +40,10 @@ namespace dak::object
          ? valid_ref_t<name_stuff_t>(my_stuff)->my_label.c_str()
          : L"";
    }
+
+   //////////////////////////////////////////////////////////////////////////
+   //
+   // Name namespace.
 
    namespace
    {
@@ -52,8 +57,72 @@ namespace dak::object
    // Retrieve the name namespace.
    const valid_ref_t<namespace_t>& name_t::get_namespace() const
    {
-      return my_stuff.is_valid()
-         ? valid_ref_t<name_stuff_t>(my_stuff)->my_namespace
-         : get_invalid_namespace();
+      if (my_stuff.is_valid())
+         return valid_ref_t<name_stuff_t>(my_stuff)->my_namespace;
+      else
+         return get_invalid_namespace();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   //
+   // Name metadata.
+
+   // Adds metadata to the name.
+   void name_t::add_metadata(const name_t& a_metadata, transaction_t& tr)
+   {
+      if (!is_valid())
+         return;
+
+      if (!a_metadata.is_valid())
+         return;
+
+      valid_ref_t<name_stuff_t> valid_mt(a_metadata.my_stuff);
+      edit_ref_t<name_stuff_t> edit_my_stuff(my_stuff, tr);
+      edit_my_stuff->my_metadata.insert(valid_mt);
+   }
+
+   // Removes metadata to the name.
+   void name_t::remove_metadata(const name_t& a_metadata, transaction_t& tr)
+   {
+      if (!is_valid())
+         return;
+
+      if (!a_metadata.is_valid())
+         return;
+
+      valid_ref_t<name_stuff_t> valid_mt(a_metadata.my_stuff);
+      edit_ref_t<name_stuff_t> edit_my_stuff(my_stuff, tr);
+      edit_my_stuff->my_metadata.erase(valid_mt);
+   }
+
+   // Removes metadata to the name.
+   bool name_t::has_metadata(const name_t& a_metadata) const
+   {
+      if (!is_valid())
+         return false;
+
+      if (!a_metadata.is_valid())
+         return false;
+
+      valid_ref_t<name_stuff_t> valid_mt(a_metadata.my_stuff);
+      return valid_ref_t<name_stuff_t>(my_stuff)->my_metadata.contains(valid_mt);
+   }
+
+   namespace
+   {
+      const name_t::metadata_t& get_invalid_metadata()
+      {
+         static name_t::metadata_t invalid_metadata;
+         return invalid_metadata;
+      }
+   }
+
+   // Retrieves all metadata.
+   const name_t::metadata_t& name_t::get_metadata() const
+   {
+      if (my_stuff.is_valid())
+         return valid_ref_t<name_stuff_t>(my_stuff)->my_metadata;
+      else
+         return get_invalid_metadata();
    }
 }
