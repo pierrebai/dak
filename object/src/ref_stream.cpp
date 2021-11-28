@@ -7,7 +7,7 @@ namespace dak::object
 {
    //////////////////////////////////////////////////////////////////////////
    //
-   // Output stream wrapper to output object into a stream.
+   // Output stream wrapper data.
 
    int64_t ref_ostream_t::get_object_id(const ref_t<object_t>& object) const
    {
@@ -29,9 +29,34 @@ namespace dak::object
       my_object_ids.clear();
    }
 
+   //////////////////////////////////////////////////////////////////////////
+   //
+   // Output stream printing.
+
+   const ref_ostream_t& ref_ostream_t::print(const namespace_t& ns) const
+   {
+      auto& ostr = get_stream();
+
+      namespace_t::parent_t parent = ns.get_parent();
+      if (parent.is_valid())
+         print(*valid_ref_t(parent));
+
+      ostr << L" : " << std::quoted(ns.to_text());
+
+      return *this;
+   }
+
    const ref_ostream_t& ref_ostream_t::print(const name_t& n) const
    {
-      get_stream() << L"/" << std::quoted(n.to_text());
+      if (n.is_valid())
+      {
+         const namespace_t& ns = *n.get_namespace();
+         *this << ns << L" / " << std::quoted(n.to_text());
+      }
+      else
+      {
+         get_stream() << L"?";
+      }
       return *this;
    }
 
@@ -91,11 +116,11 @@ namespace dak::object
 
    //////////////////////////////////////////////////////////////////////////
    //
-   // Input stream wrapper to input object into a stream.
+   // Input stream sigil parsers.
 
    namespace
    {
-      bool parse_sigil(std::wistream& istr, const wchar_t expected_sigil)
+      bool parse_optional_sigil(std::wistream& istr, const wchar_t expected_sigil)
       {
          wchar_t sigil = 0;
          istr >> std::ws >> sigil;
@@ -103,6 +128,14 @@ namespace dak::object
             return true;
 
          istr.putback(sigil);
+         return false;
+      }
+
+      bool parse_sigil(std::wistream& istr, const wchar_t expected_sigil)
+      {
+         if (parse_optional_sigil(istr, expected_sigil))
+            return true;
+
          istr.setstate(std::ios::failbit);
          return false;
       }
@@ -130,6 +163,29 @@ namespace dak::object
       }
    }
 
+   //////////////////////////////////////////////////////////////////////////
+   //
+   // Input stream constructors.
+
+   ref_istream_t::ref_istream_t(std::wistream& s, namespaces_t known_ns)
+      : my_stream(s)
+      , my_top_namespace()
+   {
+      for (const auto& ns : known_ns)
+         my_top_namespace.add_namespace(ns);
+   }
+
+   ref_istream_t::ref_istream_t(std::wistream& s, const valid_ref_t<namespace_t>& known_ns)
+      : my_stream(s)
+      , my_top_namespace()
+   {
+      my_top_namespace.add_namespace(known_ns);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   //
+   // Input stream data.
+
    void ref_istream_t::add_object_with_id(const valid_ref_t<object_t>& obj, int64_t id) const
    {
       my_object_with_ids[std::abs(id)] = obj;
@@ -150,16 +206,40 @@ namespace dak::object
       get_stream().clear();
    }
 
+   //////////////////////////////////////////////////////////////////////////
+   //
+   // Input stream parsing.
+
    const ref_istream_t& ref_istream_t::parse(name_t& n) const
    {
       auto& istr = get_stream();
+
+      // Try parsing as an invalid name, return immediately if invalid.
+      if (parse_optional_sigil(istr, L'?'))
+         return *this;
+
+      const namespace_t* current_ns = &my_top_namespace;
+      while (parse_optional_sigil(istr, L':'))
+      {
+         text_t text;
+         istr >> std::quoted(text);
+         ref_t<namespace_t> sub_ns = current_ns->find_namespace(text);
+         if (sub_ns.is_null())
+         {
+            istr.setstate(std::ios::failbit);
+            return *this;
+         }
+
+         valid_ref_t<namespace_t> valid_sub_ns(sub_ns);
+         current_ns = valid_sub_ns;
+      }
 
       if (!parse_sigil(istr, L'/'))
          return *this;
 
       text_t text;
       istr >> std::quoted(text);
-      n = my_namespace->find_name(text);
+      n = current_ns->find_name(text);
       return *this;
    }
 
@@ -280,78 +360,78 @@ namespace dak::object
 
       switch (type_sigil)
       {
-         case L'u':
+      case L'u':
+      {
+         e.reset();
+         break;
+      }
+      case L'b':
+      {
+         bool b;
+         istr >> b;
+         e = b;
+         break;
+      }
+      case L'i':
+      {
+         int64_t i;
+         istr >> i;
+         e = i;
+         break;
+      }
+      case L'r':
+      {
+         ref_t<object_t> r;
+         *this >> r;
+         if (r.is_valid())
          {
-            e.reset();
-            break;
+            e = valid_ref_t<object_t>(r);
          }
-         case L'b':
+         else
          {
-            bool b;
-            istr >> b;
-            e = b;
-            break;
-         }
-         case L'i':
-         {
-            int64_t i;
-            istr >> i;
-            e = i;
-            break;
-         }
-         case L'r':
-         {
-            ref_t<object_t> r;
-            *this >> r;
-            if (r.is_valid())
-            {
-               e = valid_ref_t<object_t>(r);
-            }
-            else
-            {
-               istr.setstate(std::ios::failbit);
-               e.reset();
-            }
-            break;
-         }
-         case L'n':
-         {
-            name_t n;
-            *this >> n;
-            e = n;
-            break;
-         }
-         case L'f':
-         {
-            double f;
-            istr >> f;
-            e = f;
-            break;
-         }
-         case L'a':
-         {
-            array_t a;
-            *this >> a;
-            e = a;
-            break;
-         }
-         case L'd':
-         {
-            dict_t d;
-            *this >> d;
-            e = d;
-            break;
-         }
-         case L't':
-         {
-            text_t t;
-            istr >> std::quoted(t);
-            e = t;
-            break;
-         }
-         default:
             istr.setstate(std::ios::failbit);
-            break;
+            e.reset();
+         }
+         break;
+      }
+      case L'n':
+      {
+         name_t n;
+         *this >> n;
+         e = n;
+         break;
+      }
+      case L'f':
+      {
+         double f;
+         istr >> f;
+         e = f;
+         break;
+      }
+      case L'a':
+      {
+         array_t a;
+         *this >> a;
+         e = a;
+         break;
+      }
+      case L'd':
+      {
+         dict_t d;
+         *this >> d;
+         e = d;
+         break;
+      }
+      case L't':
+      {
+         text_t t;
+         istr >> std::quoted(t);
+         e = t;
+         break;
+      }
+      default:
+         istr.setstate(std::ios::failbit);
+         break;
       }
 
       return *this;

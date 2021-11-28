@@ -5,26 +5,9 @@
 
 namespace dak::object
 {
-   namespace
-   {
-      str_ptr_t intern(const text_t& a_label)
-      {
-         static std::unordered_set<text_t> known_names;
-         static std::mutex mutex;
-
-         std::lock_guard lock(mutex);
-         const auto iter = known_names.find(a_label);
-         if (iter != known_names.end())
-            return iter->c_str();
-
-         auto iter_and_result = known_names.insert(a_label);
-         return iter_and_result.first->c_str();
-      }
-   }
-
    //////////////////////////////////////////////////////////////////////////
    //
-   // Makers and constructors.
+   // Makers.
 
    // Make a root ref-counted instance.
    edit_ref_t<namespace_t> namespace_t::make()
@@ -38,28 +21,46 @@ namespace dak::object
       return edit_ref_t<namespace_t>(new namespace_t(other));
    }
 
-   edit_ref_t<namespace_t> namespace_t::make(valid_ref_t<namespace_t>& other)
+   edit_ref_t<namespace_t> namespace_t::make(const valid_ref_t<namespace_t>& other)
    {
       return edit_ref_t<namespace_t>(new namespace_t(other));
    }
 
    // Make a child ref-counted instance.
-   edit_ref_t<namespace_t> namespace_t::make(str_ptr_t a_label, const parent_t& a_parent)
+   edit_ref_t<namespace_t> namespace_t::make(str_ptr_t a_label, const edit_ref_t<namespace_t>& a_parent)
    {
       return a_label ? make(text_t(a_label), a_parent) : make();
    }
 
-   edit_ref_t<namespace_t> namespace_t::make(const text_t& a_label, const parent_t& a_parent)
+   edit_ref_t<namespace_t> namespace_t::make(const text_t& a_label, const edit_ref_t<namespace_t>& a_parent)
    {
       auto new_ns = edit_ref_t<namespace_t>(new namespace_t);
+      new_ns->my_label = a_label;
+      new_ns->my_parent = a_parent;
       if (a_label.size() > 0)
-         a_parent->my_children.insert(std::pair(a_label, valid_ref_t<namespace_t>(new_ns)));
+         a_parent->add_namespace(new_ns);
       return new_ns;
    }
 
    //////////////////////////////////////////////////////////////////////////
    //
+   // Clear.
+
+   void namespace_t::clear()
+   {
+      my_children.clear();
+      my_names.clear();
+      my_parent = ref_t<namespace_t>();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   //
    // Children namespace.
+
+   void namespace_t::add_namespace(const valid_ref_t<namespace_t>& ns)
+   {
+      my_children.insert(std::pair(ns->to_text(), ns));
+   }
 
    ref_t<namespace_t> namespace_t::find_namespace(str_ptr_t a_label) const
    {

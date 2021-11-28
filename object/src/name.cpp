@@ -3,6 +3,10 @@
 
 namespace dak::object
 {
+   //////////////////////////////////////////////////////////////////////////
+   //
+   // Constructors.
+
    name_t::name_t(const edit_ref_t<namespace_t>& a_namespace, str_ptr_t a_label)
       : my_stuff(name_stuff_t::make(a_namespace, a_label))
    {
@@ -25,11 +29,31 @@ namespace dak::object
    {
    }
 
+   //////////////////////////////////////////////////////////////////////////
+   //
+   // Name data access.
+
    str_ptr_t name_t::to_text() const
    {
       return my_stuff.is_valid()
-         ? valid_ref_t<name_stuff_t>(my_stuff)->my_label->first.c_str()
+         ? valid_ref_t<name_stuff_t>(my_stuff)->my_label.c_str()
          : L"";
    }
 
+   namespace
+   {
+      const valid_ref_t<namespace_t>& get_invalid_namespace()
+      {
+         static valid_ref_t<namespace_t> invalid_ns = namespace_t::make();
+         return invalid_ns;
+      }
+   }
+
+   // Retrieve the name namespace.
+   const valid_ref_t<namespace_t>& name_t::get_namespace() const
+   {
+      return my_stuff.is_valid()
+         ? valid_ref_t<name_stuff_t>(my_stuff)->my_namespace
+         : get_invalid_namespace();
+   }
 }

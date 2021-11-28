@@ -38,6 +38,7 @@ namespace dak::object
       const ref_ostream_t& print(const dict_t& d) const;
       const ref_ostream_t& print(const object_t& o) const;
       const ref_ostream_t& print(const name_t& n) const;
+      const ref_ostream_t& print(const namespace_t& ns) const;
 
       // Retrieve the reference id of an object.
       int64_t get_object_id(const ref_t<object_t>& object) const;
@@ -74,6 +75,10 @@ namespace dak::object
       {
          return rstr.print(value);
       }
+      else if constexpr (std::is_base_of<namespace_t, T>())
+      {
+         return rstr.print(value);
+      }
       else if constexpr (std::is_base_of<ref_t<object_t>, T>())
       {
          return rstr.print(value);
@@ -104,14 +109,15 @@ namespace dak::object
 
    struct ref_istream_t
    {
+      // The known namespace that can be searched for names.
+      using namespaces_t = std::vector<valid_ref_t<namespace_t>>;
+
       // Wrap an input stream to handle object refs.
-      ref_istream_t(std::wistream& s, const valid_ref_t<namespace_t>& ns) : my_stream(s), my_namespace(ns) {}
+      ref_istream_t(std::wistream& s, namespaces_t known_ns);
+      ref_istream_t(std::wistream& s, const valid_ref_t<namespace_t>& known_ns);
 
       // Get the underlying stream.
       std::wistream& get_stream() const { return my_stream; }
-
-      // Get the underlying namespace.
-      const valid_ref_t<namespace_t>& get_namespace() const { return my_namespace; }
 
       // Parse an object through its reference.
       //
@@ -140,7 +146,7 @@ namespace dak::object
       mutable std::map<int64_t, ref_t<object_t>> my_object_with_ids;
 
       std::wistream& my_stream;
-      valid_ref_t<namespace_t> my_namespace;
+      namespace_t    my_top_namespace;
    };
 
 

@@ -35,8 +35,11 @@ namespace dak::object
       // Destructor.
       ~name_t() = default;
 
-      // Return the text of the name.
+      // Return the label of the name.
       str_ptr_t to_text() const;
+
+      // Retrieve the name namespace.
+      const valid_ref_t<namespace_t>& get_namespace() const;
 
       // Validity.
       bool is_valid() const { return my_stuff.is_valid(); }

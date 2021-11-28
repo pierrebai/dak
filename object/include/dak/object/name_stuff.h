@@ -50,8 +50,8 @@ namespace dak::object
       uint64_t hash() const;
 
    private:
+      text_t my_label;
       valid_ref_t<namespace_t> my_namespace;
-      namespace_t::names_t::const_iterator my_label;
       basename_t my_basename;
       //metadata_t my_metadata;
 
