@@ -21,6 +21,7 @@ namespace dak::utility
 
       // Remove non-essential data that can be recreated.
       // Called during commit to put the data to sleep.
+      // Can be empty if there is no data to put to sleep.
       std::function<void(std::any&)> deaden;
 
       // Recreate the non-essential data and emplace the data in the application.
@@ -38,7 +39,7 @@ namespace dak::utility
    // ***  You cannot undo if the stack is empty, so don't forget  ***
    // ***  that initial commit!                                    ***
    //
-   // Call commit with a transaction filled with the new data in order
+   // Call commit with a undo_data_t filled with the new data in order
    // to commit that data to the undo stack.
    //
    // The undo function awakens the data that was saved before
@@ -50,10 +51,8 @@ namespace dak::utility
    class undo_stack_t
    {
    public:
-      // The transaction data type and list of all undo transactions.
-      typedef undo_data_t simple_transaction_t;
-      typedef std::vector<undo_data_t> transaction_t;
-      typedef std::vector<transaction_t> transactions_t;
+      // The list of all undo transactions.
+      typedef std::vector<undo_data_t> transactions_t;
 
       // The function called when the undo stack changed (clear, commit, undo or redo called).
       std::function<void(undo_stack_t&)> changed;
@@ -66,8 +65,7 @@ namespace dak::utility
 
       // Commit the given modified data to the undo stack.
       // Deaden the transaction data.
-      void commit(const transaction_t& a_tr);
-      void simple_commit(const simple_transaction_t& tr);
+      void commit(const undo_data_t& a_tr);
 
       // Undo awakens the previous transaction data. (The one before the last commit.)
       // Does nothing if at the start of the undo stack.

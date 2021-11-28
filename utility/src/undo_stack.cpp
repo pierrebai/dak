@@ -35,22 +35,22 @@ namespace dak::utility
    // Deaden the current my_top_transaction transaction data.
    void undo_stack_t::deaden_top()
    {
-      for (auto& data : *my_top_transaction)
-         if (data.deaden)
-            data.deaden(data.data);
+      auto& data = *my_top_transaction;
+      if (data.deaden)
+         data.deaden(data.data);
    }
 
    // Awaken the current my_top_transaction transaction data.
    void undo_stack_t::awaken_top() const
    {
-      for (const auto& data : *my_top_transaction)
-         if (data.awaken)
-            data.awaken(data.data);
+      const auto& data = *my_top_transaction;
+      if (data.awaken)
+         data.awaken(data.data);
    }
 
    // Commit the given modified data to the undo stack.
    // Deaden the transaction data.
-   void undo_stack_t::commit(const transaction_t& a_tr)
+   void undo_stack_t::commit(const undo_data_t& a_tr)
    {
       // Refuse to commit during undo/redo/commit.
       if (my_is_undoing)
@@ -68,11 +68,6 @@ namespace dak::utility
 
       if (changed)
          changed(*this);
-   }
-
-   void undo_stack_t::simple_commit(const simple_transaction_t& tr)
-   {
-      commit({ tr });
    }
 
    // Undo awakens the previous transaction data. (The one before the last commit.)

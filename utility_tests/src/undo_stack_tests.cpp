@@ -39,17 +39,15 @@ namespace dak::utility::tests
          {
             undo.commit(
             {
+               my_data,
+               [&](std::any& d)
                {
-                  my_data,
-                  [&](std::any& d)
-                  {
-                     std::any_cast<data&>(d).a_squared = 0.;
-                  },
-                  [&my_data=my_data](const std::any& d)
-                  {
-                     my_data = std::any_cast<const data&>(d);
-                     my_data.a_squared = my_data.a * my_data.a;
-                  }
+                  std::any_cast<data&>(d).a_squared = 0.;
+               },
+               [&my_data=my_data](const std::any& d)
+               {
+                  my_data = std::any_cast<const data&>(d);
+                  my_data.a_squared = my_data.a * my_data.a;
                }
             });
          };
@@ -63,9 +61,8 @@ namespace dak::utility::tests
          Assert::AreEqual(49., my_data.a_squared);
 
          Assert::AreEqual<size_t>(1, undo.contents().size());
-         Assert::AreEqual<size_t>(1, undo.contents().back().size());
-         Assert::AreEqual(7., std::any_cast<const data&>(undo.contents().back().back().data).a);
-         Assert::AreEqual(0., std::any_cast<const data&>(undo.contents().back().back().data).a_squared);
+         Assert::AreEqual(7., std::any_cast<const data&>(undo.contents().back().data).a);
+         Assert::AreEqual(0., std::any_cast<const data&>(undo.contents().back().data).a_squared);
 
          my_data = data(9.);
 
@@ -78,8 +75,8 @@ namespace dak::utility::tests
          Assert::AreEqual(81., my_data.a_squared);
 
          Assert::AreEqual<size_t>(2, undo.contents().size());
-         Assert::AreEqual(9., std::any_cast<const data&>(undo.contents().back().back().data).a);
-         Assert::AreEqual(0., std::any_cast<const data&>(undo.contents().back().back().data).a_squared);
+         Assert::AreEqual(9., std::any_cast<const data&>(undo.contents().back().data).a);
+         Assert::AreEqual(0., std::any_cast<const data&>(undo.contents().back().data).a_squared);
 
          undo.undo();
 
