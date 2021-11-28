@@ -12,22 +12,20 @@ namespace dak::object
    //static
    void transaction_t::undo_redo_objects(modified_objects_t& objects)
    {
-      transaction_t undo_transaction;
-      for (auto& [dest, saved] : objects)
+      for (auto& [dest, item] : objects)
       {
-         object_t& mod_dest = dest->modify(undo_transaction);
-         mod_dest.swap(saved);
+         item.undo_redo();
       }
-      undo_transaction.forget();
    }
 
-   void transaction_t::add_stuff(const edit_ref_t<object_t>& an_object)
+   bool transaction_t::has(const ref_counted_t* an_object)
    {
-      const auto pos = my_modified_objects.find(an_object);
-      if (pos == my_modified_objects.end())
-      {
-         my_modified_objects.insert(std::pair(an_object, object_t(*an_object)));
-      }
+      return my_modified_objects.find(an_object) != my_modified_objects.end();
+   }
+
+   void transaction_t::add_stuff(const ref_counted_t* an_object, transaction_item_t&& item)
+   {
+      my_modified_objects.insert(std::pair(an_object, std::move(item)));
    }
 
    void transaction_t::forget()

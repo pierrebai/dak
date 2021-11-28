@@ -45,13 +45,21 @@ namespace dak::object
 
    //////////////////////////////////////////////////////////////////////////
    //
-   // Clear.
+   // Clear and swap.
 
    void namespace_t::clear()
    {
       my_children.clear();
       my_names.clear();
       my_parent = ref_t<namespace_t>();
+   }
+
+   void namespace_t::swap(namespace_t& other)
+   {
+      my_label.swap(other.my_label);
+      my_parent.swap(other.my_parent);
+      my_children.swap(other.my_children);
+      my_names.swap(other.my_names);
    }
 
    //////////////////////////////////////////////////////////////////////////

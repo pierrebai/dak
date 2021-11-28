@@ -28,6 +28,9 @@ namespace dak::object
       // Verifies if the reference is null, or invalid.
       bool is_null() const { return my_object == 0; }
 
+      // Swap with another reference.
+      void swap(ref_base_t& other) { std::swap(my_object, other.my_object); }
+
       // Comparison and hashing.
       auto operator<=>(const ref_base_t&) const = default;
       uint64_t hash() const { return reinterpret_cast<uint64_t>(my_object); }

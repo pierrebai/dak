@@ -82,6 +82,7 @@ namespace dak::object
       friend struct valid_ref_t<object_t>;
       friend struct edit_ref_t<object_t>;
       friend struct element_t;
+      friend struct transaction_t;
    };
 }
 

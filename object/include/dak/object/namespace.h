@@ -56,6 +56,9 @@ namespace dak::object
 
       // Remove all names and child namespaces from this namespace.
       void clear();
+
+      // Swap with another namespace.
+      void swap(namespace_t& other);
       
       // Retrieves the namespace label.
       const text_t& to_text() const { return my_label; }
@@ -93,6 +96,7 @@ namespace dak::object
       friend struct valid_ref_t<namespace_t>;
       friend struct edit_ref_t<namespace_t>;
       friend struct name_stuff_t;
+      friend struct transaction_t;
    };
 
 }

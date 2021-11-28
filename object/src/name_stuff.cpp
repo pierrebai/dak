@@ -2,6 +2,10 @@
 
 namespace dak::object
 {
+   //////////////////////////////////////////////////////////////////////////
+   //
+   // Name stuff constructors.
+
    name_stuff_t::name_stuff_t(const edit_ref_t<namespace_t>& a_namespace, const text_t& a_label)
       : my_label(a_label)
       , my_namespace(a_namespace)
@@ -42,6 +46,21 @@ namespace dak::object
    {
       return edit_ref_t<name_stuff_t>(new name_stuff_t(a_namespace, a_basename));
    }
+
+   //////////////////////////////////////////////////////////////////////////
+   //
+   // Swap with another name stuff.
+   void name_stuff_t::swap(name_stuff_t& other)
+   {
+      my_label.swap(other.my_label);
+      my_namespace.swap(other.my_namespace);
+      my_basename.swap(other.my_basename);
+      my_metadata.swap(other.my_metadata);
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   //
+   // Comparison and hash.
 
    auto name_stuff_t::operator <=>(const name_stuff_t& other) const
    {

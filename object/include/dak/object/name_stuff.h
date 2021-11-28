@@ -18,11 +18,10 @@ namespace dak::object
 
    //////////////////////////////////////////////////////////////////////////
    //
-   // Name internal guts. Internal information about a single name.
+   // Name internal stuff. Internal information about a single name.
 
    struct name_stuff_t : private ref_counted_t
    {
-   private:
       // Metadata on the name to allow customizing behaviour based on their presence.
       using metadata_t = std::unordered_set<valid_ref_t<name_stuff_t>>;
 
@@ -47,6 +46,12 @@ namespace dak::object
       // Constructor for a derived name of the given name, in the given namespace.
       name_stuff_t(const edit_ref_t<namespace_t>& a_namespace, const valid_ref_t<name_stuff_t>& a_basename);
 
+      // Copy constructor.
+      name_stuff_t(const name_stuff_t& other) = default;
+
+      // Swap with another name stuff.
+      void swap(name_stuff_t& other);
+
       // Comparison and hash.
       auto operator <=>(const name_stuff_t& other) const;
       uint64_t hash() const;
@@ -62,6 +67,7 @@ namespace dak::object
       friend struct edit_ref_t<name_stuff_t>;
       friend struct name_t;
       friend struct element_t;
+      friend struct transaction_t;
    };
 }
 
