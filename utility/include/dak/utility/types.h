@@ -5,6 +5,7 @@
 
 #include <cstdint>
 #include <string>
+#include <any>
 
 namespace dak::utility
 {
@@ -23,6 +24,7 @@ namespace dak::utility
    typedef std::wstring    text_t;
    typedef const wchar_t*  str_ptr_t;
    typedef int64_t         index_t;
+   typedef std::any        any_t;
 
 }
 
@@ -38,7 +40,8 @@ namespace dak::utility
    using dak::utility::uint64_t;    \
    using dak::utility::text_t;      \
    using dak::utility::str_ptr_t;   \
-   using dak::utility::index_t
+   using dak::utility::index_t;     \
+   using dak::utility::any_t
 
 
 #endif /* DAK_UTILITY_TYPES_H */

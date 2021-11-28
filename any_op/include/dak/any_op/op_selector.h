@@ -28,8 +28,8 @@ namespace dak::any_op
       // This is how the type A is converted to std::type_index.
       using type_index = std::type_index;
 
-      // This is how the type A is converted to std::any.
-      using any = std::any;
+      // This is how the type A is converted to any_t.
+      using any = any_t;
    };
 
    //////////////////////////////////////////////////////////////////////////
@@ -59,14 +59,14 @@ namespace dak::any_op
          }
 
          // Make a selector using the provided type index of the arguments.
-         // This is used to create a selector from std::any in op_t::call::op.
+         // This is used to create a selector from any_t in op_t::call::op.
          static selector_t make_any(const typename type_converter_t<N_ARY>::any&... args)
          {
             return selector_t(std::type_index(typeid(EXTRA_SELECTORS))..., std::type_index(args.type())...);
          }
 
          // Make a selector using the provided type index of the arguments plus of the extra selectors.
-         // This is used to create a selector from std::any in op_t::call_any::op.
+         // This is used to create a selector from any_t in op_t::call_any::op.
          static selector_t make_extra_any(const typename type_converter_t<EXTRA_SELECTORS>::type_index&... selectors, const typename type_converter_t<N_ARY>::any&... args)
          {
             return selector_t(selectors..., std::type_index(args.type())...);

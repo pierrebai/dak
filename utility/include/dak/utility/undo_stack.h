@@ -3,12 +3,15 @@
 #ifndef DAK_UTILITY_UNDO_STACK_H
 #define DAK_UTILITY_UNDO_STACK_H
 
-#include <any>
+#include <dak/utility/types.h>
+
 #include <vector>
 #include <functional>
 
 namespace dak::utility
 {
+   USING_DAK_UTILITY_TYPES;
+
    ////////////////////////////////////////////////////////////////////////////
    //
    // Data kept in an undo transaction.
@@ -17,16 +20,16 @@ namespace dak::utility
    {
    public:
       // The actual data kept in the undo stack for the application.
-      std::any data;
+      any_t data;
 
       // Remove non-essential data that can be recreated.
       // Called during commit to put the data to sleep.
       // Can be empty if there is no data to put to sleep.
-      std::function<void(std::any&)> deaden;
+      std::function<void(any_t&)> deaden;
 
       // Recreate the non-essential data and emplace the data in the application.
       // Called during undo or redo to awaken the data.
-      std::function<void(const std::any&)> awaken;
+      std::function<void(const any_t&)> awaken;
    };
 
    ////////////////////////////////////////////////////////////////////////////

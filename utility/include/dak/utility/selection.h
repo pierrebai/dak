@@ -16,16 +16,16 @@ namespace dak::utility
    {
    public:
       // The data kept in the selection.
-      std::vector<std::any> data;
+      std::vector<any_t> data;
 
       // Create an empty selection.
       selection_t() { }
 
       // Create a selection with data.
-      selection_t(const std::any& d) { data.emplace_back(d); }
+      selection_t(const any_t& d) { data.emplace_back(d); }
 
       // Add to the selection.
-      void add(const std::any& d) { data.emplace_back(d); }
+      void add(const any_t& d) { data.emplace_back(d); }
 
       // Verify if there is anything to undo.
       bool has_selection() const { return !data.empty(); }

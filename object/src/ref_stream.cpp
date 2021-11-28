@@ -1,6 +1,8 @@
 #include "dak/object/ref_stream.h"
 #include "dak/object/transaction.h"
 
+#include <dak/any_op/stream_op.h>
+
 #include <iomanip>
 
 namespace dak::object
@@ -87,6 +89,13 @@ namespace dak::object
       return *this;
    }
 
+   const ref_ostream_t& ref_ostream_t::print(const any_t& d) const
+   {
+      // TODO: not writing the actual type makes it impossible to read this back.
+      dak::any_op::stream(get_stream(), d);
+      return *this;
+   }
+
    const ref_ostream_t& ref_ostream_t::print(const object_t& o) const
    {
       *this << L"{\n";
@@ -100,16 +109,17 @@ namespace dak::object
    {
       switch (e.type())
       {
-      case datatype_t::unknown:  return *this << L"u unknown";
-      case datatype_t::boolean:  return *this << L"b " << (bool)e;
-      case datatype_t::integer:  return *this << L"i " << (int64_t)e;
-      case datatype_t::ref:      return *this << L"r " << (const ref_t<object_t> &) e;
-      case datatype_t::name:     return *this << L"n " << (const name_t&)e;
-      case datatype_t::real:     return *this << L"f " << (double)e;
-      case datatype_t::array:    return *this << L"a " << (const array_t&)e;
-      case datatype_t::dict:     return *this << L"d " << (const dict_t&)e;
-      case datatype_t::text:     return *this << L"t " << std::quoted((str_ptr_t)e);
-      default:                   return *this;
+         case datatype_t::unknown:  return *this << L"u unknown";
+         case datatype_t::boolean:  return *this << L"b " << (bool)e;
+         case datatype_t::integer:  return *this << L"i " << (int64_t)e;
+         case datatype_t::ref:      return *this << L"r " << (const ref_t<object_t> &) e;
+         case datatype_t::name:     return *this << L"n " << (const name_t&)e;
+         case datatype_t::real:     return *this << L"f " << (double)e;
+         case datatype_t::array:    return *this << L"a " << (const array_t&)e;
+         case datatype_t::dict:     return *this << L"d " << (const dict_t&)e;
+         case datatype_t::data:     return *this << L"y " << (const any_t&)e;
+         case datatype_t::text:     return *this << L"t " << std::quoted((str_ptr_t)e);
+         default:                   return *this;
       }
    }
 
@@ -351,6 +361,14 @@ namespace dak::object
       return *this;
    }
 
+   const ref_istream_t& ref_istream_t::parse(any_t& d) const
+   {
+      // TODO: not knowing in advance the actual type makes it impossible to read this back.
+      dak::any_op::stream(get_stream(), d);
+
+      return *this;
+   }
+
    const ref_istream_t& ref_istream_t::parse(element_t& e) const
    {
       auto& istr = get_stream();
@@ -418,6 +436,13 @@ namespace dak::object
       case L'd':
       {
          dict_t d;
+         *this >> d;
+         e = d;
+         break;
+      }
+      case L'y':
+      {
+         any_t d;
          *this >> d;
          e = d;
          break;

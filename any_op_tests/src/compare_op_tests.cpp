@@ -13,22 +13,22 @@ namespace dak::any_op::tests
 	public:
       TEST_METHOD(compare_equal_test)
       {
-         const std::any e_u;
-         const std::any e_t1(text_t(L"text_t"));
-         const std::any e_t2(L"strptr");
-         const std::any e_c1('c');
-         const std::any e_c2(L'w');
-         const std::any e_b(true);
-         const std::any e_i2((int16_t)2);
-         const std::any e_i1((int32_t)1);
-         const std::any e_i3((int64_t)3);
-         const std::any e_u1((uint16_t)4u);
-         const std::any e_u2((uint32_t)5u);
-         const std::any e_u3((uint64_t)6u);
-         const std::any e_r1(7.0f);
-         const std::any e_r2(8.0);
+         const any_t e_u;
+         const any_t e_t1(text_t(L"text_t"));
+         const any_t e_t2(L"strptr");
+         const any_t e_c1('c');
+         const any_t e_c2(L'w');
+         const any_t e_b(true);
+         const any_t e_i2((int16_t)2);
+         const any_t e_i1((int32_t)1);
+         const any_t e_i3((int64_t)3);
+         const any_t e_u1((uint16_t)4u);
+         const any_t e_u2((uint32_t)5u);
+         const any_t e_u3((uint64_t)6u);
+         const any_t e_r1(7.0f);
+         const any_t e_r2(8.0);
 
-         Assert::AreEqual(compare(std::any(), e_u), comparison_t::equal);
+         Assert::AreEqual(compare(any_t(), e_u), comparison_t::equal);
          Assert::AreEqual(compare(text_t(L"text_t"), e_t1), comparison_t::equal);
          Assert::AreEqual(compare(L"strptr", e_t2), comparison_t::equal);
          Assert::AreEqual(compare('c', e_c1), comparison_t::equal);

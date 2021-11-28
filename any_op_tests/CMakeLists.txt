@@ -16,6 +16,8 @@ target_link_libraries(any_op_tests PUBLIC
    any_op
 )
 
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set_property(TARGET any_op_tests PROPERTY CXX_STANDARD 20)
 
 target_include_directories(any_op_tests PUBLIC

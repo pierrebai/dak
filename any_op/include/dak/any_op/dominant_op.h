@@ -28,9 +28,9 @@ namespace dak::any_op
    };
 
    template<class OTHER>
-   inline std::any dominant(const std::any& arg_a)
+   inline any_t dominant(const any_t& arg_a)
    {
-      const std::any result = dominant_op_t::call_any<OTHER>::op(arg_a);
+      const any_t result = dominant_op_t::call_any<OTHER>::op(arg_a);
       if (result.has_value())
          return result;
       else
@@ -38,9 +38,9 @@ namespace dak::any_op
    }
 
    template<class OTHER, class FROM>
-   inline std::any dominant(const FROM& arg_a)
+   inline any_t dominant(const FROM& arg_a)
    {
-      const std::any result = dominant_op_t::call<OTHER>::op(arg_a);
+      const any_t result = dominant_op_t::call<OTHER>::op(arg_a);
       if (result.has_value())
          return result;
       else

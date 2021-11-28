@@ -8,7 +8,8 @@ add_library(any_op
    include/dak/any_op/op.h
    include/dak/any_op/op_selector.h           src/register_ops.cpp
    include/dak/any_op/size_op.h               src/size_op.cpp
-   include/dak/any_op/stream_op.h             src/stream_op.cpp
+   include/dak/any_op/stream_op.h             src/ostream_op.cpp
+                                              src/istream_op.cpp
    include/dak/any_op/to_text_op.h            src/to_text_op.cpp
 )
 

@@ -15,7 +15,7 @@ namespace Microsoft::VisualStudio::CppUnitTestFramework
       RETURN_WIDE_STRING(an_info.name());
    }
 
-   template<> inline std::wstring ToString<std::any>(const std::any& a_var)
+   template<> inline std::wstring ToString<dak::utility::any_t>(const dak::utility::any_t& a_var)
    {
       using namespace dak::any_op;
       RETURN_WIDE_STRING(a_var);
@@ -25,6 +25,11 @@ namespace Microsoft::VisualStudio::CppUnitTestFramework
    {
       using namespace dak::any_op;
       RETURN_WIDE_STRING(a_cmp);
+   }
+
+   template<> inline std::wstring ToString<dak::utility::uint16_t>(const dak::utility::uint16_t& e)
+   {
+      RETURN_WIDE_STRING(dak::utility::uint32_t(e));
    }
 
 }

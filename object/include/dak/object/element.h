@@ -22,7 +22,7 @@ namespace dak::object
 
    enum class datatype_t : uint8_t
    {
-      unknown, boolean, integer, ref, name, real, array, dict, text
+      unknown, boolean, integer, ref, name, real, array, dict, text, data
    };
 
    //////////////////////////////////////////////////////////////////////////
@@ -73,6 +73,7 @@ namespace dak::object
       explicit element_t(const dict_t &);
       explicit element_t(const name_t &);
       explicit element_t(const valid_ref_t<object_t>&);
+      explicit element_t(const any_t &);
       ~element_t();
 
       static const element_t empty;
@@ -98,6 +99,7 @@ namespace dak::object
       element_t& operator =(const dict_t &);
       element_t& operator =(const name_t &);
       element_t& operator =(const valid_ref_t<object_t>&);
+      element_t& operator =(const any_t&);
 
       // Data access. Does not change the type.
       operator char() const;
@@ -117,6 +119,7 @@ namespace dak::object
       operator const dict_t &() const;
       operator name_t() const;
       operator valid_ref_t<object_t>() const;
+      operator const any_t&() const;
 
       // Modifiable data access. Change the type if needed.
       operator text_t& ();
@@ -184,6 +187,7 @@ namespace dak::object
          text_t *                my_t;
          const name_stuff_t *    my_n;
          const object_t *        my_o;
+         any_t*                  my_y;
       };
       datatype_t my_type = datatype_t::unknown;
 

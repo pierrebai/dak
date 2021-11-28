@@ -3,11 +3,15 @@
 #include "dak/object/array.h"
 #include "dak/object/object.h"
 
+#include <dak/any_op/compare_op.h>
+
 #include <exception>
 #include <wchar.h>
 
 namespace dak::object
 {
+   using namespace dak::any_op;
+
    const element_t element_t::empty;
 
    void element_t::reset(datatype_t a_type)
@@ -24,6 +28,7 @@ namespace dak::object
          case datatype_t::array: delete my_a; my_a = nullptr;              break;
          case datatype_t::dict:  delete my_d; my_d = nullptr;              break;
          case datatype_t::text:  delete my_t; my_t = nullptr;              break;
+         case datatype_t::data:  delete my_y; my_y = nullptr;              break;
       }
 
       my_type = a_type;
@@ -40,6 +45,7 @@ namespace dak::object
          case datatype_t::text:  my_t = new text_t;  break;
          case datatype_t::array: my_a = new array_t; break;
          case datatype_t::dict:  my_d = new dict_t;  break;
+         case datatype_t::data:  my_y = new any_t;   break;
       }
    }
 
@@ -54,6 +60,7 @@ namespace dak::object
          case datatype_t::name:
          case datatype_t::array:
          case datatype_t::dict:
+         case datatype_t::data:
          case datatype_t::text:    return my_type == a_type;
          case datatype_t::boolean:
          case datatype_t::integer: return datatype_t::boolean == a_type
@@ -76,6 +83,7 @@ namespace dak::object
          case datatype_t::text:
          case datatype_t::array:
          case datatype_t::dict:
+         case datatype_t::data:
             return reset(a_type);
 
          case datatype_t::boolean:
@@ -238,6 +246,7 @@ namespace dak::object
          case datatype_t::real:    *this =  anOther.my_r; break;
          case datatype_t::array:   *this = *anOther.my_a; break;
          case datatype_t::dict:    *this = *anOther.my_d; break;
+         case datatype_t::data:    *this = *anOther.my_y; break;
          case datatype_t::text:    *this = *anOther.my_t; break;
       }
 
@@ -337,6 +346,14 @@ namespace dak::object
       return *this;
    }
 
+   element_t& element_t::operator =(const any_t& some_data)
+   {
+      reset(datatype_t::data);
+      *my_y = some_data;
+
+      return *this;
+   }
+
    element_t& element_t::operator =(const name_t& a_name)
    {
       reset(datatype_t::name);
@@ -432,6 +449,7 @@ namespace dak::object
          case datatype_t::array:
          case datatype_t::dict:
          case datatype_t::text:     return size() > 0;
+         case datatype_t::data:     return my_y->has_value();
       }
    }
 
@@ -507,6 +525,15 @@ namespace dak::object
          return *my_a;
 
       return array_t::empty;
+   }
+
+   element_t::operator const any_t& () const
+   {
+      if (compatible(datatype_t::data))
+         return *my_y;
+
+      static any_t empty;
+      return empty;
    }
 
    element_t::operator const dict_t &() const
@@ -636,6 +663,7 @@ namespace dak::object
          case datatype_t::boolean:
          case datatype_t::integer:
          case datatype_t::real:
+         case datatype_t::data:
          case datatype_t::name:  return 0;
          case datatype_t::ref:   return my_o ? my_o->size() : 0;
          case datatype_t::array: return my_a->size();
@@ -665,6 +693,7 @@ namespace dak::object
          case datatype_t::name:    return my_n == e.my_n;
          case datatype_t::array:   return *my_a == *e.my_a;
          case datatype_t::dict:    return *my_d == *e.my_d;
+         case datatype_t::data:    return *my_y == *e.my_y;
          case datatype_t::text:    return *my_t == *e.my_t;
       }
    }

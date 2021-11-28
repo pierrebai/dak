@@ -4,8 +4,12 @@
 #include <dak/object/object.h>
 #include <dak/object/similar.h>
 
+#include <dak/any_op/compare_op.h>
+
 namespace dak::object
 {
+   using namespace dak::any_op;
+
    bool are_similar(const dict_t& a, const dict_t& b, const visited_refs_t& visited)
    {
       if (a.size() != b.size())
@@ -19,6 +23,12 @@ namespace dak::object
       }
 
       return true;
+   }
+
+   bool are_similar(const any_t& a, const any_t& b, const visited_refs_t& visited)
+   {
+      // TODO: capture op== in lambda to compare any_t?
+      return a == b;
    }
 
    bool are_similar(const object_t& a, const object_t& b, const visited_refs_t& visited)
@@ -75,10 +85,11 @@ namespace dak::object
          case datatype_t::boolean:
          case datatype_t::integer: return my_i == other.my_i;
          case datatype_t::real:    return my_r == other.my_r;
-         case datatype_t::ref:     return are_similar(my_o, other.my_o, visited);
+         case datatype_t::ref:     return are_similar(valid_ref_t<object_t>(my_o), valid_ref_t<object_t>(other.my_o), visited);
          case datatype_t::name:    return my_n == other.my_n;
          case datatype_t::array:   return are_similar(*my_a, *other.my_a, visited);
          case datatype_t::dict:    return are_similar(*my_d, *other.my_d, visited);
+         case datatype_t::data:    return are_similar(*my_y, *other.my_y, visited);
          case datatype_t::text:    return *my_t == *other.my_t;
       }
    }

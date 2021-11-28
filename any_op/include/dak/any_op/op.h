@@ -46,8 +46,8 @@ namespace dak::any_op
    //    2. The make::op function wraps the specific implementation for
    //       specific types then registers the implementation.
    //       The call::op is a  convenience to automatically extract
-   //       the correct types from std::any and write code without
-   //       std::any.
+   //       the correct types from any_t and write code without
+   //       any_t.
    //
    //    3. The sub class is necessary as it is what identifies your
    //       unique operation. It's your operation!
@@ -55,11 +55,11 @@ namespace dak::any_op
    // The family of foo operations will be registered in the op_t<foo_op_t>
    // class.
    //
-   // To call an implementation corresponding to the value kept in a std::any,
+   // To call an implementation corresponding to the value kept in a any_t,
    // call:
    //
-   //        std::any arg_a = 2152671; // any value type!
-   //        std::any result = foo(arg_a);
+   //        any_t arg_a = 2152671; // any value type!
+   //        any_t result = foo(arg_a);
    //
    // The declaration of the operations support:
    //
@@ -85,11 +85,11 @@ namespace dak::any_op
          {
             using op_sel_t = typename op_selector_t<EXTRA_SELECTORS...>::template n_ary_t<N_ARY...>;
             using selector_t = typename op_sel_t::selector_t;
-            using op_func_t = std::function<std::any(EXTRA_ARGS ..., typename type_converter_t<N_ARY>::any...)>;
+            using op_func_t = std::function<any_t(EXTRA_ARGS ..., typename type_converter_t<N_ARY>::any...)>;
 
-            op_func_t op([a_func](EXTRA_ARGS... extra_args, const typename type_converter_t<N_ARY>::any&... args) -> std::any
+            op_func_t op([a_func](EXTRA_ARGS... extra_args, const typename type_converter_t<N_ARY>::any&... args) -> any_t
             {
-               return std::any(a_func(extra_args..., *std::any_cast<N_ARY>(&args)...));
+               return any_t(a_func(extra_args..., *std::any_cast<N_ARY>(&args)...));
             });
 
             auto& ops = get_ops<selector_t, op_func_t>();
@@ -102,16 +102,16 @@ namespace dak::any_op
       struct call
       {
          template <class... N_ARY>
-         static std::any op(EXTRA_ARGS... extra_args, N_ARY... args)
+         static any_t op(EXTRA_ARGS... extra_args, N_ARY... args)
          {
             using op_sel_t = typename op_selector_t<EXTRA_SELECTORS...>::template n_ary_t<N_ARY...>;
             using selector_t = typename op_sel_t::selector_t;
-            using op_func_t = std::function<std::any(EXTRA_ARGS ..., typename type_converter_t<N_ARY>::any...)>;
+            using op_func_t = std::function<any_t(EXTRA_ARGS ..., typename type_converter_t<N_ARY>::any...)>;
 
             const auto& ops = get_ops<selector_t, op_func_t>();
             const auto pos = ops.find(op_sel_t::make());
             if (pos == ops.end())
-               return std::any();
+               return any_t();
             return pos->second(extra_args..., args...);
          }
       };
@@ -121,37 +121,37 @@ namespace dak::any_op
       struct call_any
       {
          template <class... N_ARY>
-         static std::any op(EXTRA_ARGS... extra_args, N_ARY... args)
+         static any_t op(EXTRA_ARGS... extra_args, N_ARY... args)
          {
             using op_sel_t = typename op_selector_t<EXTRA_SELECTORS...>::template n_ary_t<N_ARY...>;
             using selector_t = typename op_sel_t::selector_t;
-            using op_func_t = std::function<std::any(EXTRA_ARGS ..., typename type_converter_t<N_ARY>::any...)>;
+            using op_func_t = std::function<any_t(EXTRA_ARGS ..., typename type_converter_t<N_ARY>::any...)>;
 
             const auto& ops = get_ops<selector_t, op_func_t>();
             const auto pos = ops.find(op_sel_t::make_any(args...));
             if (pos == ops.end())
-               return std::any();
+               return any_t();
             return pos->second(extra_args..., args...);
          }
       };
 
       // Call a n-ary operation with the optional extra args and selected with the extra selectors
       // receiving the std::type_index of the extra selector explicitly. This is used when there
-      // are extra selectors but the function has std::any values instead of compile-time types.
+      // are extra selectors but the function has any_t values instead of compile-time types.
       template <class... EXTRA_SELECTORS>
       struct call_extra_any
       {
          template <class... N_ARY>
-         static std::any op(EXTRA_ARGS... extra_args, N_ARY... args, const typename type_converter_t<EXTRA_SELECTORS>::type_index... selectors)
+         static any_t op(EXTRA_ARGS... extra_args, N_ARY... args, const typename type_converter_t<EXTRA_SELECTORS>::type_index... selectors)
          {
             using op_sel_t = typename op_selector_t<EXTRA_SELECTORS...>::template n_ary_t<N_ARY...>;
             using selector_t = typename op_sel_t::selector_t;
-            using op_func_t = std::function<std::any(EXTRA_ARGS ..., typename type_converter_t<N_ARY>::any...)>;
+            using op_func_t = std::function<any_t(EXTRA_ARGS ..., typename type_converter_t<N_ARY>::any...)>;
 
             const auto& ops = get_ops<selector_t, op_func_t>();
             const auto pos = ops.find(op_sel_t::make_extra_any(selectors..., args...));
             if (pos == ops.end())
-               return std::any();
+               return any_t();
             return pos->second(extra_args..., args...);
          }
       };

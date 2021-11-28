@@ -16,7 +16,7 @@ namespace dak::any_op
       dominant_op_t::register_ops();
       is_compatible_op_t::register_ops();
       size_op_t::register_ops();
-      stream_op_t::register_ops();
+      ostream_op_t::register_ops();
       to_text_op_t::register_ops();
    }
 }

@@ -24,9 +24,9 @@ namespace dak::any_op
       static void register_ops();
    };
 
-   inline uint64_t size(const std::any& arg_a)
+   inline uint64_t size(const any_t& arg_a)
    {
-      const std::any result = size_op_t::call_any<>::op(arg_a);
+      const any_t result = size_op_t::call_any<>::op(arg_a);
       if (result.has_value())
          return std::any_cast<uint64_t>(result);
       else
@@ -36,7 +36,7 @@ namespace dak::any_op
    template<class A>
    inline uint64_t size(const A& arg_a)
    {
-      const std::any result = size_op_t::call<>::op(arg_a);
+      const any_t result = size_op_t::call<>::op(arg_a);
       if (result.has_value())
          return std::any_cast<uint64_t>(result);
       else

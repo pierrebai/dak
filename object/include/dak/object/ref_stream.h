@@ -36,6 +36,7 @@ namespace dak::object
       const ref_ostream_t& print(const element_t& e) const;
       const ref_ostream_t& print(const array_t& a) const;
       const ref_ostream_t& print(const dict_t& d) const;
+      const ref_ostream_t& print(const any_t& d) const;
       const ref_ostream_t& print(const object_t& o) const;
       const ref_ostream_t& print(const name_t& n) const;
       const ref_ostream_t& print(const namespace_t& ns) const;
@@ -95,6 +96,10 @@ namespace dak::object
       {
          return rstr.print(value);
       }
+      else if constexpr (std::is_base_of<any_t, T>())
+      {
+         return rstr.print(value);
+      }
       else
       {
          rstr.get_stream() << value;
@@ -128,6 +133,7 @@ namespace dak::object
       const ref_istream_t& parse(element_t& e) const;
       const ref_istream_t& parse(array_t& a) const;
       const ref_istream_t& parse(dict_t& d) const;
+      const ref_istream_t& parse(any_t& d) const;
       const ref_istream_t& parse(object_t& o) const;
       const ref_istream_t& parse(name_t& n) const;
 
@@ -183,6 +189,10 @@ namespace dak::object
          return rstr.parse(value);
       }
       else if constexpr (std::is_base_of<object_t, T>())
+      {
+         return rstr.parse(value);
+      }
+      else if constexpr (std::is_base_of<any_t, T>())
       {
          return rstr.parse(value);
       }

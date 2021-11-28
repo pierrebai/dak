@@ -50,7 +50,7 @@ namespace dak::any_op
    //
    // Comparison function.
 
-   inline comparison_t compare(const std::any& arg_a, const std::any& arg_b)
+   inline comparison_t compare(const any_t& arg_a, const any_t& arg_b)
    {
       if (!arg_a.has_value())
       {
@@ -61,7 +61,7 @@ namespace dak::any_op
          return comparison_t::more;
       }
 
-      const std::any result = compare_op_t::call_any<>::op(arg_a, arg_b);
+      const any_t result = compare_op_t::call_any<>::op(arg_a, arg_b);
       if (result.has_value())
          return std::any_cast<comparison_t>(result);
 
@@ -71,7 +71,7 @@ namespace dak::any_op
    template<class A>
    inline comparison_t compare(const A& arg_a, const A& arg_b)
    {
-      const std::any result = compare_op_t::call<>::op(arg_a, arg_b);
+      const any_t result = compare_op_t::call<>::op(arg_a, arg_b);
       if (result.has_value())
          return std::any_cast<comparison_t>(result);
 
@@ -82,32 +82,32 @@ namespace dak::any_op
    //
    // Comparison C++ operators.
 
-   inline bool operator==(const std::any& arg_a, const std::any& arg_b)
+   inline bool operator==(const any_t& arg_a, const any_t& arg_b)
    {
       return compare(arg_a, arg_b) == comparison_t::equal;
    }
 
-   inline bool operator<(const std::any& arg_a, const std::any& arg_b)
+   inline bool operator<(const any_t& arg_a, const any_t& arg_b)
    {
       return compare(arg_a, arg_b) == comparison_t::less;
    }
 
-   inline bool operator>(const std::any& arg_a, const std::any& arg_b)
+   inline bool operator>(const any_t& arg_a, const any_t& arg_b)
    {
       return compare(arg_a, arg_b) == comparison_t::more;
    }
 
-   inline bool operator!=(const std::any& arg_a, const std::any& arg_b)
+   inline bool operator!=(const any_t& arg_a, const any_t& arg_b)
    {
       return compare(arg_a, arg_b) != comparison_t::equal;
    }
 
-   inline bool operator<=(const std::any& arg_a, const std::any& arg_b)
+   inline bool operator<=(const any_t& arg_a, const any_t& arg_b)
    {
       return is(compare(arg_a, arg_b), comparison_t::less_or_equal);
    }
 
-   inline bool operator>=(const std::any& arg_a, const std::any& arg_b)
+   inline bool operator>=(const any_t& arg_a, const any_t& arg_b)
    {
       return is(compare(arg_a, arg_b), comparison_t::more_or_equal);
    }

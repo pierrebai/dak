@@ -19,4 +19,6 @@ target_include_directories(utility_tests PUBLIC
    "${CMAKE_CURRENT_SOURCE_DIR}/../utility/include"
 )
 
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set_property(TARGET utility_tests PROPERTY CXX_STANDARD 20)

@@ -23,9 +23,9 @@ namespace dak::any_op
    };
 
    template<class TO>
-   inline TO convert(const std::any& arg_a)
+   inline TO convert(const any_t& arg_a)
    {
-      const std::any result = convert_op_t::call_any<TO>::op(arg_a);
+      const any_t result = convert_op_t::call_any<TO>::op(arg_a);
       if (result.has_value())
          return std::any_cast<TO>(result);
       else
@@ -35,7 +35,7 @@ namespace dak::any_op
    template<class TO, class FROM>
    inline TO convert(const FROM& arg_a)
    {
-      const std::any result = convert_op_t::call<TO>::op(arg_a);
+      const any_t result = convert_op_t::call<TO>::op(arg_a);
       if (result.has_value())
          return std::any_cast<TO>(result);
       else

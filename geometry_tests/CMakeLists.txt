@@ -15,6 +15,8 @@ target_link_libraries(geometry_tests PUBLIC
    utility
 )
 
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set_property(TARGET geometry_tests PROPERTY CXX_STANDARD 20)
 
 target_include_directories(geometry_tests PUBLIC

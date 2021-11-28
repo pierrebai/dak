@@ -40,11 +40,11 @@ namespace dak::utility::tests
             undo.commit(
             {
                my_data,
-               [&](std::any& d)
+               [&](any_t& d)
                {
                   std::any_cast<data&>(d).a_squared = 0.;
                },
-               [&my_data=my_data](const std::any& d)
+               [&my_data=my_data](const any_t& d)
                {
                   my_data = std::any_cast<const data&>(d);
                   my_data.a_squared = my_data.a * my_data.a;
