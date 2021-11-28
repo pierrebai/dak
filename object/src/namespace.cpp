@@ -71,14 +71,14 @@ namespace dak::object
       my_children.insert(std::pair(ns->to_text(), ns));
    }
 
-   ref_t<namespace_t> namespace_t::find_namespace(str_ptr_t a_label) const
+   ref_t<namespace_t> namespace_t::get_namespace(str_ptr_t a_label) const
    {
       if (!a_label)
          return ref_t<namespace_t>();
-      return find_namespace(text_t(a_label));
+      return get_namespace(text_t(a_label));
    }
 
-   ref_t<namespace_t> namespace_t::find_namespace(const text_t& a_label) const
+   ref_t<namespace_t> namespace_t::get_namespace(const text_t& a_label) const
    {
       const auto iter = my_children.find(a_label);
       if (iter == my_children.end())
@@ -91,20 +91,47 @@ namespace dak::object
    //
    // Names.
 
-   // Finds a name in this namespace. May return an invalid name.
-   name_t namespace_t::find_name(str_ptr_t a_label) const
+   // Retrieves a name in this namespace. May return an invalid name.
+   name_t namespace_t::get_name(str_ptr_t a_label) const
    {
       if (!a_label)
          return name_t();
-      return find_name(text_t(a_label));
+      return get_name(text_t(a_label));
    }
 
-   name_t namespace_t::find_name(const text_t& a_label) const
+   name_t namespace_t::get_name(const text_t& a_label) const
    {
       const auto iter = my_names.find(a_label);
       if (iter == my_names.end())
          return name_t();
 
       return iter->second;
+   }
+
+   // Searches a name in this namespace and its parents. May return an invalid name.
+   name_t namespace_t::search_name(str_ptr_t a_label) const
+   {
+      if (!a_label)
+         return name_t();
+
+      return search_name(text_t(a_label));
+   }
+
+   name_t namespace_t::search_name(const text_t& a_label) const
+   {
+      const namespace_t* current_ns = this;
+      while (current_ns)
+      {
+         const name_t name = current_ns->get_name(a_label);
+         if (name.is_valid())
+            return name;
+
+         if (!my_parent.is_valid())
+            break;
+
+         current_ns = valid_ref_t(my_parent);
+      }
+
+      return name_t();
    }
 }

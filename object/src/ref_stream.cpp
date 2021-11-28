@@ -223,7 +223,7 @@ namespace dak::object
       {
          text_t text;
          istr >> std::quoted(text);
-         ref_t<namespace_t> sub_ns = current_ns->find_namespace(text);
+         ref_t<namespace_t> sub_ns = current_ns->get_namespace(text);
          if (sub_ns.is_null())
          {
             istr.setstate(std::ios::failbit);
@@ -239,7 +239,7 @@ namespace dak::object
 
       text_t text;
       istr >> std::quoted(text);
-      n = current_ns->find_name(text);
+      n = current_ns->get_name(text);
       return *this;
    }
 

@@ -72,16 +72,20 @@ namespace dak::object
       // Add the given namespace as a child of this namespace.
       void add_namespace(const valid_ref_t<namespace_t>&);
 
-      // Finds a child namespace in this namespace. May return an invalid reference.
-      ref_t<namespace_t> find_namespace(str_ptr_t a_label) const;
-      ref_t<namespace_t> find_namespace(const text_t& a_label) const;
+      // Retrieves a child namespace in this namespace. May return an invalid reference.
+      ref_t<namespace_t> get_namespace(str_ptr_t a_label) const;
+      ref_t<namespace_t> get_namespace(const text_t& a_label) const;
 
       // Retrieves all names of this namespace.
       const names_t& get_names() const { return my_names; }
 
-      // Finds a name in this namespace. May return an invalid name.
-      name_t find_name(str_ptr_t a_label) const;
-      name_t find_name(const text_t& a_label) const;
+      // Retrieves a name in this namespace. May return an invalid name.
+      name_t get_name(str_ptr_t a_label) const;
+      name_t get_name(const text_t& a_label) const;
+
+      // Searches a name in this namespace and its parents. May return an invalid name.
+      name_t search_name(str_ptr_t a_label) const;
+      name_t search_name(const text_t& a_label) const;
 
       // Comparison.
       auto operator <=>(const namespace_t&) const = default;
