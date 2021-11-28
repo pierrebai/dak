@@ -28,9 +28,6 @@ namespace dak::object
       // Verifies if the reference is null, or invalid.
       bool is_null() const { return my_object == 0; }
 
-      // Swap with another reference.
-      void swap(ref_base_t& other) { std::swap(my_object, other.my_object); }
-
       // Comparison and hashing.
       auto operator<=>(const ref_base_t&) const = default;
       uint64_t hash() const { return reinterpret_cast<uint64_t>(my_object); }
@@ -48,17 +45,19 @@ namespace dak::object
       // Destructor.
       ~ref_base_t();
 
-   protected:
-      const ref_counted_t* my_object = nullptr;
+      // Swap with another reference.
+      void swap(ref_base_t& other) { std::swap(my_object, other.my_object); }
 
-      friend struct name_t;
-      friend struct element_t;
+      const ref_counted_t* my_object = nullptr;
 
    private:
       // Clear the reference. Private because some derived
       // classes guarantee that the reference is valid.
       // Only used to implement common code of op= and destructor.
       void clear();
+
+      friend struct name_t;
+      friend struct element_t;
    };
 
    //////////////////////////////////////////////////////////////////////////
@@ -67,8 +66,8 @@ namespace dak::object
    // Must be converted to valid_ref_t to access its content.
    //
    // You cannot create an initialized instance of a smart pointer directly.
-   // To create one, call the make() function on the type T.
-   // See for example: object_t::make() in object.h.
+   // To create one, call the make() function on the type T. See for example:
+   // object_t::make() in object.h.
 
    template<class T>
    struct ref_t : ref_base_t
@@ -91,6 +90,9 @@ namespace dak::object
       // Copy from similar ref.
       template <class O>
       ref_t<T>& operator =(const ref_t<O>& other) { return operator =(static_cast<const O*>(other.my_object)); }
+
+      // Swap with another reference.
+      void swap(ref_t<T>& other) { ref_base_t::swap(other); }
 
    protected:
       ref_t(const T* t) : ref_base_t(t) {}
@@ -137,6 +139,14 @@ namespace dak::object
       // Copy from similar possibly invalid ref.
       template <class O>
       valid_ref_t<T>& operator =(const ref_t<O>& other) { if (other.is_null()) throw std::exception("invalid valid ref"); ref_t<T>::operator =(other); return *this; }
+
+      // Swap with another valid reference.
+      void swap(valid_ref_t<T>& other) { ref_t<T>::swap(other); }
+
+      // Do not allow modifiable access as a ref_t.
+      // This prevent swapping with a ref_t or being sliced into one and then assigned to.
+      // Allowing this would break the invariant that the reference is valid.
+      operator ref_t<T>& () = delete;
 
       // Access to the referenced object.
       operator const T* () const { return static_cast<const T*>(this->my_object); }
@@ -190,6 +200,17 @@ namespace dak::object
       // Copy from similar edit ref.
       template <class O>
       edit_ref_t<T>& operator =(const edit_ref_t<O>& other) { valid_ref_t<T>::operator =(other); return *this; }
+
+      // Swap with another edit reference.
+      void swap(edit_ref_t<T>& other) { ref_t::swap(other); }
+
+      // Do not allow modifiable access as a ref_t or valid_ref_t.
+      // This prevent swapping with a ref_t or valid_ref_t or
+      // being sliced into one and then assigned to.
+      // Allowing this would break the invariant that the object was added to a transation_t
+      // or that the reference is valid.
+      operator ref_t<T>& () = delete;
+      operator valid_ref_t<T>& () = delete;
 
       // Access to the referenced object.
       operator T* () const { return const_cast<T*>(static_cast<const T*>(this->my_object)); }
