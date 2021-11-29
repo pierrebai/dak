@@ -4,6 +4,7 @@
 #include "dak/object/object.h"
 
 #include <dak/any_op/compare_op.h>
+#include <dak/any_op/size_op.h>
 
 #include <exception>
 #include <wchar.h>
@@ -226,6 +227,12 @@ namespace dak::object
    : my_i(0), my_type(datatype_t::unknown)
    {
       *this = o;
+   }
+
+   element_t::element_t(const any_t& d)
+      : my_i(0), my_type(datatype_t::unknown)
+   {
+      *this = d;
    }
 
    element_t::~element_t()
@@ -663,12 +670,12 @@ namespace dak::object
          case datatype_t::boolean:
          case datatype_t::integer:
          case datatype_t::real:
-         case datatype_t::data:
          case datatype_t::name:  return 0;
          case datatype_t::ref:   return my_o ? my_o->size() : 0;
          case datatype_t::array: return my_a->size();
          case datatype_t::dict:  return my_d->size();
          case datatype_t::text:  return my_t->length();
+         case datatype_t::data:  return any_op::size(*my_y);
       }
    }
 

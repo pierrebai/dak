@@ -11,6 +11,7 @@
 #include "dak/object/object.h"
 #include "dak/object/ref_stream.h"
 #include "dak/object/voc.h"
+#include "dak/any_op/stream_op.h"
 
 namespace Microsoft::VisualStudio::CppUnitTestFramework
 {
@@ -19,6 +20,12 @@ namespace Microsoft::VisualStudio::CppUnitTestFramework
    template<> inline std::wstring ToString<dak::object::name_t>(const dak::object::name_t& n)
    {
       RETURN_WIDE_STRING(n.to_text());
+   }
+
+   template<> inline std::wstring ToString<dak::utility::any_t>(const dak::utility::any_t& a_var)
+   {
+      using namespace dak::any_op;
+      RETURN_WIDE_STRING(a_var);
    }
 
    template<> inline std::wstring ToString<dak::object::dict_t>(const dak::object::dict_t& d);
