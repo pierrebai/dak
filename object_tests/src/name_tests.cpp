@@ -8,7 +8,6 @@
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace dak::object;
-using namespace dak::object::voc;
 using namespace std;
 
 namespace dak::object::tests
@@ -23,7 +22,7 @@ namespace dak::object::tests
          Assert::IsFalse(n.is_valid());
 
          Assert::AreEqual(n, name_t());
-         Assert::AreNotEqual(n, (const name_t&)rock);
+         Assert::AreNotEqual(n, (const name_t&)voc::rock);
 
          Assert::IsTrue(n == name_t());
          Assert::IsFalse(n != name_t());
@@ -33,8 +32,8 @@ namespace dak::object::tests
          Assert::IsFalse(n >  name_t());
          Assert::IsTrue( n >= name_t());
 
-         Assert::IsFalse(n == rock);
-         Assert::IsTrue( n != rock);
+         Assert::IsFalse(n == voc::rock);
+         Assert::IsTrue( n != voc::rock);
 
          // A valid namespace ref is returned even for invalid name, but it is empty.
          Assert::IsTrue(n.get_namespace().is_valid());
@@ -43,30 +42,30 @@ namespace dak::object::tests
          // A valid metadat container ref is returned even for invalid name, but it is empty.
          Assert::AreEqual<size_t>(0, n.get_metadata().size());
 
-         Assert::IsFalse(r.has_metadata(voc::acceleration));
+         Assert::IsFalse(n.has_metadata(voc::acceleration));
 
          transaction_t trans;
          n.remove_metadata(name_t(), trans);
-         Assert::IsFalse(r.has_metadata(voc::acceleration));
-         Assert::IsFalse(r.has_metadata(name_t()));
+         Assert::IsFalse(n.has_metadata(voc::acceleration));
+         Assert::IsFalse(n.has_metadata(name_t()));
       }
 
       TEST_METHOD(name_derived)
       {
-         const name_t r = rock;
+         const name_t r = voc::rock;
 
          Assert::IsTrue(r.is_valid());
 
          Assert::AreNotEqual(r, name_t());
-         Assert::AreEqual<name_t>(r, rock);
+         Assert::AreEqual<name_t>(r, voc::rock);
 
-         Assert::IsTrue( r == rock);
-         Assert::IsFalse(r != rock);
+         Assert::IsTrue( r == voc::rock);
+         Assert::IsFalse(r != voc::rock);
 
-         Assert::IsFalse(r < rock);
-         Assert::IsTrue( r <= rock);
-         Assert::IsFalse(r > rock);
-         Assert::IsTrue( r >= rock);
+         Assert::IsFalse(r < voc::rock);
+         Assert::IsTrue( r <= voc::rock);
+         Assert::IsFalse(r > voc::rock);
+         Assert::IsTrue( r >= voc::rock);
 
          Assert::IsFalse(r == name_t());
          Assert::IsTrue(r != name_t());
@@ -75,7 +74,7 @@ namespace dak::object::tests
 
       TEST_METHOD(name_metadata)
       {
-         name_t r = rock;
+         name_t r = voc::rock;
 
          Assert::IsTrue(r.is_valid());
          Assert::AreEqual<size_t>(0, r.get_metadata().size());

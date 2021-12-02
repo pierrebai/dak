@@ -60,7 +60,7 @@ namespace dak::object
    void timeline_t::commit(modified_objects_t&& objects)
    {
       if (has_redo())
-         my_commits.erase(my_top_commit + 1, my_commits.end());
+         my_commits.erase(my_top_commit, my_commits.end());
 
       my_commits.emplace_back(objects);
 

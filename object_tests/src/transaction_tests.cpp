@@ -26,18 +26,34 @@ namespace dak::object::tests
          {
             transaction_t t1;
 
-            auto& o1 = ro1->modify(t1);
-
-            o1[rock] = 3;
-            o1[pebble] = 4;
-            o1[sand] = 5.0;
-            o1[hello] = L"6";
-            o1[world] = voc::rock;
+            fill_object(ro1->modify(t1));
 
             t1.commit(undo_redo);
          }
 
          verify_object(ro1);
+
+         {
+            transaction_t t1;
+
+            object_t o1 = ro1->modify(t1);
+
+            o1[rock] = 7;
+
+            t1.commit(undo_redo);
+         }
+
+         undo_redo.undo();
+
+         {
+            transaction_t t1;
+
+            fill_object(ro1->modify(t1));
+
+            t1.commit(undo_redo);
+         }
+
+         undo_redo.undo();
 
          for (int i = 0; i < 3; ++i)
          {
@@ -84,13 +100,7 @@ namespace dak::object::tests
          {
             transaction_t t1;
 
-            auto& o1 = ro1->modify(t1);
-
-            o1[rock] = 3;
-            o1[pebble] = 4;
-            o1[sand] = 5.0;
-            o1[hello] = L"6";
-            o1[world] = voc::rock;
+            fill_object(ro1->modify(t1));
 
             t1.cancel();
          }
@@ -99,6 +109,15 @@ namespace dak::object::tests
       }
 
    private:
+      void fill_object(object_t& o1)
+      {
+         o1[rock] = 3;
+         o1[pebble] = 4;
+         o1[sand] = 5.0;
+         o1[hello] = L"6";
+         o1[world] = voc::rock;
+      }
+
       void verify_object(const valid_ref_t<object_t>& object)
       {
          Assert::AreEqual<int32_t>(3, object[rock]);
