@@ -111,8 +111,11 @@ namespace dak::object::tests
          ss << expected;
 
          dict_t received;
-         ref_istream_t(ss, voc::get_namespace()) >> received;
+         ref_istream_t istr(ss, { voc::get_namespace() });
+         istr >> received;
          Assert::AreEqual(expected, received);
+
+         istr.clear();
       }
 
       TEST_METHOD(istream_one_item_dict)
@@ -197,6 +200,151 @@ namespace dak::object::tests
 
          rostr.clear();
          Assert::AreEqual<int64_t>(reserved_id, rostr.get_object_id(expected));
+      }
+
+      TEST_METHOD(istream_parsing_missing_array_comma)
+      {
+         std::wistringstream ss(
+            L"ref 1 {\n"
+            L" : \"\" / \"child\": r ref 2 {\n"
+            L" : \"\" / \"after\": a [\n"
+            L"b 1,\n"
+            L"r ref -1\n"
+            L"],\n"
+            L"},\n"
+            L"}");
+
+         ref_t<object_t> received;
+         ref_istream_t(ss, voc::get_namespace()) >> received;
+
+         Assert::IsTrue(ss.fail());
+      }
+
+      TEST_METHOD(istream_parsing_missing_opening_accolade)
+      {
+         std::wistringstream ss(
+            L"ref 1 {\n"
+            L" : \"\" / \"child\": r ref 2\n"
+            L" : \"\" / \"after\": a [\n"
+            L"b 1,\n"
+            L"r ref -1,\n"
+            L"],\n"
+            L"},\n"
+            L"}");
+
+         ref_t<object_t> received;
+         ref_istream_t(ss, voc::get_namespace()) >> received;
+
+         Assert::IsTrue(ss.fail());
+      }
+
+      TEST_METHOD(istream_parsing_missing_closing_accolade)
+      {
+         std::wistringstream ss(
+            L"ref 1 {\n"
+            L" : \"\" / \"child\": r ref 2\n"
+            L" : \"\" / \"after\": a [\n"
+            L"b 1,\n"
+            L"r ref -1,\n"
+            L"],\n"
+            L",\n"
+            L"}");
+
+         ref_t<object_t> received;
+         ref_istream_t(ss, voc::get_namespace()) >> received;
+
+         Assert::IsTrue(ss.fail());
+      }
+
+      TEST_METHOD(istream_parsing_missing_column)
+      {
+         std::wistringstream ss(
+            L"ref 1 {\n"
+            L" : \"\" / \"child\" r ref 2 {\n"
+            L" : \"\" / \"after\" a [\n"
+            L"b 1,\n"
+            L"r ref -1,\n"
+            L"],\n"
+            L"},\n"
+            L"}");
+
+         ref_t<object_t> received;
+         ref_istream_t(ss, voc::get_namespace()) >> received;
+
+         Assert::IsTrue(ss.fail());
+      }
+
+      TEST_METHOD(istream_parsing_missing_opening_bracket)
+      {
+         std::wistringstream ss(
+            L"ref 1 {\n"
+            L" : \"\" / \"child\": r ref 2 {\n"
+            L" : \"\" / \"after\": a\n"
+            L"b 1,\n"
+            L"r ref -1,\n"
+            L"],\n"
+            L"},\n"
+            L"}");
+
+         ref_t<object_t> received;
+         ref_istream_t(ss, voc::get_namespace()) >> received;
+
+         Assert::IsTrue(ss.fail());
+      }
+
+      TEST_METHOD(istream_parsing_missing_closing_bracket)
+      {
+         std::wistringstream ss(
+            L"ref 1 {\n"
+            L" : \"\" / \"child\": r ref 2 {\n"
+            L" : \"\" / \"after\": a [\n"
+            L"b 1,\n"
+            L"r ref -1,\n"
+            L",\n"
+            L"},\n"
+            L"}");
+
+         ref_t<object_t> received;
+         ref_istream_t(ss, voc::get_namespace()) >> received;
+
+         Assert::IsTrue(ss.fail());
+      }
+
+
+      TEST_METHOD(istream_parsing_missing_object_comma)
+      {
+         std::wistringstream ss(
+            L"ref 1 {\n"
+            L" : \"\" / \"child\": r ref 2 {\n"
+            L" : \"\" / \"after\": a [\n"
+            L"b 1,\n"
+            L"r ref -1,\n"
+            L"],\n"
+            L"}\n"
+            L"}");
+
+         ref_t<object_t> received;
+         ref_istream_t(ss, voc::get_namespace()) >> received;
+
+         Assert::IsTrue(ss.fail());
+      }
+
+      TEST_METHOD(istream_parsing_missing_ref)
+      {
+         std::wistringstream ss(
+            L"ref 1 {\n"
+            L" : \"\" / \"child\": r 2 {\n"
+            L" : \"\" / \"after\": a [\n"
+            L"b 1,\n"
+            L"r ref -1,\n"
+            L"],\n"
+            L"},\n"
+            L"}");
+
+         ref_t<object_t> received;
+         ref_istream_t(ss, voc::get_namespace()) >> received;
+
+         Assert::IsTrue(ss.fail());
       }
    };
 }

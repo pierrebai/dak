@@ -118,7 +118,7 @@ namespace dak::object
       using namespaces_t = std::vector<valid_ref_t<namespace_t>>;
 
       // Wrap an input stream to handle object refs.
-      ref_istream_t(std::wistream& s, namespaces_t known_ns);
+      ref_istream_t(std::wistream& s, const namespaces_t& known_ns);
       ref_istream_t(std::wistream& s, const valid_ref_t<namespace_t>& known_ns);
 
       // Get the underlying stream.

@@ -177,7 +177,7 @@ namespace dak::object
    //
    // Input stream constructors.
 
-   ref_istream_t::ref_istream_t(std::wistream& s, namespaces_t known_ns)
+   ref_istream_t::ref_istream_t(std::wistream& s, const namespaces_t& known_ns)
       : my_stream(s)
       , my_top_namespace()
    {
