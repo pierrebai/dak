@@ -126,10 +126,11 @@ namespace dak::object
          if (name.is_valid())
             return name;
 
-         if (!my_parent.is_valid())
+         auto parent = current_ns->get_parent();
+         if (!parent.is_valid())
             break;
 
-         current_ns = valid_ref_t(my_parent);
+         current_ns = valid_ref_t(parent);
       }
 
       return name_t();
