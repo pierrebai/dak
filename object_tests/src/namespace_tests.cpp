@@ -30,6 +30,7 @@ namespace dak::object::tests
          Assert::IsTrue(ref_t<namespace_t>(sub_ns_a) == root->get_namespace(L"a"));
          Assert::IsTrue(ref_t<namespace_t>(sub_ns_b) == root->get_namespace(L"b"));
          Assert::IsTrue(ref_t<namespace_t>() == root->get_namespace(L"d"));
+         Assert::IsTrue(ref_t<namespace_t>() == root->get_namespace(nullptr));
 
          Assert::IsTrue(root->get_namespaces().count(sub_ns_a->to_text()) == 1);
          Assert::IsTrue(root->get_namespaces().count(L"b") == 1);
@@ -48,12 +49,14 @@ namespace dak::object::tests
          Assert::AreEqual(a_x, sub_ns_a->get_name(L"x"));
          Assert::AreEqual(a_y, sub_ns_a->get_name(text_t(L"y")));
          Assert::AreEqual(name_t(), sub_ns_a->get_name(text_t(L"z")));
+         Assert::AreEqual(name_t(), sub_ns_a->get_name(nullptr));
 
          Assert::AreEqual(a_x, name_t(sub_ns_a->get_names().at(L"x")));
          Assert::AreEqual(a_y, name_t(sub_ns_a->get_names().at(text_t(L"y"))));
 
          edit_ref_t<namespace_t> sub_ns_c = namespace_t::make(text_t(L"c"), sub_ns_a);
 
+         Assert::AreEqual(name_t(), sub_ns_b->search_name(nullptr));
          Assert::AreEqual(name_t(), sub_ns_b->search_name(L"x"));
          Assert::AreEqual(name_t(), sub_ns_b->search_name(text_t(L"y")));
          Assert::AreEqual(a_x, sub_ns_c->search_name(L"x"));
@@ -65,6 +68,16 @@ namespace dak::object::tests
          Assert::AreEqual(a_y, sub_ns_b->search_name(text_t(L"y")));
          Assert::AreEqual(name_t(), sub_ns_c->search_name(L"x"));
          Assert::AreEqual(name_t(), sub_ns_c->search_name(text_t(L"y")));
+
+         edit_ref_t<namespace_t> sub_ns_d = namespace_t::make(sub_ns_b);
+         edit_ref_t<namespace_t> sub_ns_e = namespace_t::make(*sub_ns_b);
+
+         Assert::IsTrue(*sub_ns_d == *sub_ns_b);
+         Assert::IsTrue(*sub_ns_e == *sub_ns_d);
+
+         name_t a_x2(sub_ns_c, a_x);
+         Assert::AreEqual(a_x2, sub_ns_c->search_name(L"x"));
+
       }
 
    };
