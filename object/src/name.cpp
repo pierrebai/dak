@@ -55,22 +55,16 @@ namespace dak::object
    //
    // Name namespace.
 
-   namespace
-   {
-      const valid_ref_t<namespace_t>& get_invalid_namespace()
-      {
-         static valid_ref_t<namespace_t> invalid_ns = namespace_t::make();
-         return invalid_ns;
-      }
-   }
-
    // Retrieve the name namespace.
-   const valid_ref_t<namespace_t>& name_t::get_namespace() const
+   const weak_ref_t<namespace_t>& name_t::get_namespace() const
    {
-      if (my_stuff.is_valid())
-         return valid_ref_t<name_stuff_t>(my_stuff)->my_namespace;
-      else
-         return get_invalid_namespace();
+      if (!my_stuff.is_valid())
+      {
+         static const weak_ref_t<namespace_t> empty;
+         return empty;
+      }
+
+      return valid_ref_t<name_stuff_t>(my_stuff)->my_namespace;
    }
 
    //////////////////////////////////////////////////////////////////////////

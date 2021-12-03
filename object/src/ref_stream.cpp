@@ -41,7 +41,7 @@ namespace dak::object
 
       namespace_t::parent_t parent = ns.get_parent();
       if (parent.is_valid())
-         print(*valid_ref_t(parent));
+         print(*valid_ref_t(ref_t<namespace_t>(parent)));
 
       ostr << L" : " << std::quoted(ns.to_text());
 
@@ -52,8 +52,11 @@ namespace dak::object
    {
       if (n.is_valid())
       {
-         const namespace_t& ns = *n.get_namespace();
-         *this << ns << L" / " << std::quoted(n.to_text());
+         const weak_ref_t<namespace_t>& ns = n.get_namespace();
+         if (ns.is_valid())
+            *this << *valid_ref_t<namespace_t>(ref_t<namespace_t>(ns));
+
+         *this << L" / " << std::quoted(n.to_text());
       }
       else
       {
@@ -66,9 +69,15 @@ namespace dak::object
    {
       const auto id = get_object_id(o);
       *this << L"ref " << id;
-      if (id > 0)
-         *this << " " << *valid_ref_t(o);
-      return *this;
+      if (id <= 0)
+         return *this;
+
+      return *this << L" " << *valid_ref_t<object_t>(o);
+   }
+
+   const ref_ostream_t& ref_ostream_t::print(const weak_ref_t<object_t>& w) const
+   {
+      return *this << ref_t<object_t>(w);
    }
 
    const ref_ostream_t& ref_ostream_t::print(const array_t& a) const
@@ -107,12 +116,13 @@ namespace dak::object
 
    const ref_ostream_t& ref_ostream_t::print(const element_t& e) const
    {
-      switch (e.type())
+      switch (e.get_type())
       {
          case datatype_t::unknown:  return *this << L"u unknown";
          case datatype_t::boolean:  return *this << L"b " << (bool)e;
          case datatype_t::integer:  return *this << L"i " << (int64_t)e;
          case datatype_t::ref:      return *this << L"r " << (const ref_t<object_t> &) e;
+         case datatype_t::weak_ref: return *this << L"w " << (const weak_ref_t<object_t> &) e;
          case datatype_t::name:     return *this << L"n " << (const name_t&)e;
          case datatype_t::real:     return *this << L"f " << (double)e;
          case datatype_t::array:    return *this << L"a " << (const array_t&)e;
@@ -276,6 +286,14 @@ namespace dak::object
       return *this;
    }
 
+   const ref_istream_t& ref_istream_t::parse(weak_ref_t<object_t>& w) const
+   {
+      ref_t<object_t> r;
+      parse(r);
+      w = r;
+      return *this;
+   }
+
    const ref_istream_t& ref_istream_t::parse(array_t& a) const
    {
       auto& istr = get_stream();
@@ -410,6 +428,13 @@ namespace dak::object
             istr.setstate(std::ios::failbit);
             e.reset();
          }
+         break;
+      }
+      case L'w':
+      {
+         weak_ref_t<object_t> w;
+         *this >> w;
+         e = weak_ref_t<object_t>(w);
          break;
       }
       case L'n':

@@ -10,7 +10,7 @@ namespace dak::any_op
 
    //////////////////////////////////////////////////////////////////////////
    //
-   // The is-compatible operation returns true if a the types are compatible.
+   // The is-compatible operation returns true if a the types are is_compatible.
    // That is, the second can be converted to the first.
 
    struct is_compatible_op_t : op_t<is_compatible_op_t>

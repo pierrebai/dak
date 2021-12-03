@@ -4,7 +4,7 @@
 #define DAK_OBJECT_NAME_PRIVATE_H
 
 #include <dak/object/namespace.h>
-#include <dak/object/ref.h>
+#include <dak/object/edit_ref.h>
 
 #include <unordered_set>
 
@@ -52,19 +52,23 @@ namespace dak::object
       // Swap with another name stuff.
       void swap(name_stuff_t& other);
 
+      // Reset the name stuff.
+      void clear() override;
+
       // Comparison and hash.
       auto operator <=>(const name_stuff_t& other) const;
       uint64_t hash() const;
 
    private:
       text_t my_label;
-      valid_ref_t<namespace_t> my_namespace;
+      weak_ref_t<namespace_t> my_namespace;
       basename_t my_basename;
       metadata_t my_metadata;
 
       friend struct ref_t<name_stuff_t>;
       friend struct valid_ref_t<name_stuff_t>;
       friend struct edit_ref_t<name_stuff_t>;
+      friend struct weak_ref_t<name_stuff_t>;
       friend struct name_t;
       friend struct element_t;
       friend struct transaction_t;

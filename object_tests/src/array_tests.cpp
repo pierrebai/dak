@@ -37,10 +37,10 @@ namespace dak::object::tests
 
          Assert::AreEqual<index_t>(0, a.size());
 
-         Assert::AreEqual(datatype_t::unknown, a[-1000].type());
+         Assert::AreEqual(datatype_t::unknown, a[-1000].get_type());
 
          const array_t b;
-         Assert::AreEqual(datatype_t::unknown, b[-1000].type());
+         Assert::AreEqual(datatype_t::unknown, b[-1000].get_type());
       }
 
       TEST_METHOD(array_append)
@@ -132,12 +132,12 @@ namespace dak::object::tests
 
          Assert::AreEqual<index_t>(7, a1.size());
          Assert::AreEqual<text_t>(text_t(L"first"), a1[0]);
-         Assert::AreEqual<datatype_t>(datatype_t::unknown, a1[1].type());
-         Assert::AreEqual<datatype_t>(datatype_t::unknown, a1[2].type());
-         Assert::AreEqual<datatype_t>(datatype_t::unknown, a1[3].type());
-         Assert::AreEqual<datatype_t>(datatype_t::unknown, a1[4].type());
-         Assert::AreEqual<datatype_t>(datatype_t::unknown, a1[5].type());
-         Assert::AreEqual<datatype_t>(datatype_t::unknown, a1[6].type());
+         Assert::AreEqual<datatype_t>(datatype_t::unknown, a1[1].get_type());
+         Assert::AreEqual<datatype_t>(datatype_t::unknown, a1[2].get_type());
+         Assert::AreEqual<datatype_t>(datatype_t::unknown, a1[3].get_type());
+         Assert::AreEqual<datatype_t>(datatype_t::unknown, a1[4].get_type());
+         Assert::AreEqual<datatype_t>(datatype_t::unknown, a1[5].get_type());
+         Assert::AreEqual<datatype_t>(datatype_t::unknown, a1[6].get_type());
 
          // Note: insert inserts before the index given, so -1 inserts before the last element.
          a1.insert(-1) = 8;
@@ -151,7 +151,7 @@ namespace dak::object::tests
 
          Assert::IsTrue(a1.erase(-8));
          Assert::AreEqual<index_t>(7, a1.size());
-         Assert::AreEqual<datatype_t>(datatype_t::unknown, a1[0].type());
+         Assert::AreEqual<datatype_t>(datatype_t::unknown, a1[0].get_type());
 
          Assert::IsTrue(a1.erase(-1));
          Assert::AreEqual<index_t>(6, a1.size());

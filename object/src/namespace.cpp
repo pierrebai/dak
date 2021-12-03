@@ -130,7 +130,7 @@ namespace dak::object
          if (!parent.is_valid())
             break;
 
-         current_ns = valid_ref_t(parent);
+         current_ns = valid_ref_t(ref_t(parent));
       }
 
       return name_t();

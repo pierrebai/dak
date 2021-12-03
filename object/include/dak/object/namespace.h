@@ -4,7 +4,7 @@
 #define DAK_OBJECT_NAMESPACE_H
 
 #include <dak/object/name_stuff.h>
-#include <dak/object/ref.h>
+#include <dak/object/edit_ref.h>
 #include <dak/object/ref_counted.h>
 
 #include <unordered_map>
@@ -30,7 +30,7 @@ namespace dak::object
 
       using child_t = valid_ref_t<namespace_t>;
       using children_t = std::unordered_map<text_t, child_t>;
-      using parent_t = ref_t<namespace_t>;
+      using parent_t = weak_ref_t<namespace_t>;
       using names_t = std::unordered_map<text_t, valid_ref_t<name_stuff_t>>;
 
       // Make a root ref-counted instance.
@@ -55,7 +55,7 @@ namespace dak::object
       ~namespace_t() = default;
 
       // Remove all names and child namespaces from this namespace.
-      void clear();
+      void clear() override;
 
       // Swap with another namespace.
       void swap(namespace_t& other);
@@ -99,6 +99,7 @@ namespace dak::object
       friend struct ref_t<namespace_t>;
       friend struct valid_ref_t<namespace_t>;
       friend struct edit_ref_t<namespace_t>;
+      friend struct weak_ref_t<namespace_t>;
       friend struct name_stuff_t;
       friend struct transaction_t;
    };

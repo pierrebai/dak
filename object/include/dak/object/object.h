@@ -7,7 +7,7 @@
 #include "dak/object/element.h"
 #include <dak/object/name.h>
 #include <dak/object/ref_counted.h>
-#include <dak/object/ref.h>
+#include <dak/object/edit_ref.h>
 
 #include <map>
 
@@ -53,6 +53,9 @@ namespace dak::object
       bool erase(const name_t&);
       void swap(object_t&);
 
+      // Reset the object.
+      void clear() override;
+
       // Element containment check.
       bool contains(const name_t&) const;
 
@@ -81,6 +84,7 @@ namespace dak::object
       friend struct ref_t<object_t>;
       friend struct valid_ref_t<object_t>;
       friend struct edit_ref_t<object_t>;
+      friend struct weak_ref_t<object_t>;
       friend struct element_t;
       friend struct transaction_t;
    };

@@ -40,6 +40,12 @@ namespace dak::object
       return true;
    }
 
+   // Reset the object.
+   void object_t::clear()
+   {
+      my_elements.clear();
+   }
+
    void object_t::swap(object_t& an_other)
    {
       my_elements.swap(an_other.my_elements);

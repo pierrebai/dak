@@ -50,6 +50,16 @@ namespace dak::object
    //////////////////////////////////////////////////////////////////////////
    //
    // Swap with another name stuff.
+
+   void name_stuff_t::clear()
+   {
+      my_label.clear();
+      my_namespace = ref_t<namespace_t>();
+      my_basename = ref_t<name_stuff_t>();
+      my_metadata.clear();
+
+   }
+
    void name_stuff_t::swap(name_stuff_t& other)
    {
       my_label.swap(other.my_label);

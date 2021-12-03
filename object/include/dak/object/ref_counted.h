@@ -25,6 +25,9 @@ namespace dak::object
       constexpr std::strong_ordering operator<=>(const ref_counted_t&) const noexcept { return std::strong_ordering::equal; }
       constexpr bool operator==(const ref_counted_t&) const noexcept { return true; }
 
+      // Reset the object, in particular removes all references to other objects.
+      virtual void clear() = 0;
+
    protected:
       ref_counted_t() = default;
       ref_counted_t(const ref_counted_t &);
@@ -38,10 +41,14 @@ namespace dak::object
       void add_weak() const;
       void sub_weak() const;
 
-      mutable int64_t my_ref_count = 0;
-      mutable int64_t my_weak_count = 0;
+      void check_ref() const;
 
+      mutable int32_t my_ref_count = 0;
+      mutable int32_t my_weak_count = 0;
+
+      friend struct ref_base_t;
       friend struct strong_ref_base_t;
+      friend struct weak_ref_base_t;
       friend struct element_t;
    };
 }

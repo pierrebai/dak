@@ -8,7 +8,11 @@ add_library(object
    include/dak/object/name_stuff.h              src/name_stuff.cpp
    include/dak/object/namespace.h               src/namespace.cpp
    include/dak/object/object.h                  src/object.cpp
-   include/dak/object/ref.h                     src/ref_base.cpp
+   include/dak/object/ref.h
+   include/dak/object/weak_ref.h
+   include/dak/object/valid_ref.h
+   include/dak/object/edit_ref.h
+   include/dak/object/ref_base.h                src/ref_base.cpp
    include/dak/object/ref_counted.h             src/ref_counted.cpp
    include/dak/object/ref_stream.h              src/ref_stream.cpp
    include/dak/object/similar.h                 src/similar.cpp

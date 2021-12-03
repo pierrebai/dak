@@ -6,7 +6,7 @@
 #include <dak/utility/types.h>
 #include <dak/object/name.h>
 #include <dak/object/name_stuff.h>
-#include <dak/object/ref.h>
+#include <dak/object/edit_ref.h>
 #include <dak/object/similar.h>
 
 namespace dak::object
@@ -22,7 +22,7 @@ namespace dak::object
 
    enum class datatype_t : uint8_t
    {
-      unknown, boolean, integer, ref, name, real, array, dict, text, data
+      unknown, boolean, integer, ref, weak_ref, name, real, array, dict, text, data
    };
 
    //////////////////////////////////////////////////////////////////////////
@@ -50,11 +50,15 @@ namespace dak::object
 
    struct element_t
    {
+      static const element_t empty;
+
       // Create an element of an unfixed type, potentially pre-initialized to a value.
       element_t();
 
       // Copy the given element.
       element_t(const element_t &);
+
+      // Constructors taking values.
 
       explicit element_t(const text_t &);
       explicit element_t(wchar_t);
@@ -73,15 +77,15 @@ namespace dak::object
       explicit element_t(const dict_t &);
       explicit element_t(const name_t &);
       explicit element_t(const valid_ref_t<object_t>&);
+      explicit element_t(const weak_ref_t<object_t>&);
       explicit element_t(const any_t &);
       ~element_t();
-
-      static const element_t empty;
 
       // Assignments. Changes the type if needed.
       element_t& operator =(const element_t &);
 
       // Assignments of various types. Changes the type if needed.
+
       element_t& operator =(const text_t &);
       element_t& operator =(wchar_t);
       element_t& operator =(char);
@@ -99,9 +103,22 @@ namespace dak::object
       element_t& operator =(const dict_t &);
       element_t& operator =(const name_t &);
       element_t& operator =(const valid_ref_t<object_t>&);
+      element_t& operator =(const weak_ref_t<object_t>&);
       element_t& operator =(const any_t&);
 
       // Data access. Does not change the type.
+
+      bool as_boolean() const;
+      int64_t as_integer() const;
+      valid_ref_t<object_t> as_ref() const;
+      weak_ref_t<object_t> as_weak_ref() const;
+      name_t as_name() const;
+      double as_real() const;
+      const array_t& as_array() const;
+      const dict_t& as_dict() const;
+      text_t as_text() const;
+      const any_t& as_data() const;
+
       operator char() const;
       operator wchar_t() const;
       operator text_t() const;
@@ -119,14 +136,17 @@ namespace dak::object
       operator const dict_t &() const;
       operator name_t() const;
       operator valid_ref_t<object_t>() const;
+      operator weak_ref_t<object_t>() const;
       operator const any_t&() const;
 
       // Modifiable data access. Change the type if needed.
+
       operator text_t& ();
       operator array_t& ();
       operator dict_t& ();
 
       // Array conversion + immediate array_t op.
+
       element_t & operator [](index_t an_index);
       const element_t & operator [](index_t an_index) const;
       bool erase(index_t an_index);
@@ -135,6 +155,7 @@ namespace dak::object
       element_t & grow();
 
       // Dict conversion + immediate dict_t op.
+
       void append(const dict_t &);
       bool erase(const name_t &);
       bool contains(const name_t &) const;
@@ -145,11 +166,11 @@ namespace dak::object
       index_t size() const;
 
       // Current type of data contained in the element.
-      datatype_t type() const;
+      datatype_t get_type() const;
 
       // All integer-like types are equivalent, so you can read a boolean
       // from an integer. Same for double-like types, float and double.
-      bool compatible(datatype_t aType) const;
+      bool is_compatible(datatype_t aType) const;
 
       // Clear the old data and set the type. Clear even if same type.
       void reset(datatype_t = datatype_t::unknown);

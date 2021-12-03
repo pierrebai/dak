@@ -3,7 +3,7 @@
 #ifndef DAK_OBJECT_SIMILAR_H
 #define DAK_OBJECT_SIMILAR_H
 
-#include <dak/object/ref.h>
+#include <dak/object/valid_ref.h>
 
 #include <set>
 #include <algorithm>
@@ -36,6 +36,7 @@ namespace dak::object
    bool are_similar(const element_t& a, const element_t& b, const visited_refs_t& visited = visited_refs_t());
    bool are_similar(const object_t&  a, const object_t&  b, const visited_refs_t& visited = visited_refs_t());
    bool are_similar(const valid_ref_t<object_t>& a, const valid_ref_t<object_t>& b, const visited_refs_t& visited = visited_refs_t());
+   bool are_similar(const weak_ref_t<object_t>& a, const weak_ref_t<object_t>& b, const visited_refs_t& visited = visited_refs_t());
 }
 
 #endif /* DAK_OBJECT_SIMILAR_H */

@@ -5,7 +5,7 @@
 
 #include <dak/object/name_stuff.h>
 #include <dak/utility/types.h>
-#include <dak/object/ref.h>
+#include <dak/object/edit_ref.h>
 
 namespace dak::object
 {
@@ -45,8 +45,8 @@ namespace dak::object
       // Return the label of the name.
       str_ptr_t to_text() const;
 
-      // Retrieves the name namespace.
-      const valid_ref_t<namespace_t>& get_namespace() const;
+      // Retrieves the name namespace, if any.
+      const weak_ref_t<namespace_t>& get_namespace() const;
 
       // Adds metadata to the name.
       void add_metadata(const name_t& a_metadata, transaction_t& tr);

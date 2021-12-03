@@ -175,7 +175,7 @@ namespace dak::object::tests
             array_t& a3 = mo2[voc::after];
 
             a3[0] = true;
-            a3[1] = expected;
+            a3[1] = weak_ref_t<object_t>(expected);
 
             dict_t& d32 = a3[2];
             d32[voc::date] = 55;
@@ -192,7 +192,6 @@ namespace dak::object::tests
 
          ss.clear();
          ref_ostream_t rostr(ss);
-         Assert::AreEqual<int64_t>(0, rostr.get_object_id(ref_t<object_t>()));
 
          const int64_t reserved_id = rostr.get_object_id(expected);
          Assert::AreNotEqual<int64_t>(0, reserved_id);

@@ -33,6 +33,7 @@ namespace dak::object
       // Afterward, only the reference id is printed, as a negative value.
       // Empty references are printed as a zero reference id.
       const ref_ostream_t& print(const ref_t<object_t>& r) const;
+      const ref_ostream_t& print(const weak_ref_t<object_t>& r) const;
       const ref_ostream_t& print(const element_t& e) const;
       const ref_ostream_t& print(const array_t& a) const;
       const ref_ostream_t& print(const dict_t& d) const;
@@ -84,6 +85,10 @@ namespace dak::object
       {
          return rstr.print(value);
       }
+      else if constexpr (std::is_base_of<weak_ref_t<object_t>, T>())
+      {
+         return rstr.print(value);
+      }
       else if constexpr (std::is_base_of<dict_t, T>())
       {
          return rstr.print(value);
@@ -130,6 +135,7 @@ namespace dak::object
       // Afterward, only the reference id is printed, as a negative value.
       // Empty references are printed as a zero reference id.
       const ref_istream_t& parse(ref_t<object_t>& r) const;
+      const ref_istream_t& parse(weak_ref_t<object_t>& r) const;
       const ref_istream_t& parse(element_t& e) const;
       const ref_istream_t& parse(array_t& a) const;
       const ref_istream_t& parse(dict_t& d) const;
@@ -177,6 +183,10 @@ namespace dak::object
          return rstr.parse(value);
       }
       else if constexpr (std::is_base_of<ref_t<object_t>, T>())
+      {
+         return rstr.parse(value);
+      }
+      else if constexpr (std::is_base_of<weak_ref_t<object_t>, T>())
       {
          return rstr.parse(value);
       }

@@ -73,6 +73,20 @@ namespace dak::object
       return are_similar(*a, *b, visited);
    }
 
+   bool are_similar(const weak_ref_t<object_t>& a, const weak_ref_t<object_t>& b, const visited_refs_t& visited)
+   {
+      if (a.is_null())
+         return b.is_null();
+
+      if (b.is_null())
+         return false;
+
+      return are_similar(
+         valid_ref_t<object_t>(ref_t<object_t>(a)),
+         valid_ref_t<object_t>(ref_t<object_t>(b)),
+         visited);
+   }
+
    bool element_t::is_similar(const element_t& other, const visited_refs_t& visited) const
    {
       if (my_type != other.my_type)
@@ -86,6 +100,8 @@ namespace dak::object
          case datatype_t::integer: return my_i == other.my_i;
          case datatype_t::real:    return my_r == other.my_r;
          case datatype_t::ref:     return are_similar(valid_ref_t<object_t>(my_o), valid_ref_t<object_t>(other.my_o), visited);
+         case datatype_t::weak_ref:
+                                   return are_similar(weak_ref_t<object_t>(my_o), weak_ref_t<object_t>(other.my_o), visited);
          case datatype_t::name:    return my_n == other.my_n;
          case datatype_t::array:   return are_similar(*my_a, *other.my_a, visited);
          case datatype_t::dict:    return are_similar(*my_d, *other.my_d, visited);
