@@ -4,43 +4,47 @@
 
 namespace dak::object
 {
-   ref_base_t::ref_base_t(const ref_counted_t* an_object)
-   : my_object(an_object)
+   //////////////////////////////////////////////////////////////////////////
+   //
+   // strong_ref_base_t
+
+   strong_ref_base_t::strong_ref_base_t(const ref_counted_t* an_object)
+      : ref_base_t(an_object)
    {
       if (an_object)
-         an_object->addref();
+         an_object->add_ref();
    }
 
-   ref_base_t::ref_base_t(const ref_base_t& other)
-   : my_object(other.my_object)
+   strong_ref_base_t::strong_ref_base_t(const strong_ref_base_t& other)
+      : ref_base_t(other.my_object)
    {
       if (my_object)
-         my_object->addref();
+         my_object->add_ref();
    }
 
-   ref_base_t& ref_base_t::operator =(const ref_counted_t* an_object)
+   strong_ref_base_t& strong_ref_base_t::operator =(const ref_counted_t* an_object)
    {
       if (my_object != an_object)
       {
          clear();
-         my_object = an_object;
+         ref_base_t::operator=(an_object);
          if (an_object)
-            an_object->addref();
+            an_object->add_ref();
       }
       return *this;
    }
 
-   ref_base_t& ref_base_t::operator =(const ref_base_t& other)
+   strong_ref_base_t& strong_ref_base_t::operator =(const strong_ref_base_t& other)
    {
       return operator =(other.my_object);
    }
 
-   ref_base_t::~ref_base_t()
+   strong_ref_base_t::~strong_ref_base_t()
    {
       clear();
    }
 
-   void ref_base_t::clear()
+   void strong_ref_base_t::clear()
    {
       if (!my_object)
          return;
@@ -50,7 +54,7 @@ namespace dak::object
       //       reference. Can happens in object cycles.
       auto oldmy_object = my_object;
       my_object = nullptr;
-      oldmy_object->unref();
+      oldmy_object->sub_ref();
    }
 }
 

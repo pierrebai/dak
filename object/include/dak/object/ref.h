@@ -16,9 +16,7 @@ namespace dak::object
    //////////////////////////////////////////////////////////////////////////
    //
    // Base class for the smart reference-counted templated pointer.
-   // Holds references to ref_counted_t objects.
-   //
-   // Holds the common code.
+   // Holds the pointer to the ref_counted_t objects.
 
    struct ref_base_t
    {
@@ -37,18 +35,42 @@ namespace dak::object
       ref_base_t() = default;
 
       // Copy constructors and assignments.
-      ref_base_t(const ref_counted_t*);
-      ref_base_t(const ref_base_t&);
-      ref_base_t& operator =(const ref_counted_t*);
-      ref_base_t& operator =(const ref_base_t&);
+      ref_base_t(const ref_counted_t* obj) { my_object = obj; }
+      ref_base_t(const ref_base_t&) = default;
+      ref_base_t& operator =(const ref_counted_t* obj) { my_object = obj; return *this; }
+      ref_base_t& operator =(const ref_base_t&) = default;
 
       // Destructor.
-      ~ref_base_t();
-
-      // Swap with another reference.
-      void swap(ref_base_t& other) { std::swap(my_object, other.my_object); }
+      ~ref_base_t() = default;
 
       const ref_counted_t* my_object = nullptr;
+
+      friend struct name_t;
+      friend struct element_t;
+   };
+
+   //////////////////////////////////////////////////////////////////////////
+   //
+   // Base class for the strong smart reference-counted templated pointer.
+   // Manages the strong ref count.
+
+   struct strong_ref_base_t : ref_base_t
+   {
+   protected:
+      // Default constructor.
+      strong_ref_base_t() = default;
+
+      // Copy constructors and assignments.
+      strong_ref_base_t(const ref_counted_t*);
+      strong_ref_base_t(const strong_ref_base_t&);
+      strong_ref_base_t& operator =(const ref_counted_t*);
+      strong_ref_base_t& operator =(const strong_ref_base_t&);
+
+      // Destructor.
+      ~strong_ref_base_t();
+
+      // Swap with another reference.
+      void swap(strong_ref_base_t& other) { std::swap(my_object, other.my_object); }
 
    private:
       // Clear the reference. Private because some derived
@@ -70,10 +92,10 @@ namespace dak::object
    // object_t::make() in object.h.
 
    template<class T>
-   struct ref_t : ref_base_t
+   struct ref_t : strong_ref_base_t
    {
       // Invalid ref constructors.
-      ref_t() : ref_base_t() {}
+      ref_t() : strong_ref_base_t() {}
 
       // Copy constructors.
       ref_t(const ref_t<T>& other) = default;
@@ -92,11 +114,11 @@ namespace dak::object
       ref_t<T>& operator =(const ref_t<O>& other) { return operator =(static_cast<const O*>(other.my_object)); }
 
       // Swap with another reference.
-      void swap(ref_t<T>& other) { ref_base_t::swap(other); }
+      void swap(ref_t<T>& other) { strong_ref_base_t::swap(other); }
 
    protected:
-      ref_t(const T* t) : ref_base_t(t) {}
-      ref_t<T>& operator =(const T* t) { ref_base_t::operator =(t); return *this; }
+      ref_t(const T* t) : strong_ref_base_t(t) {}
+      ref_t<T>& operator =(const T* t) { strong_ref_base_t::operator =(t); return *this; }
 
       friend T;
       friend struct element_t;
@@ -115,7 +137,7 @@ namespace dak::object
       valid_ref_t(valid_ref_t<T>&& other) = default;
 
       // Constructors from possibly invalid ref.
-      explicit valid_ref_t(const ref_t<T>& other) : ref_t<T>(other) { if (ref_base_t::is_null()) throw std::exception("invalid valid ref"); }
+      explicit valid_ref_t(const ref_t<T>& other) : ref_t<T>(other) { if (strong_ref_base_t::is_null()) throw std::exception("invalid valid ref"); }
 
       // Constructors from similar valid ref.
       template <class O>
@@ -123,7 +145,7 @@ namespace dak::object
 
       // Constructors from similar possibly invalid ref.
       template <class O>
-      explicit valid_ref_t(const ref_t<O>& other) : ref_t<T>(other) { if (ref_base_t::is_null()) throw std::exception("invalid valid ref"); }
+      explicit valid_ref_t(const ref_t<O>& other) : ref_t<T>(other) { if (strong_ref_base_t::is_null()) throw std::exception("invalid valid ref"); }
 
       // Copy from other valid ref.
       valid_ref_t<T>& operator =(const valid_ref_t<T>& other) = default;
@@ -232,9 +254,9 @@ namespace dak::object
 namespace std
 {
    template <>
-   struct hash<dak::object::ref_base_t>
+   struct hash<dak::object::strong_ref_base_t>
    {
-      size_t operator()(const dak::object::ref_base_t& r) const
+      size_t operator()(const dak::object::strong_ref_base_t& r) const
       {
          return static_cast<size_t>(r.hash());
       }

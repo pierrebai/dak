@@ -9,7 +9,7 @@
 
 namespace dak::object
 {
-   struct ref_base_t;
+   struct strong_ref_base_t;
    struct element_t;
 
    //////////////////////////////////////////////////////////////////////////
@@ -32,12 +32,16 @@ namespace dak::object
       virtual ~ref_counted_t() = default;
 
    private:
-      void addref() const;
-      void unref() const;
+      void add_ref() const;
+      void sub_ref() const;
 
-      mutable int64_t my_refcount = 0;
+      void add_weak() const;
+      void sub_weak() const;
 
-      friend struct ref_base_t;
+      mutable int64_t my_ref_count = 0;
+      mutable int64_t my_weak_count = 0;
+
+      friend struct strong_ref_base_t;
       friend struct element_t;
    };
 }

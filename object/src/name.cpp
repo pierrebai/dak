@@ -30,6 +30,16 @@ namespace dak::object
    {
    }
 
+   name_t::name_t(const valid_ref_t<name_stuff_t>& stuff)
+      : my_stuff(stuff)
+   {
+   }
+
+   name_t::name_t(const edit_ref_t<name_stuff_t>& stuff)
+      : my_stuff(stuff)
+   {
+   }
+
    //////////////////////////////////////////////////////////////////////////
    //
    // Name text conversion.

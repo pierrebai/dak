@@ -5,7 +5,7 @@
 namespace dak::object
 {
    ref_counted_t::ref_counted_t(const ref_counted_t &)
-   : my_refcount(0)
+   : my_ref_count(0)
    {
    }
 
@@ -14,16 +14,16 @@ namespace dak::object
       return *this;
    }
 
-   void ref_counted_t::addref() const
+   void ref_counted_t::add_ref() const
    {
-      ++my_refcount;
+      ++my_ref_count;
    }
 
-   void ref_counted_t::unref() const
+   void ref_counted_t::sub_ref() const
    {
-      if ( --my_refcount == 0 )
+      if ( --my_ref_count == 0 )
       {
-         my_refcount = std::numeric_limits<int64_t>::min() / 2;
+         my_ref_count = std::numeric_limits<int64_t>::min() / 2;
          delete this;
       }
    }

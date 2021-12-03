@@ -36,6 +36,8 @@ namespace dak::object
 
       // Constructor from name internal stuff.
       name_t(const ref_t<name_stuff_t>& stuff);
+      name_t(const valid_ref_t<name_stuff_t>& stuff);
+      name_t(const edit_ref_t<name_stuff_t>& stuff);
 
       // Destructor.
       ~name_t() = default;

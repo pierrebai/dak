@@ -24,8 +24,8 @@ namespace dak::object
          case datatype_t::boolean:
          case datatype_t::integer:
          case datatype_t::real:  my_i = 0;                                 break;
-         case datatype_t::ref:   if (my_o) my_o->unref(); my_o = nullptr;  break;
-         case datatype_t::name:  if (my_n) my_n->unref(); my_n = nullptr;  break;
+         case datatype_t::ref:   if (my_o) my_o->sub_ref(); my_o = nullptr;  break;
+         case datatype_t::name:  if (my_n) my_n->sub_ref(); my_n = nullptr;  break;
          case datatype_t::array: delete my_a; my_a = nullptr;              break;
          case datatype_t::dict:  delete my_d; my_d = nullptr;              break;
          case datatype_t::text:  delete my_t; my_t = nullptr;              break;
@@ -249,7 +249,7 @@ namespace dak::object
          case datatype_t::boolean: *this = bool(anOther.my_i); break;
          case datatype_t::integer: *this =  anOther.my_i; break;
          case datatype_t::ref:     *this =  valid_ref_t<object_t>(anOther.my_o); break;
-         case datatype_t::name:    *this =  name_t(anOther.my_n); break;
+         case datatype_t::name:    *this =  name_t(ref_t<name_stuff_t>(anOther.my_n)); break;
          case datatype_t::real:    *this =  anOther.my_r; break;
          case datatype_t::array:   *this = *anOther.my_a; break;
          case datatype_t::dict:    *this = *anOther.my_d; break;
@@ -366,7 +366,7 @@ namespace dak::object
       reset(datatype_t::name);
       if (a_name.is_valid()) {
          my_n = valid_ref_t<name_stuff_t>(a_name.my_stuff);
-         my_n->addref();
+         my_n->add_ref();
       }
 
       return *this;
@@ -377,7 +377,7 @@ namespace dak::object
       reset(datatype_t::ref);
       my_o = o;
       if (my_o)
-         my_o->addref();
+         my_o->add_ref();
 
       return *this;
    }
@@ -554,7 +554,7 @@ namespace dak::object
    element_t::operator name_t() const
    {
       if (compatible(datatype_t::name))
-         return name_t(my_n);
+         return name_t(ref_t<name_stuff_t>(my_n));
 
       return name_t();
    }
