@@ -8,8 +8,6 @@
 
 namespace dak::object
 {
-   using namespace dak::any_op;
-
    bool are_similar(const dict_t& a, const dict_t& b, const visited_refs_t& visited)
    {
       if (a.size() != b.size())
@@ -27,8 +25,7 @@ namespace dak::object
 
    bool are_similar(const any_t& a, const any_t& b, const visited_refs_t& visited)
    {
-      // TODO: capture op== in lambda to compare any_t?
-      return a == b;
+      return any_op::is(any_op::compare(a, b), any_op::comparison_t::equal);
    }
 
    bool are_similar(const object_t& a, const object_t& b, const visited_refs_t& visited)

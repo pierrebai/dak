@@ -23,7 +23,15 @@ namespace dak::object
    {
       if (--my_ref_count == 0)
       {
+         // Prevent deletion by making the strong reference count very negative
+         // while we're clearing. The reason is that referenced objects could
+         // have weak references to us. Also, do subtraction and addition
+         // to the ref-count as clearing could somehow add new strong references
+         // to this, however unlikely that may seem, and we cannot just reset it
+         // to zero. 
+         my_ref_count -= std::numeric_limits<int32_t>::min() / 2;
          const_cast<ref_counted_t*>(this)->clear();
+         my_ref_count += std::numeric_limits<int32_t>::min() / 2;
          check_ref();
       }
    }
@@ -44,6 +52,8 @@ namespace dak::object
    {
       if (my_ref_count == 0 && my_weak_count == 0)
       {
+         // Prevent double-deletion by making the all reference counts
+         // very negative while we're destroying this.
          my_ref_count = std::numeric_limits<int32_t>::min() / 2;
          my_weak_count = std::numeric_limits<int32_t>::min() / 2;
          delete this;
