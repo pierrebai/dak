@@ -33,23 +33,11 @@ namespace dak::object
       using parent_t = weak_ref_t<namespace_t>;
       using names_t = std::unordered_map<text_t, valid_ref_t<name_stuff_t>>;
 
-      // Make a root ref-counted instance.
-      static edit_ref_t<namespace_t> make();
-
-      // Make a copy ref-counted instance.
-      static edit_ref_t<namespace_t> make(const namespace_t&);
-      static edit_ref_t<namespace_t> make(const valid_ref_t<namespace_t>&);
+      DAK_OBJECT_REF_COUNTED(namespace_t);
 
       // Make a child ref-counted instance. If the label is empty, it is not added to the parent.
       static edit_ref_t<namespace_t> make(str_ptr_t a_label, const edit_ref_t<namespace_t>& a_parent);
       static edit_ref_t<namespace_t> make(const text_t& a_label, const edit_ref_t<namespace_t>& a_parent);
-
-      // Root namespace constructor.
-      namespace_t() = default;
-
-      // Copy constructor.
-      namespace_t(const namespace_t& other) = default;
-      namespace_t(const valid_ref_t<namespace_t>& other) : namespace_t(*other) {}
 
       // Destructor.
       ~namespace_t() = default;
@@ -96,12 +84,7 @@ namespace dak::object
       children_t  my_children;
       names_t     my_names;
 
-      friend struct ref_t<namespace_t>;
-      friend struct valid_ref_t<namespace_t>;
-      friend struct edit_ref_t<namespace_t>;
-      friend struct weak_ref_t<namespace_t>;
       friend struct name_stuff_t;
-      friend struct transaction_t;
    };
 
 }

@@ -3,21 +3,6 @@
 
 namespace dak::object
 {
-   edit_ref_t<object_t> object_t::make()
-   {
-      return edit_ref_t<object_t>(new object_t);
-   }
-
-   edit_ref_t<object_t> object_t::make(const object_t& an_obj)
-   {
-      return edit_ref_t<object_t>(new object_t(an_obj));
-   }
-
-   edit_ref_t<object_t> object_t::make(valid_ref_t<object_t> & an_obj)
-   {
-      return edit_ref_t<object_t>(new object_t(*an_obj));
-   }
-
    object_t& object_t::operator +=(const object_t & an_obj)
    {
       append(an_obj);

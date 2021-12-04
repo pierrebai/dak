@@ -51,6 +51,43 @@ namespace dak::object
       friend struct weak_ref_base_t;
       friend struct element_t;
    };
+
+   //////////////////////////////////////////////////////////////////////////
+   //
+   // Declare and defines typical necessary functions for dynamic objects.
+   //
+   // Use the macro in the public section of a class that derived
+   // from ref_counted_t.
+   //
+   // It declares a make() function and teh necessary friends.
+
+   #define DAK_OBJECT_REF_COUNTED(T)                              \
+      static edit_ref_t<T> make()                                 \
+      {                                                           \
+         return edit_ref_t<T>(new T);                             \
+      }                                                           \
+                                                                  \
+      static edit_ref_t<T> make(const T& other)                   \
+      {                                                           \
+         return edit_ref_t<T>(new T(other));                      \
+      }                                                           \
+                                                                  \
+      static edit_ref_t<T> make(const valid_ref_t<T>& other)      \
+      {                                                           \
+         return edit_ref_t<T>(new T(other));                      \
+      }                                                           \
+                                                                  \
+      T() = default;                                              \
+      T(const T&) = default;                                      \
+      T(const valid_ref_t<T>& other) : T(*other) {}               \
+                                                                  \
+      friend struct ref_t<T>;                                     \
+      friend struct valid_ref_t<T>;                               \
+      friend struct edit_ref_t<T>;                                \
+      friend struct weak_ref_t<T>;                                \
+      friend struct element_t;                                    \
+      friend struct transaction_t
+
 }
 
 #endif /* DAK_OBJECT_REF_COUNTED_H */

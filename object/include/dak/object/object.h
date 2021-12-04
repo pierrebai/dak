@@ -30,14 +30,7 @@ namespace dak::object
       typedef elements_t::iterator iterator;
       typedef elements_t::const_iterator const_iterator;
 
-      // Make a ref-counted instance.
-      static edit_ref_t<object_t> make();
-      static edit_ref_t<object_t> make(const object_t&);
-      static edit_ref_t<object_t> make(valid_ref_t<object_t>&);
-
-      // Constructors.
-      object_t() = default;
-      object_t(const object_t&) = default;
+      DAK_OBJECT_REF_COUNTED(object_t);
 
       // Assignment. Copy the whole object.
       object_t& operator =(const object_t&) = default;
@@ -80,13 +73,6 @@ namespace dak::object
 
    protected:
       elements_t my_elements;
-
-      friend struct ref_t<object_t>;
-      friend struct valid_ref_t<object_t>;
-      friend struct edit_ref_t<object_t>;
-      friend struct weak_ref_t<object_t>;
-      friend struct element_t;
-      friend struct transaction_t;
    };
 }
 

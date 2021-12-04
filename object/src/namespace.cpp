@@ -10,23 +10,6 @@ namespace dak::object
    //
    // Makers.
 
-   // Make a root ref-counted instance.
-   edit_ref_t<namespace_t> namespace_t::make()
-   {
-      return edit_ref_t<namespace_t>(new namespace_t);
-   }
-
-   // Make a copy ref-counted instance.
-   edit_ref_t<namespace_t> namespace_t::make(const namespace_t& other)
-   {
-      return edit_ref_t<namespace_t>(new namespace_t(other));
-   }
-
-   edit_ref_t<namespace_t> namespace_t::make(const valid_ref_t<namespace_t>& other)
-   {
-      return edit_ref_t<namespace_t>(new namespace_t(other));
-   }
-
    // Make a child ref-counted instance.
    edit_ref_t<namespace_t> namespace_t::make(str_ptr_t a_label, const edit_ref_t<namespace_t>& a_parent)
    {

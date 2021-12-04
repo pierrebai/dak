@@ -79,6 +79,13 @@ namespace dak::object
       explicit element_t(const valid_ref_t<object_t>&);
       explicit element_t(const weak_ref_t<object_t>&);
       explicit element_t(const any_t &);
+
+      template <class T>
+      explicit element_t(const valid_ref_t<T>& r) : element_t(valid_ref_t<object_t>(r)) {}
+
+      template <class T>
+      explicit element_t(const weak_ref_t<T>& w) : element_t(weak_ref_t<object_t>(w)) {}
+
       ~element_t();
 
       // Assignments. Changes the type if needed.
@@ -105,6 +112,12 @@ namespace dak::object
       element_t& operator =(const valid_ref_t<object_t>&);
       element_t& operator =(const weak_ref_t<object_t>&);
       element_t& operator =(const any_t&);
+
+      template <class T>
+      element_t& operator =(const valid_ref_t<T>& r) { return operator=(valid_ref_t<object_t>(r)); }
+
+      template <class T>
+      element_t& operator =(const weak_ref_t<object_t>& w) { return operator=(weak_ref_t<object_t>(w)); }
 
       // Data access. Does not change the type.
 
