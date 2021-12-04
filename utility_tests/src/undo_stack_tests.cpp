@@ -93,6 +93,11 @@ namespace dak::utility::tests
 
          Assert::AreEqual(9., my_data.a);
          Assert::AreEqual(81., my_data.a_squared);
+
+         undo.clear();
+
+         Assert::IsFalse(undo.has_undo());
+         Assert::IsFalse(undo.has_redo());
       }
 
       TEST_METHOD(undo_stack_without_deaded_awaken)

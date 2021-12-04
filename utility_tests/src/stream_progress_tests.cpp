@@ -10,6 +10,26 @@ namespace dak::utility::tests
 	{
 	public:
 		
+      TEST_METHOD(test_empty_stream_progress)
+      {
+         stream_progress_t p1;
+
+         Assert::AreEqual<size_t>(0, p1.total_progress());
+
+         p1.progress(1);
+
+         Assert::AreEqual<size_t>(1, p1.total_progress());
+
+         p1.progress(progress_t::my_default_report_every);
+
+         Assert::AreEqual<size_t>(progress_t::my_default_report_every + 1, p1.total_progress());
+
+         p1.flush_progress();
+         p1.clear_progress();
+
+         Assert::AreEqual<size_t>(0, p1.total_progress());
+      }
+
 		TEST_METHOD(test_stream_progress)
 		{
          std::ostringstream stream;

@@ -48,14 +48,15 @@ namespace dak::utility
    {
       STREAM_TYPE stream;
 
-      const int seconds = static_cast<int>(std::round(some_seconds));
+      const int seconds = static_cast<int>(std::floor(some_seconds));
+      const int milliseconds = static_cast<int>((some_seconds - seconds) * 1000);
 
       if (seconds < 2 * 60)
-         stream << seconds << "s";
+         stream << seconds << "s " << (milliseconds % 1000) << "ms";
       else if (seconds < 60 * 60)
-         stream << (seconds / 60) << "m " << (seconds % 60) << "s";
+         stream << (seconds / 60) << "m " << (seconds % 60) << "s " << (milliseconds % 1000) << "ms";
       else
-         stream << (seconds / 3600) << "h " << ((seconds / 60) % 60) << "m " << (seconds % 60) << "s";
+         stream << (seconds / 3600) << "h " << ((seconds / 60) % 60) << "m " << (seconds % 60) << "s " << (milliseconds % 1000) << "ms";
 
       return stream.str();
    }

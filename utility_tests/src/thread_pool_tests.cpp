@@ -30,8 +30,12 @@ namespace dak::utility::tests
          void wait_or_execute()
          {
             my_execute_count += 1;
+
             if (my_execute_count >= my_stop_after_n_execute)
                stop();
+
+            if (my_execute_count > 0 && (my_execute_count % 100) == 0)
+               throw std::exception();
          }
 
          size_t                  my_stop_after_n_execute = 800;

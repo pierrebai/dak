@@ -22,7 +22,64 @@ namespace dak::utility::tests
          size_t my_received_progress = 0;
       };
 		
-		TEST_METHOD(test_multi_thread_progress)
+      TEST_METHOD(test_empty_per_thread_progress)
+      {
+         per_thread_progress_t pt_prog;
+
+         Assert::AreEqual<size_t>(0, pt_prog.total_progress());
+
+         pt_prog.progress(1);
+
+         // Note: received multi_thread_progress not yet updated due to too-little multi_thread_progress.
+         Assert::AreEqual<size_t>(1, pt_prog.total_progress());
+
+         pt_prog.progress(progress_t::my_default_report_every);
+
+         // Note: received multi_thread_progress updated with enough multi_thread_progress done.
+         // Note: the per-thread progress gets reset to zero.
+         Assert::AreEqual<size_t>(progress_t::my_default_report_every + 1, pt_prog.total_progress());
+
+         pt_prog.flush_progress();
+         pt_prog.clear_progress();
+
+         Assert::AreEqual<size_t>(0, pt_prog.total_progress());
+      }
+
+      TEST_METHOD(test_empty_multi_thread_progress)
+      {
+         multi_thread_progress_t mt_prog;
+         per_thread_progress_t pt_prog(mt_prog);
+
+         Assert::AreEqual<size_t>(0, pt_prog.total_progress());
+
+         pt_prog.progress(1);
+
+         // Note: received multi_thread_progress not yet updated due to too-little multi_thread_progress.
+         Assert::AreEqual<size_t>(1, pt_prog.total_progress());
+
+         pt_prog.progress(progress_t::my_default_report_every);
+
+         // Note: received multi_thread_progress updated with enough multi_thread_progress done.
+         // Note: the per-thread progress gets reset to zero.
+         Assert::AreEqual<size_t>(0, pt_prog.total_progress());
+
+         pt_prog.progress(5);
+
+         // Note: received multi_thread_progress not yet updated due to too-little multi_thread_progress.
+         Assert::AreEqual<size_t>(5, pt_prog.total_progress());
+
+         pt_prog.flush_progress();
+
+         // Note: multi-thread progress received progress updated due to flush, but not the dummy progress
+         Assert::AreEqual<size_t>(0, pt_prog.total_progress());
+
+         pt_prog.clear_progress();
+         pt_prog.flush_progress();
+
+         Assert::AreEqual<size_t>(0, pt_prog.total_progress());
+      }
+
+      TEST_METHOD(test_multi_thread_progress)
 		{
          dummy_progress_t dummy_prog;
          multi_thread_progress_t mt_prog(dummy_prog);

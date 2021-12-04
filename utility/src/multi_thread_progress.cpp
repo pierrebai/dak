@@ -17,7 +17,7 @@ namespace dak::utility
       try
       {
          if (!my_mt_progress)
-         return;
+            return;
 
          my_mt_progress->update_progress_from_thread(total_progress());
          clear_progress();
@@ -33,7 +33,7 @@ namespace dak::utility
       try
       {
          if (!my_non_thread_safe_progress)
-         return;
+            return;
 
          report_to_non_thread_safe_progress(my_total_count_so_far);
       }

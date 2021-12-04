@@ -63,5 +63,44 @@ namespace dak::utility::tests
          Assert::AreEqual(t3, t4);
 
       }
+
+      TEST_METHOD(test_stopwatch_formatted_buffer)
+      {
+         std::string narrow_time;
+         std::wstring wide_time;
+         stopwatch_t stopwatch(nullptr, &narrow_time, &wide_time);
+
+         std::this_thread::sleep_for(1ms);
+
+         stopwatch.elapsed();
+         Assert::AreNotEqual<std::string>("", narrow_time);
+         Assert::AreNotEqual<std::wstring>(L"", wide_time);
+
+         stopwatch.elapsed();
+         std::string nt1 = narrow_time;
+         std::wstring wt1 = wide_time;
+         std::this_thread::sleep_for(3ms);
+         stopwatch.elapsed();
+         std::string nt2 = narrow_time;
+         std::wstring wt2 = wide_time;
+
+         Assert::AreNotEqual(nt1, nt2);
+         Assert::AreNotEqual(wt1, wt2);
+
+         // Stop updates the time buffer a last time and after stop,
+         // the time buffer is no longer updated by the stopwatch.
+         stopwatch.stop();
+
+         stopwatch.elapsed();
+         std::string nt3 = narrow_time;
+         std::wstring wt3 = wide_time;
+         std::this_thread::sleep_for(3ms);
+         stopwatch.elapsed();
+         std::string nt4 = narrow_time;
+         std::wstring wt4 = wide_time;
+
+         Assert::AreEqual(nt3, nt4);
+         Assert::AreEqual(wt3, wt4);
+      }
    };
 }
