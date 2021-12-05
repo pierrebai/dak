@@ -65,12 +65,12 @@ namespace dak::object::tests
             timeline_t undo_redo;
             transaction_t tr1;
 
-            auto& mo1 = o1->modify(tr1);
+            auto& mo1 = *o1->modify(tr1);
 
             auto o2 = object_t::make();
             mo1[voc::child] = o2;
 
-            auto& mo2 = o2->modify(tr1);
+            auto& mo2 = *o2->modify(tr1);
             array_t& a3 = mo2[voc::after];
 
             a3[0] = true;
@@ -110,12 +110,12 @@ namespace dak::object::tests
          {
             transaction_t tr1;
 
-            auto& mo1 = o1->modify(tr1);
+            auto& mo1 = *o1->modify(tr1);
 
             auto o2 = object_t::make();
             mo1[voc::child] = o2;
 
-            auto& mo2 = o2->modify(tr1);
+            auto& mo2 = *o2->modify(tr1);
             array_t& a3 = mo2[rock_with_metadata];
 
             a3[0] = true;
@@ -219,12 +219,12 @@ namespace dak::object::tests
          {
             transaction_t tr1;
 
-            auto& mo1 = expected->modify(tr1);
+            auto& mo1 = *expected->modify(tr1);
 
             auto o2 = object_t::make();
             mo1[voc::child] = o2;
 
-            auto& mo2 = o2->modify(tr1);
+            auto& mo2 = *o2->modify(tr1);
             array_t& a3 = mo2[voc::after];
 
             a3[0] = true;

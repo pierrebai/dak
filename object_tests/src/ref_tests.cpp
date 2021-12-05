@@ -60,11 +60,11 @@ namespace dak::object::tests
             {
                timeline_t timeline;
                transaction_t tr;
-               auto& o1 = ro1->modify(tr);
+               auto& o1 = *ro1->modify(tr);
 
                o1[voc::other] = ro2;
 
-               auto& o2 = ro2->modify(tr);
+               auto& o2 = *ro2->modify(tr);
                o2[voc::other] = ro1;
 
                tr.commit(timeline);
@@ -83,7 +83,7 @@ namespace dak::object::tests
             timeline_t timeline;
             transaction_t tr;
 
-            auto& o1 = ro1->modify(tr);
+            auto& o1 = *ro1->modify(tr);
 
             o1[voc::other] = wro2;
 

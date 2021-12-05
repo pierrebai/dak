@@ -70,7 +70,7 @@ namespace dak::object
       auto operator <=> (const object_t&) const = default;
 
       // Modification in a transaction.
-      object_t& modify(transaction_t&) const;
+      edit_ref_t<object_t> modify(transaction_t&) const;
 
    protected:
       elements_t my_elements;

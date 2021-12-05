@@ -94,9 +94,10 @@ namespace dak::object
    //
    // Modification in a transaction.
 
-   object_t& object_t::modify(transaction_t& a_trans) const
+   edit_ref_t<object_t> object_t::modify(transaction_t& a_trans) const
    {
-      a_trans.add(edit_ref_t<object_t>(const_cast<object_t*>(this)));
-      return const_cast<object_t&>(*this);
+      edit_ref_t<object_t> edit_this(const_cast<object_t*>(this));
+      a_trans.add(edit_this);
+      return edit_this;
    }
 }

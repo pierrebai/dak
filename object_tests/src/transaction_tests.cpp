@@ -26,7 +26,7 @@ namespace dak::object::tests
          {
             transaction_t t1;
 
-            fill_object(ro1->modify(t1));
+            fill_object(*ro1->modify(t1));
 
             t1.commit(undo_redo);
          }
@@ -36,7 +36,7 @@ namespace dak::object::tests
          {
             transaction_t t1;
 
-            object_t o1 = ro1->modify(t1);
+            object_t o1 = *ro1->modify(t1);
 
             o1[rock] = 7;
 
@@ -48,7 +48,7 @@ namespace dak::object::tests
          {
             transaction_t t1;
 
-            fill_object(ro1->modify(t1));
+            fill_object(*ro1->modify(t1));
 
             t1.commit(undo_redo);
          }
@@ -100,7 +100,7 @@ namespace dak::object::tests
          {
             transaction_t t1;
 
-            fill_object(ro1->modify(t1));
+            fill_object(*ro1->modify(t1));
 
             t1.cancel();
          }

@@ -18,7 +18,7 @@ namespace dak::object::tests
          auto ro1 = object_t::make();
 
          transaction_t t1;
-         auto& o1 = ro1->modify(t1);
+         auto& o1 = *ro1->modify(t1);
 
          Assert::AreEqual<index_t>(0, o1.size());
 
@@ -59,7 +59,7 @@ namespace dak::object::tests
          auto ro1 = object_t::make();
 
          transaction_t t1;
-         auto& o1 = ro1->modify(t1);
+         auto& o1 = *ro1->modify(t1);
 
          o1[rock] = 3;
          o1[pebble] = 4;
@@ -67,7 +67,7 @@ namespace dak::object::tests
          o1[hello][world] = rock;
 
          auto ro2 = object_t::make();
-         auto& o2 = ro2->modify(t1);
+         auto& o2 = *ro2->modify(t1);
 
          o2 += o1;
 
@@ -94,7 +94,7 @@ namespace dak::object::tests
          auto ro1 = object_t::make();
 
          transaction_t t1;
-         auto& o1 = ro1->modify(t1);
+         auto& o1 = *ro1->modify(t1);
 
          o1[rock] = 3;
          o1[pebble] = 4;
@@ -128,7 +128,7 @@ namespace dak::object::tests
          {
             transaction_t t1;
 
-            object_t& o1 = ro1->modify(t1);
+            object_t& o1 = *ro1->modify(t1);
 
             o1[voc::rock] = 3;
             o1[voc::pebble] = 4;
@@ -157,7 +157,7 @@ namespace dak::object::tests
          {
             transaction_t t2;
 
-            auto& o1 = ro1->modify(t2);
+            auto& o1 = *ro1->modify(t2);
 
             o1[voc::rock] = 33;
             o1[voc::pebble] = 44;
