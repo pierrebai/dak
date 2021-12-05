@@ -69,6 +69,7 @@ namespace dak::object
       friend struct valid_ref_t<name_stuff_t>;
       friend struct edit_ref_t<name_stuff_t>;
       friend struct weak_ref_t<name_stuff_t>;
+      friend struct ref_base_t;
       friend struct name_t;
       friend struct element_t;
       friend struct transaction_t;

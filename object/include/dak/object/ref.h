@@ -30,24 +30,24 @@ namespace dak::object
       ref_t(const ref_t<O>& other) : ref_t(static_cast<const O*>(other.my_object)) {}
 
       // Constructors from a weak reference.
-      explicit ref_t(const weak_ref_t<T>& other) : ref_t<T>(static_cast<const T*>(other.is_valid() ? other.my_object : nullptr)) {}
+      explicit ref_t(const weak_ref_t<T>& other) : ref_t<T>(other.as<T>()) {}
 
       template <class O>
-      explicit ref_t(const weak_ref_t<O>& other) : ref_t<T>(static_cast<const O*>(other.is_valid() ? other.my_object : nullptr)) {}
+      explicit ref_t(const weak_ref_t<O>& other) : ref_t<T>(other.as<O>()) {}
 
       // Copy from other ref.
       ref_t<T>& operator =(const ref_t<T>& other) = default;
       ref_t<T>& operator =(ref_t<T>&& other) = default;
 
-      // Copy from a weak reference.
-      ref_t<T>& operator =(const weak_ref_t<T>& other) { return operator =(static_cast<const T*>(other.is_valid() ? other.my_object : nullptr)); }
-
-      template <class O>
-      ref_t<T>& operator =(const weak_ref_t<O>& other) { return operator =(static_cast<const O*>(other.is_valid() ? other.my_object : nullptr)); }
-
       // Copy from similar ref.
       template <class O>
-      ref_t<T>& operator =(const ref_t<O>& other) { return operator =(static_cast<const O*>(other.my_object)); }
+      ref_t<T>& operator =(const ref_t<O>& other) { return operator =(other.as<O>()); }
+
+      // Copy from a weak reference.
+      ref_t<T>& operator =(const weak_ref_t<T>& other) { return operator =(other.as<T>()); }
+
+      template <class O>
+      ref_t<T>& operator =(const weak_ref_t<O>& other) { return operator =(other.as<O>()); }
 
       // Swap with another reference.
       void swap(ref_t<T>& other) { strong_ref_base_t::swap(other); }
@@ -60,19 +60,24 @@ namespace dak::object
       friend struct element_t;
    };
 
+
+   //////////////////////////////////////////////////////////////////////////
+   //
+   // Now we can implement the weak_ref_t functions taking ref_t.
+
    template <class T>
-   weak_ref_t<T>::weak_ref_t(const ref_t<T>& other) : weak_ref_t(static_cast<const T*>(other.my_object)) {}
+   weak_ref_t<T>::weak_ref_t(const ref_t<T>& other) : weak_ref_t(other.as<T>()) {}
 
    template <class T>
    template <class O>
-   weak_ref_t<T>::weak_ref_t(const ref_t<O>& other) : weak_ref_t(static_cast<const O*>(other.my_object)) {}
+   weak_ref_t<T>::weak_ref_t(const ref_t<O>& other) : weak_ref_t(other.as<O>()) {}
 
    template <class T>
-   weak_ref_t<T>& weak_ref_t<T>::operator =(const ref_t<T>& other) { return operator =(static_cast<const T*>(other.my_object)); }
+   weak_ref_t<T>& weak_ref_t<T>::operator =(const ref_t<T>& other) { return operator =(other.as<T>()); }
 
    template <class T>
    template <class O>
-   weak_ref_t<T>& weak_ref_t<T>::operator =(const ref_t<O>& other) { return operator =(static_cast<const O*>(other.my_object)); }
+   weak_ref_t<T>& weak_ref_t<T>::operator =(const ref_t<O>& other) { return operator =(other.as<O>()); }
 
 }
 

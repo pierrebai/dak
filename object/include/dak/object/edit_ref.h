@@ -24,6 +24,9 @@ namespace dak::object
       // Constructors from possibly invalid ref and transaction.
       explicit edit_ref_t(const ref_t<T>& other, transaction_t& trans) : valid_ref_t<T>(other) { trans.add(*this); }
 
+      // Constructors from weak ref and transaction.
+      explicit edit_ref_t(const weak_ref_t<T>& other, transaction_t& trans) : valid_ref_t<T>(other) { trans.add(*this); }
+
       // Constructors from similar edit ref.
       template <class O>
       edit_ref_t(const edit_ref_t<O>& other) : valid_ref_t<T>(other) {}
@@ -36,11 +39,21 @@ namespace dak::object
       template <class O>
       explicit edit_ref_t(const ref_t<O>& other, transaction_t& trans) : valid_ref_t<T>(other) { trans.add(*this); }
 
+      // Constructors from similar weak ref and transaction.
+      template <class O>
+      explicit edit_ref_t(const weak_ref_t<O>& other, transaction_t& trans) : valid_ref_t<T>(other) { trans.add(*this); }
+
       // Copy from edit ref.
+      //
+      // Note: do *not* provide assigment operator for other ref types
+      //       as we need a transaction to make an edit ref.
       edit_ref_t<T>& operator =(const edit_ref_t<T>& other) = default;
       edit_ref_t<T>& operator =(edit_ref_t<T>&& other) = default;
 
       // Copy from similar edit ref.
+      //
+      // Note: do *not* provide assigment operator for other ref types
+      //       as we need a transaction to make an edit ref.
       template <class O>
       edit_ref_t<T>& operator =(const edit_ref_t<O>& other) { valid_ref_t<T>::operator =(other); return *this; }
 
@@ -66,10 +79,31 @@ namespace dak::object
 
    protected:
       edit_ref_t(T* t) : valid_ref_t<T>(t) {}
+      edit_ref_t<T>& operator =(const T* t) { valid_ref_t<T>::operator =(t); return *this; }
 
       friend T;
       friend struct element_t;
    };
+
+
+   //////////////////////////////////////////////////////////////////////////
+   //
+   // Now we can implement the weak_ref_t functions taking edit_ref_t.
+
+   template <class T>
+   weak_ref_t<T>::weak_ref_t(const edit_ref_t<T>& other) : weak_ref_t(other.as<T>()) {}
+
+   template <class T>
+   template <class O>
+   weak_ref_t<T>::weak_ref_t(const edit_ref_t<O>& other) : weak_ref_t(other.as<O>()) {}
+
+   template <class T>
+   weak_ref_t<T>& weak_ref_t<T>::operator =(const edit_ref_t<T>& other) { return operator =(other.as<T>()); }
+
+   template <class T>
+   template <class O>
+   weak_ref_t<T>& weak_ref_t<T>::operator =(const edit_ref_t<O>& other) { return operator =(other.as<O>()); }
+
 }
 
 namespace std

@@ -18,7 +18,7 @@ namespace dak::object::tests
       {
          wstringstream ss;
          ss << voc::rock;
-         Assert::AreEqual(text_t(L" : \"\" / \"rock\""), ss.str());
+         Assert::AreEqual(text_t(L" : \"\" / 1 \"rock\""), ss.str());
       }
 
       TEST_METHOD(ostream_empty_dict)
@@ -35,7 +35,7 @@ namespace dak::object::tests
          dict_t d2;
          d2[voc::rock] = 3;
          ss << d2;
-         Assert::AreEqual(text_t(L"{\n : \"\" / \"rock\": i 3,\n}"), ss.str());
+         Assert::AreEqual(text_t(L"{\n : \"\" / 1 \"rock\": i 3,\n}"), ss.str());
       }
 
       TEST_METHOD(ostream_one_empty_array)
@@ -81,8 +81,8 @@ namespace dak::object::tests
          ref_ostream_t(ss) << o1;
          Assert::AreEqual(text_t(
             L"ref 1 {\n"
-            L" : \"\" / \"child\": r ref 2 {\n"
-            L" : \"\" / \"after\": a [\n"
+            L" : \"\" / 1 \"child\": r ref 2 {\n"
+            L" : \"\" / 2 \"after\": a [\n"
             L"b 1,\n"
             L"r ref -1,\n"
             L"],\n"

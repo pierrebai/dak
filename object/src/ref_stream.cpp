@@ -11,39 +11,58 @@ namespace dak::object
    //
    // Output stream wrapper data.
 
+   namespace
+   {
+      template <class T>
+      int64_t get_thing_id(std::map<const T, int64_t>& ids, const T& thing)
+      {
+         if (!thing.is_valid())
+            return 0;
+
+         const auto pos = ids.find(thing);
+         if (pos != ids.end())
+            return -pos->second;
+
+         // Note: 0 is reserved for invalid things.
+         const int64_t id = static_cast<int64_t>(ids.size()) + 1;
+         ids[thing] = id;
+         return id;
+      }
+   }
+
    int64_t ref_ostream_t::get_object_id(const ref_t<object_t>& object) const
    {
-      if (object.is_null())
-         return 0;
+      return get_thing_id<ref_t<object_t>>(my_object_ids, object);
+   }
 
-      const auto pos = my_object_ids.find(object);
-      if (pos != my_object_ids.end())
-         return -pos->second;
-
-      // Note: 0 is reserved for null object ref.
-      const int64_t id = static_cast<int64_t>(my_object_ids.size()) + 1;
-      my_object_ids[object] = id;
-      return id;
+   int64_t ref_ostream_t::get_name_id(const name_t& name) const
+   {
+      // TODO: problem: similar names will compare equal but have differen metadata...
+      return get_thing_id<name_t>(my_name_ids, name);
    }
 
    void ref_ostream_t::clear()
    {
       my_object_ids.clear();
+      my_name_ids.clear();
    }
 
    //////////////////////////////////////////////////////////////////////////
    //
    // Output stream printing.
 
-   const ref_ostream_t& ref_ostream_t::print(const namespace_t& ns) const
+   const ref_ostream_t& ref_ostream_t::print(const weak_ref_t<namespace_t>& ns) const
    {
+      if (!ns.is_valid())
+         return *this;
+
       auto& ostr = get_stream();
 
-      namespace_t::parent_t parent = ns.get_parent();
-      if (parent.is_valid())
-         print(*valid_ref_t(ref_t<namespace_t>(parent)));
+      valid_ref_t<namespace_t> valid_ns(ns);
 
-      ostr << L" : " << std::quoted(ns.to_text());
+      print(valid_ns->get_parent());
+
+      ostr << L" : " << std::quoted(valid_ns->to_text());
 
       return *this;
    }
@@ -51,17 +70,16 @@ namespace dak::object
    const ref_ostream_t& ref_ostream_t::print(const name_t& n) const
    {
       if (n.is_valid())
-      {
-         const weak_ref_t<namespace_t>& ns = n.get_namespace();
-         if (ns.is_valid())
-            *this << *valid_ref_t<namespace_t>(ref_t<namespace_t>(ns));
+         print(n.get_namespace());
 
-         *this << L" / " << std::quoted(n.to_text());
-      }
-      else
-      {
-         get_stream() << L"?";
-      }
+      const auto id = get_name_id(n);
+      *this << L" / " << id;
+      if (id <= 0)
+         return *this;
+
+      // TODO: write all metadata.
+      *this << L" " << std::quoted(n.to_text());
+
       return *this;
    }
 
@@ -206,23 +224,51 @@ namespace dak::object
    //
    // Input stream data.
 
-   void ref_istream_t::add_object_with_id(const valid_ref_t<object_t>& obj, int64_t id) const
+   namespace
    {
-      my_object_with_ids[std::abs(id)] = obj;
+      template <class T>
+      void add_thing_with_id(std::map<int64_t, T>& ids, const T& thing, const int64_t id)
+      {
+         ids[std::abs(id)] = thing;
+      }
+
+      template <class T>
+      const T& get_thing_with_id(const std::map<int64_t, T>& ids, const int64_t id)
+      {
+         const auto pos = ids.find(std::abs(id));
+         if (pos != ids.end())
+            return pos->second;
+
+         static const T empty;
+         return empty;
+      }
+
    }
 
-   ref_t<object_t> ref_istream_t::get_object_with_id(int64_t id) const
+   void ref_istream_t::add_object_with_id(const ref_t<object_t>& obj, int64_t id) const
    {
-      const auto pos = my_object_with_ids.find(std::abs(id));
-      if (pos != my_object_with_ids.end())
-         return pos->second;
+      return add_thing_with_id(my_object_with_ids, obj, id);
+   }
 
-      return ref_t<object_t>();
+   const ref_t<object_t>& ref_istream_t::get_object_with_id(int64_t id) const
+   {
+      return get_thing_with_id(my_object_with_ids, id);
+   }
+
+   void ref_istream_t::add_name_with_id(const name_t& name, int64_t id) const
+   {
+      return add_thing_with_id(my_name_with_ids, name, id);
+   }
+
+   const name_t& ref_istream_t::get_name_with_id(int64_t id) const
+   {
+      return get_thing_with_id(my_name_with_ids, id);
    }
 
    void ref_istream_t::clear()
    {
       my_object_with_ids.clear();
+      my_name_with_ids.clear();
       get_stream().clear();
    }
 
@@ -233,10 +279,6 @@ namespace dak::object
    const ref_istream_t& ref_istream_t::parse(name_t& n) const
    {
       auto& istr = get_stream();
-
-      // Try parsing as an invalid name, return immediately if invalid.
-      if (parse_optional_sigil(istr, L'?'))
-         return *this;
 
       const namespace_t* current_ns = &my_top_namespace;
       while (parse_optional_sigil(istr, L':'))
@@ -257,9 +299,21 @@ namespace dak::object
       if (!parse_sigil(istr, L'/'))
          return *this;
 
-      text_t text;
-      istr >> std::quoted(text);
-      n = current_ns->get_name(text);
+      int64_t id = 0;
+      istr >> std::ws >> id;
+      if (id > 0)
+      {
+         text_t text;
+         istr >> std::ws >> std::quoted(text);
+         n = current_ns->get_name(text);
+         // TODO: parse metadata.
+         add_name_with_id(n, id);
+      }
+      else
+      {
+         n = get_name_with_id(-id);
+      }
+
       return *this;
    }
 

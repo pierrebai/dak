@@ -41,12 +41,17 @@ namespace dak::object
       // Destructor.
       ~ref_base_t() = default;
 
+      template <class T>
+      const T* as() const { return static_cast<const T*>(is_valid() ? my_object : nullptr); }
+
       const ref_counted_t* my_object = nullptr;
 
       friend struct name_t;
       friend struct element_t;
 
       template <class T> friend struct ref_t;
+      template <class T> friend struct valid_ref_t;
+      template <class T> friend struct edit_ref_t;
       template <class T> friend struct weak_ref_t;
    };
 

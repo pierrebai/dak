@@ -40,18 +40,35 @@ namespace dak::object
       const ref_ostream_t& print(const any_t& d) const;
       const ref_ostream_t& print(const object_t& o) const;
       const ref_ostream_t& print(const name_t& n) const;
-      const ref_ostream_t& print(const namespace_t& ns) const;
+      const ref_ostream_t& print(const weak_ref_t<namespace_t>& ns) const;
 
-      // Retrieve the reference id of an object.
+      // Retrieve the id of an object reference .
       int64_t get_object_id(const ref_t<object_t>& object) const;
+
+      // Retrieve the id of a name.
+      int64_t get_name_id(const name_t& name) const;
 
       // Reset the tracked object references.
       void clear();
 
    private:
-      // Kept as mutable so that a const ref stream can be passed
-      // as a temporary value to the stream operator.
+      // Map of already written object references, used to avoid
+      // infinite recursion due to mutually referencing objects.
+      // 
+      // An object is written only the first time it is encountered.
+      // Subsequent references to it only write the associated id
+      // as a *negative* value. Invalid (null) references are written
+      // as zero.
+      //
+      // Kept as mutable so that a temporary ref stream can be passed
+      // as a const value to the stream operator.
       mutable std::map<const ref_t<object_t>, int64_t> my_object_ids;
+
+      // Map of already written names, used to avoid infinite recursion
+      // due to names using each other as metadata.
+      //
+      // The numbering scheme is the same as for the object references.
+      mutable std::map<const name_t, int64_t> my_name_ids;
 
       std::wostream& my_stream;
    };
@@ -144,18 +161,28 @@ namespace dak::object
       const ref_istream_t& parse(name_t& n) const;
 
       // Retrieve the object reference corresponding to the id.
-      ref_t<object_t> get_object_with_id(int64_t id) const;
+      const ref_t<object_t>& get_object_with_id(int64_t id) const;
 
       // Add the object reference corresponding to the id.
-      void add_object_with_id(const valid_ref_t<object_t>& obj, int64_t id) const;
+      void add_object_with_id(const ref_t<object_t>& obj, int64_t id) const;
+
+      // Retrieve the name corresponding to the id.
+      const name_t& get_name_with_id(int64_t id) const;
+
+      // Add the name corresponding to the id.
+      void add_name_with_id(const name_t& obj, int64_t id) const;
 
       // Reset the tracked object references.
       void clear();
 
    private:
-      // Kept as mutable so that a const ref stream can be passed
-      // as a temporary value to the stream operator.
+      // Kept as mutable so that a temporary ref stream can be passed
+      // as a const value to the stream operator.
       mutable std::map<int64_t, ref_t<object_t>> my_object_with_ids;
+
+      // Kept as mutable so that a temporary ref stream can be passed
+      // as a const value to the stream operator.
+      mutable std::map<int64_t, name_t> my_name_with_ids;
 
       std::wistream& my_stream;
       namespace_t    my_top_namespace;
