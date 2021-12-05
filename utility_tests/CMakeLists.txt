@@ -1,5 +1,5 @@
 
-add_library(utility_tests SHARED
+add_library(dak_utility_tests SHARED
    src/multi_thread_progress_tests.cpp
    src/number_tests.cpp
    src/progress_tests.cpp
@@ -11,14 +11,10 @@ add_library(utility_tests SHARED
    src/undo_stack_tests.cpp
 )
 
-target_link_libraries(utility_tests PUBLIC
-   utility
-)
-
-target_include_directories(utility_tests PUBLIC
-   "${CMAKE_CURRENT_SOURCE_DIR}/../utility/include"
+target_link_libraries(dak_utility_tests PUBLIC
+   dak_utility
 )
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set_property(TARGET utility_tests PROPERTY CXX_STANDARD 20)
+set_property(TARGET dak_utility_tests PROPERTY CXX_STANDARD 20)

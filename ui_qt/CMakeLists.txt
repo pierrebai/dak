@@ -9,7 +9,7 @@ find_package(Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt5 COMPONENTS Gui REQUIRED)
 find_package(Qt5 COMPONENTS WinExtras REQUIRED)
 
-add_library(ui_qt
+add_library(dak_ui_qt
    include/dak/ui/qt/canvas.h                         src/canvas.cpp
    include/dak/ui/qt/convert.h                        src/convert.cpp
    include/dak/ui/qt/color_editor.h                   src/color_editor.cpp
@@ -28,14 +28,17 @@ add_library(ui_qt
    include/dak/ui/qt/widget_mouse_emitter.h           src/widget_mouse_emitter.cpp
 )
 
-target_include_directories(ui_qt PUBLIC
+target_include_directories(dak_ui_qt PUBLIC
    include
+)
+
+target_include_directories(dak_ui_qt PRIVATE
    "${CMAKE_CURRENT_SOURCE_DIR}/../utility/include"
    "${CMAKE_CURRENT_SOURCE_DIR}/../geometry/include"
    "${CMAKE_CURRENT_SOURCE_DIR}/../ui/include"
 )
 
-target_include_directories(ui_qt PUBLIC
+target_include_directories(dak_ui_qt PUBLIC
    "${Qt5Core_INCLUDE_DIRS}"
    "${Qt5Widgets_INCLUDE_DIRS}"
    "${Qt5Gui_INCLUDE_DIRS}"
@@ -44,4 +47,4 @@ target_include_directories(ui_qt PUBLIC
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set_property(TARGET ui_qt PROPERTY CXX_STANDARD 20)
+set_property(TARGET dak_ui_qt PROPERTY CXX_STANDARD 20)

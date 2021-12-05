@@ -1,5 +1,5 @@
 
-add_library(ui
+add_library(dak_ui
    include/dak/ui/color.h              src/color.cpp
    include/dak/ui/drawing.h
    include/dak/ui/drawing_base.h       src/drawing_base.cpp
@@ -14,13 +14,16 @@ add_library(ui
    include/dak/ui/transformer.h        src/transformer.cpp
 )
 
-target_include_directories(ui PUBLIC
+target_include_directories(dak_ui PUBLIC
    include
+)
+
+target_include_directories(dak_ui PRIVATE
    "${CMAKE_CURRENT_SOURCE_DIR}/../utility/include"
    "${CMAKE_CURRENT_SOURCE_DIR}/../geometry/include"
 )
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set_property(TARGET ui PROPERTY CXX_STANDARD 20)
+set_property(TARGET dak_ui PROPERTY CXX_STANDARD 20)
 

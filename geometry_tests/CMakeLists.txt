@@ -1,5 +1,5 @@
 
-add_library(geometry_tests SHARED
+add_library(dak_geometry_tests SHARED
    src/edge_tests.cpp
    src/edges_map_tests.cpp
    src/face_tests.cpp
@@ -10,18 +10,16 @@ add_library(geometry_tests SHARED
    src/utility_tests.cpp
 )
 
-target_link_libraries(geometry_tests PUBLIC
-   geometry
-   utility
+target_link_libraries(dak_geometry_tests PUBLIC
+   dak_geometry
+   dak_utility
 )
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set_property(TARGET geometry_tests PROPERTY CXX_STANDARD 20)
+set_property(TARGET dak_geometry_tests PROPERTY CXX_STANDARD 20)
 
-target_include_directories(geometry_tests PUBLIC
+target_include_directories(dak_geometry_tests PRIVATE
    include
-   "${CMAKE_CURRENT_SOURCE_DIR}/../utility/include"
-   "${CMAKE_CURRENT_SOURCE_DIR}/../geometry/include"
 )
 

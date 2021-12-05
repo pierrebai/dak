@@ -1,5 +1,5 @@
 
-add_library(utility
+add_library(dak_utility
    include/dak/utility/all.h
    include/dak/utility/constants.h
    include/dak/utility/containers.h
@@ -16,11 +16,11 @@ add_library(utility
    include/dak/utility/undo_stack.h                src/undo_stack.cpp
 )
 
-target_include_directories(utility PUBLIC
+target_include_directories(dak_utility PUBLIC
    include
 )
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set_property(TARGET utility PROPERTY CXX_STANDARD 20)
+set_property(TARGET dak_utility PROPERTY CXX_STANDARD 20)
 

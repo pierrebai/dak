@@ -1,5 +1,5 @@
 
-add_library(geometry
+add_library(dak_geometry
    include/dak/geometry/constants.h
    include/dak/geometry/edge.h
    include/dak/geometry/edges_map.h       src/edges_map.cpp
@@ -14,12 +14,15 @@ add_library(geometry
                                           src/filler.cpp
 )
 
-target_include_directories(geometry PUBLIC
+target_include_directories(dak_geometry PUBLIC
    include
+)
+
+target_include_directories(dak_geometry PRIVATE
    "${CMAKE_CURRENT_SOURCE_DIR}/../utility/include"
 )
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set_property(TARGET geometry PROPERTY CXX_STANDARD 20)
+set_property(TARGET dak_geometry PROPERTY CXX_STANDARD 20)
 

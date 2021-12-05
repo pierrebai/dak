@@ -1,5 +1,5 @@
 
-add_library(object
+add_library(dak_object
    include/dak/object/all.h
    include/dak/object/array.h                   src/array.cpp
    include/dak/object/dict.h                    src/dict.cpp
@@ -22,7 +22,11 @@ add_library(object
    include/dak/object/voc_internal.h
 )
 
-target_include_directories(object PUBLIC
+target_include_directories(dak_object PUBLIC
+   include
+)
+
+target_include_directories(dak_object PRIVATE
    include
    "${CMAKE_CURRENT_SOURCE_DIR}/../utility/include"
    "${CMAKE_CURRENT_SOURCE_DIR}/../any_op/include"
@@ -30,5 +34,5 @@ target_include_directories(object PUBLIC
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set_property(TARGET object PROPERTY CXX_STANDARD 20)
+set_property(TARGET dak_object PROPERTY CXX_STANDARD 20)
 

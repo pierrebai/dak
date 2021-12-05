@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # The dak libraries and their tests.
 
-project(dak_utility)
+project(dak)
 
 add_definitions(-DUNICODE)
 add_definitions(-D_UNICODE)

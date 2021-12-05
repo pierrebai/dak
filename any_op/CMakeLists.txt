@@ -1,5 +1,5 @@
 
-add_library(any_op
+add_library(dak_any_op
    Readme.md
    include/dak/any_op/compare_op.h            src/compare_op.cpp
    include/dak/any_op/convert_op.h            src/convert_op.cpp
@@ -13,16 +13,19 @@ add_library(any_op
    include/dak/any_op/to_text_op.h            src/to_text_op.cpp
 )
 
-target_include_directories(any_op PUBLIC
+target_include_directories(dak_any_op PUBLIC
    include
+)
+
+target_include_directories(dak_any_op PRIVATE
    "${CMAKE_CURRENT_SOURCE_DIR}/../utility/include"
 )
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set_property(TARGET any_op PROPERTY CXX_STANDARD 20)
+set_property(TARGET dak_any_op PROPERTY CXX_STANDARD 20)
 
-target_compile_options(any_op PRIVATE
+target_compile_options(dak_any_op PRIVATE
    /bigobj
 )
 
