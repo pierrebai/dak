@@ -11,12 +11,12 @@ namespace dak::object
    // Makers.
 
    // Make a child ref-counted instance.
-   edit_ref_t<namespace_t> namespace_t::make(str_ptr_t a_label, const edit_ref_t<namespace_t>& a_parent)
+   edit_ref_t<namespace_t> namespace_t::make(const edit_ref_t<namespace_t>& a_parent, str_ptr_t a_label)
    {
-      return a_label ? make(text_t(a_label), a_parent) : make();
+      return a_label ? make(a_parent, text_t(a_label)) : make();
    }
 
-   edit_ref_t<namespace_t> namespace_t::make(const text_t& a_label, const edit_ref_t<namespace_t>& a_parent)
+   edit_ref_t<namespace_t> namespace_t::make(const edit_ref_t<namespace_t>& a_parent, const text_t& a_label)
    {
       auto new_ns = edit_ref_t<namespace_t>(new namespace_t);
       new_ns->my_label = a_label;

@@ -139,12 +139,10 @@ namespace dak::object
 
    struct ref_istream_t
    {
-      // The known namespace that can be searched for names.
-      using namespaces_t = std::vector<valid_ref_t<namespace_t>>;
-
-      // Wrap an input stream to handle object refs.
-      ref_istream_t(std::wistream& s, transaction_t& transaction, const namespaces_t& known_ns);
-      ref_istream_t(std::wistream& s, transaction_t& transaction, const valid_ref_t<namespace_t>& known_ns);
+      // Wrap an input stream to handle reading object reference, names, namespaces, etc.
+      //
+      // Requires a transaction to create new names and namespace into the given base namespace.
+      ref_istream_t(std::wistream& s, transaction_t& transaction, const valid_ref_t<namespace_t>& into_ns);
 
       // Get the underlying stream.
       std::wistream& get_stream() const { return my_stream; }
@@ -187,9 +185,9 @@ namespace dak::object
       // as a const value to the stream operator.
       mutable std::unordered_map<int64_t, exact_name_t> my_name_with_ids;
 
-      std::wistream& my_stream;
-      transaction_t& my_transaction;
-      namespace_t    my_top_namespace;
+      std::wistream&             my_stream;
+      transaction_t&             my_transaction;
+      valid_ref_t<namespace_t>   my_target_namespace;
    };
 
 

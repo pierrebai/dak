@@ -258,14 +258,64 @@ namespace dak::object::tests
          Assert::AreEqual<int64_t>(reserved_id, rostr.get_object_id(expected));
       }
 
+      TEST_METHOD(istream_parsing_create_names_and_namespaces)
+      {
+         std::wistringstream ss(
+            L"ref 1 {\n"
+            L" : \"\" / 1 \"child\": r ref 2 {\n"
+            L" : \"custom\" / 2 \"after\": a [\n"
+            L"b 1,\n"
+            L"w ref -1,\n"
+            L"],\n"
+            L"},\n"
+            L"}");
+         transaction_t tr;
+
+         ref_t<object_t> received;
+         auto target_ns = namespace_t::make();
+         ref_istream_t(ss, tr, target_ns) >> received;
+
+         Assert::IsFalse(ss.fail());
+         Assert::IsTrue(received.is_valid());
+
+         Assert::IsTrue(target_ns->get_namespace(L"").is_null());
+         Assert::IsTrue(target_ns->get_namespace(L"custom").is_valid());
+
+         name_t child = target_ns->get_name(L"child");
+         name_t custom_after = valid_ref_t(target_ns->get_namespace(L"custom"))->get_name(L"after");
+
+         Assert::IsTrue(child.is_valid());
+         Assert::IsTrue(custom_after.is_valid());
+
+         valid_ref_t<object_t> valid_rec(received);
+
+         Assert::AreEqual<index_t>(1, valid_rec->size());
+         Assert::AreEqual(datatype_t::ref, valid_rec[child].get_type());
+
+         valid_ref_t<object_t> child_obj = valid_rec[child];
+
+         Assert::AreEqual<index_t>(1, child_obj->size());
+         Assert::AreEqual(datatype_t::array, child_obj[custom_after].get_type());
+
+         const array_t arr = child_obj[custom_after];
+
+         Assert::AreEqual<index_t>(2, arr.size());
+
+         Assert::AreEqual(datatype_t::boolean, arr[0].get_type());
+         Assert::IsTrue(arr[0].as_boolean());
+
+         Assert::AreEqual(datatype_t::weak_ref, arr[1].get_type());
+         Assert::IsTrue(arr[1].as_weak_ref() == received);
+      }
+
       TEST_METHOD(istream_parsing_missing_array_comma)
       {
          std::wistringstream ss(
             L"ref 1 {\n"
-            L" : \"\" / \"child\": r ref 2 {\n"
-            L" : \"\" / \"after\": a [\n"
+            L" : \"\" / 1 \"child\": r ref 2 {\n"
+            L" : \"\" / 2 \"after\": a [\n"
             L"b 1,\n"
-            L"r ref -1\n"
+            L"w ref -1\n"
             L"],\n"
             L"},\n"
             L"}");
@@ -281,10 +331,10 @@ namespace dak::object::tests
       {
          std::wistringstream ss(
             L"ref 1 {\n"
-            L" : \"\" / \"child\": r ref 2\n"
-            L" : \"\" / \"after\": a [\n"
+            L" : \"\" / 1 \"child\": r ref 2\n"
+            L" : \"\" / 2 \"after\": a [\n"
             L"b 1,\n"
-            L"r ref -1,\n"
+            L"w ref -1,\n"
             L"],\n"
             L"},\n"
             L"}");
@@ -300,10 +350,10 @@ namespace dak::object::tests
       {
          std::wistringstream ss(
             L"ref 1 {\n"
-            L" : \"\" / \"child\": r ref 2\n"
-            L" : \"\" / \"after\": a [\n"
+            L" : \"\" / 1 \"child\": r ref 2\n"
+            L" : \"\" / 2 \"after\": a [\n"
             L"b 1,\n"
-            L"r ref -1,\n"
+            L"w ref -1,\n"
             L"],\n"
             L",\n"
             L"}");
@@ -319,10 +369,10 @@ namespace dak::object::tests
       {
          std::wistringstream ss(
             L"ref 1 {\n"
-            L" : \"\" / \"child\" r ref 2 {\n"
-            L" : \"\" / \"after\" a [\n"
+            L" : \"\" / 1 \"child\" r ref 2 {\n"
+            L" : \"\" / 2 \"after\" a [\n"
             L"b 1,\n"
-            L"r ref -1,\n"
+            L"w ref -1,\n"
             L"],\n"
             L"},\n"
             L"}");
@@ -338,10 +388,10 @@ namespace dak::object::tests
       {
          std::wistringstream ss(
             L"ref 1 {\n"
-            L" : \"\" / \"child\": r ref 2 {\n"
-            L" : \"\" / \"after\": a\n"
+            L" : \"\" / 1 \"child\": r ref 2 {\n"
+            L" : \"\" / 2 \"after\": a\n"
             L"b 1,\n"
-            L"r ref -1,\n"
+            L"w ref -1,\n"
             L"],\n"
             L"},\n"
             L"}");
@@ -357,10 +407,10 @@ namespace dak::object::tests
       {
          std::wistringstream ss(
             L"ref 1 {\n"
-            L" : \"\" / \"child\": r ref 2 {\n"
-            L" : \"\" / \"after\": a [\n"
+            L" : \"\" / 1 \"child\": r ref 2 {\n"
+            L" : \"\" / 2 \"after\": a [\n"
             L"b 1,\n"
-            L"r ref -1,\n"
+            L"w ref -1,\n"
             L",\n"
             L"},\n"
             L"}");
@@ -377,10 +427,10 @@ namespace dak::object::tests
       {
          std::wistringstream ss(
             L"ref 1 {\n"
-            L" : \"\" / \"child\": r ref 2 {\n"
-            L" : \"\" / \"after\": a [\n"
+            L" : \"\" / 1 \"child\": r ref 2 {\n"
+            L" : \"\" / 2 \"after\": a [\n"
             L"b 1,\n"
-            L"r ref -1,\n"
+            L"w ref -1,\n"
             L"],\n"
             L"}\n"
             L"}");
@@ -396,10 +446,10 @@ namespace dak::object::tests
       {
          std::wistringstream ss(
             L"ref 1 {\n"
-            L" : \"\" / \"child\": r 2 {\n"
-            L" : \"\" / \"after\": a [\n"
+            L" : \"\" / 1 \"child\": r 2 {\n"
+            L" : \"\" / 2 \"after\": a [\n"
             L"b 1,\n"
-            L"r ref -1,\n"
+            L"w ref -1,\n"
             L"],\n"
             L"},\n"
             L"}");

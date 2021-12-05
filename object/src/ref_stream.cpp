@@ -213,22 +213,13 @@ namespace dak::object
    //
    // Input stream constructors.
 
-   ref_istream_t::ref_istream_t(std::wistream& s, transaction_t& transaction, const namespaces_t& known_ns)
+   ref_istream_t::ref_istream_t(std::wistream& s, transaction_t& transaction, const valid_ref_t<namespace_t>& into_ns)
       : my_stream(s)
       , my_transaction(transaction)
-      , my_top_namespace()
+      , my_target_namespace(into_ns)
    {
-      for (const auto& ns : known_ns)
-         my_top_namespace.add_namespace(ns);
    }
 
-   ref_istream_t::ref_istream_t(std::wistream& s, transaction_t& transaction, const valid_ref_t<namespace_t>& known_ns)
-      : my_stream(s)
-      , my_transaction(transaction)
-      , my_top_namespace()
-   {
-      my_top_namespace.add_namespace(known_ns);
-   }
 
    //////////////////////////////////////////////////////////////////////////
    //
@@ -290,20 +281,25 @@ namespace dak::object
    {
       auto& istr = get_stream();
 
-      const namespace_t* current_ns = &my_top_namespace;
+      bool in_top = true;
+      valid_ref_t<namespace_t> current_ns = my_target_namespace;
       while (parse_optional_sigil(istr, L':'))
       {
          text_t text;
          istr >> std::quoted(text);
-         ref_t<namespace_t> sub_ns = current_ns->get_namespace(text);
-         if (sub_ns.is_null())
+         if (!in_top || current_ns->to_text() != text)
          {
-            istr.setstate(std::ios::failbit);
-            return *this;
+            ref_t<namespace_t> sub_ns = current_ns->get_namespace(text);
+            if (sub_ns.is_null())
+            {
+               current_ns = namespace_t::make(current_ns->modify(my_transaction), text);
+            }
+            else
+            {
+               current_ns = sub_ns;
+            }
          }
-
-         valid_ref_t<namespace_t> valid_sub_ns(sub_ns);
-         current_ns = valid_sub_ns;
+         in_top = false;
       }
 
       if (!parse_sigil(istr, L'/'))

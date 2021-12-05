@@ -73,7 +73,7 @@ namespace dak::object::tests
 
       TEST_METHOD(name_metadata)
       {
-         auto ns = namespace_t::make(L"custom", voc::get_namespace());
+         auto ns = namespace_t::make(voc::get_namespace(), L"custom");
          name_t r = name_t(ns, voc::rock);
 
          Assert::IsTrue(r.is_valid());

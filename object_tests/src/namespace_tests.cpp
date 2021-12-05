@@ -17,8 +17,8 @@ namespace dak::object::tests
 		TEST_METHOD(namespace_base)
 		{
          edit_ref_t<namespace_t> root = namespace_t::make();
-         edit_ref_t<namespace_t> sub_ns_a = namespace_t::make(L"a", root);
-         edit_ref_t<namespace_t> sub_ns_b = namespace_t::make(text_t(L"b"), root);
+         edit_ref_t<namespace_t> sub_ns_a = namespace_t::make(root, L"a");
+         edit_ref_t<namespace_t> sub_ns_b = namespace_t::make(root, text_t(L"b"));
 
          Assert::AreEqual(root->to_text(), text_t(L""));
          Assert::AreEqual(sub_ns_a->to_text(), text_t(L"a"));
@@ -54,7 +54,7 @@ namespace dak::object::tests
          Assert::AreEqual(a_x, name_t(sub_ns_a->get_names().at(L"x")));
          Assert::AreEqual(a_y, name_t(sub_ns_a->get_names().at(text_t(L"y"))));
 
-         edit_ref_t<namespace_t> sub_ns_c = namespace_t::make(text_t(L"c"), sub_ns_a);
+         edit_ref_t<namespace_t> sub_ns_c = namespace_t::make(sub_ns_a, text_t(L"c"));
 
          Assert::AreEqual(name_t(), sub_ns_b->search_name(nullptr));
          Assert::AreEqual(name_t(), sub_ns_b->search_name(L"x"));

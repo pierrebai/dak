@@ -36,8 +36,8 @@ namespace dak::object
       DAK_OBJECT_REF_COUNTED(namespace_t);
 
       // Make a child ref-counted instance. If the label is empty, it is not added to the parent.
-      static edit_ref_t<namespace_t> make(str_ptr_t a_label, const edit_ref_t<namespace_t>& a_parent);
-      static edit_ref_t<namespace_t> make(const text_t& a_label, const edit_ref_t<namespace_t>& a_parent);
+      static edit_ref_t<namespace_t> make(const edit_ref_t<namespace_t>& a_parent, str_ptr_t a_label);
+      static edit_ref_t<namespace_t> make(const edit_ref_t<namespace_t>& a_parent, const text_t& a_label);
 
       // Destructor.
       ~namespace_t() = default;
