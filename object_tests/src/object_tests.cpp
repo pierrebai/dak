@@ -45,7 +45,7 @@ namespace dak::object::tests
 
          Assert::AreEqual<index_t>(0, o1.size());
 
-         auto ro2 = object_t::make(ro1);
+         auto ro2 = object_t::make(*ro1);
 
          Assert::AreEqual(*ro2, *ro1);
 

@@ -69,7 +69,7 @@ namespace dak::object::tests
          Assert::AreEqual(name_t(), sub_ns_c->search_name(L"x"));
          Assert::AreEqual(name_t(), sub_ns_c->search_name(text_t(L"y")));
 
-         edit_ref_t<namespace_t> sub_ns_d = namespace_t::make(sub_ns_b);
+         edit_ref_t<namespace_t> sub_ns_d = namespace_t::make(*sub_ns_b);
          edit_ref_t<namespace_t> sub_ns_e = namespace_t::make(*sub_ns_b);
 
          Assert::IsTrue(*sub_ns_d == *sub_ns_b);

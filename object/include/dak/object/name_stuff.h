@@ -18,9 +18,27 @@ namespace dak::object
 
    //////////////////////////////////////////////////////////////////////////
    //
+   // Name internal base stuff.
+   //
+   // Keep things to compare two basenames.
+
+   struct name_stuff_base_t
+   {
+      name_stuff_base_t(weak_ref_t<namespace_t> a_namespace, const text_t& a_label);
+
+      auto operator <=>(const name_stuff_base_t& other) const = default;
+
+   protected:
+      text_t my_label;
+      weak_ref_t<namespace_t> my_namespace;
+   };
+
+
+   //////////////////////////////////////////////////////////////////////////
+   //
    // Name internal stuff. Internal information about a single name.
 
-   struct name_stuff_t : private ref_counted_t
+   struct name_stuff_t : private ref_counted_t, private name_stuff_base_t
    {
       // Metadata on the name to allow customizing behaviour based on their presence.
       using metadata_t = std::unordered_set<valid_ref_t<name_stuff_t>>;
@@ -59,9 +77,10 @@ namespace dak::object
       auto operator <=>(const name_stuff_t& other) const;
       uint64_t hash() const;
 
+      // Retrieve the basename of this name stuff. Maybe itself.
+      const name_stuff_base_t& get_basename() const;
+
    private:
-      text_t my_label;
-      weak_ref_t<namespace_t> my_namespace;
       basename_t my_basename;
       metadata_t my_metadata;
 

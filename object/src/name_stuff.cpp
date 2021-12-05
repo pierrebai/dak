@@ -4,27 +4,37 @@ namespace dak::object
 {
    //////////////////////////////////////////////////////////////////////////
    //
+   // Name internal base stuff.
+   //
+   // Keep things to compare two basenames.
+
+   name_stuff_base_t::name_stuff_base_t(weak_ref_t<namespace_t> a_namespace, const text_t& a_label)
+      : my_label(a_label)
+      , my_namespace(a_namespace)
+   {
+   }
+
+
+   //////////////////////////////////////////////////////////////////////////
+   //
    // Name stuff constructors.
 
    name_stuff_t::name_stuff_t(const edit_ref_t<namespace_t>& a_namespace, const text_t& a_label)
-      : my_label(a_label)
-      , my_namespace(a_namespace)
+      : name_stuff_base_t(a_namespace, a_label)
    {
       a_namespace->my_names.insert(std::pair(my_label, valid_ref_t<name_stuff_t>(this)));
    }
 
    // Constructor for a derived name of the given name, in the same namespace.
    name_stuff_t::name_stuff_t(const valid_ref_t<name_stuff_t>& a_basename)
-      : my_namespace(a_basename->my_namespace)
-      , my_label(a_basename->my_label)
+      : name_stuff_base_t(a_basename->my_namespace, a_basename->my_label)
       , my_basename(a_basename)
    {
    }
 
    // Constructor for a derived name of the given name, in the given namespace.
    name_stuff_t::name_stuff_t(const edit_ref_t<namespace_t>& a_namespace, const valid_ref_t<name_stuff_t>& a_basename)
-      : my_namespace(a_namespace)
-      , my_label(a_basename->my_label)
+      : name_stuff_base_t(a_namespace, a_basename->my_label)
       , my_basename(a_basename)
    {
       a_namespace->my_names.insert(std::pair(my_label, valid_ref_t<name_stuff_t>(this)));
@@ -72,18 +82,25 @@ namespace dak::object
    //
    // Comparison and hash.
 
-   auto name_stuff_t::operator <=>(const name_stuff_t& other) const
-   {
-      return my_label <=> other.my_label;
-   }
-
-   uint64_t name_stuff_t::hash() const
+   const name_stuff_base_t& name_stuff_t::get_basename() const
    {
       const name_stuff_t* n = this;
       while (n->my_basename.is_valid())
          n = valid_ref_t<name_stuff_t>(n->my_basename);
+      return *n;
+   }
 
-      return reinterpret_cast<uint64_t>(n);
+   auto name_stuff_t::operator <=>(const name_stuff_t& other) const
+   {
+      const name_stuff_base_t& this_n = get_basename();
+      const name_stuff_base_t& other_n = other.get_basename();
+
+      return this_n <=> other_n;
+   }
+
+   uint64_t name_stuff_t::hash() const
+   {
+      return reinterpret_cast<uint64_t>(&get_basename());
    }
 
 }
