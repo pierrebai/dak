@@ -7,6 +7,7 @@
 #include <dak/object/edit_ref.h>
 
 #include <unordered_set>
+#include <compare>
 
 namespace dak::object
 {
@@ -74,7 +75,8 @@ namespace dak::object
       void clear() override;
 
       // Comparison and hash.
-      auto operator <=>(const name_stuff_t& other) const;
+      std::strong_ordering operator <=>(const name_stuff_t& other) const;
+      bool operator ==(const name_stuff_t& other) const;
       uint64_t hash() const;
 
       // Retrieve the basename of this name stuff. Maybe itself.

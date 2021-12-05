@@ -42,6 +42,40 @@ namespace dak::object
 
    //////////////////////////////////////////////////////////////////////////
    //
+   // Name comparison and hash.
+
+   std::strong_ordering name_t::operator <=>(const name_t& other) const
+   {
+      if (!is_valid())
+         return other.is_valid() ? std::strong_ordering::less : std::strong_ordering::equal;
+
+      if (!other.is_valid())
+         return std::strong_ordering::greater;
+
+      return *valid_ref_t<name_stuff_t>(my_stuff) <=> *valid_ref_t<name_stuff_t>(other.my_stuff);
+   }
+
+   bool name_t::operator ==(const name_t& other) const
+   {
+      if (!is_valid())
+         return !other.is_valid();
+
+      if (!other.is_valid())
+         return false;
+
+      return *valid_ref_t<name_stuff_t>(my_stuff) == *valid_ref_t<name_stuff_t>(other.my_stuff);
+   }
+
+   uint64_t name_t::hash() const
+   {
+      if (my_stuff.is_null())
+         return 0;
+
+      return valid_ref_t<name_stuff_t>(my_stuff)->hash();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   //
    // Name text conversion.
 
    str_ptr_t name_t::to_text() const

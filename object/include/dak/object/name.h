@@ -63,10 +63,10 @@ namespace dak::object
       // Validity.
       bool is_valid() const { return my_stuff.is_valid(); }
 
-      // Comparison.
-      auto operator <=>(const name_t&) const = default;
-
-      uint64_t hash() const { return my_stuff.hash(); }
+      // Comparison and hash.
+      std::strong_ordering operator <=>(const name_t&) const;
+      bool operator ==(const name_t&) const;
+      uint64_t hash() const;
 
    protected:
       ref_t<name_stuff_t> my_stuff;

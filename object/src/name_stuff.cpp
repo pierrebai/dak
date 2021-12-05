@@ -90,12 +90,20 @@ namespace dak::object
       return *n;
    }
 
-   auto name_stuff_t::operator <=>(const name_stuff_t& other) const
+   std::strong_ordering name_stuff_t::operator <=>(const name_stuff_t& other) const
    {
-      const name_stuff_base_t& this_n = get_basename();
-      const name_stuff_base_t& other_n = other.get_basename();
+      const name_stuff_base_t* this_n = &get_basename();
+      const name_stuff_base_t* other_n = &other.get_basename();
 
       return this_n <=> other_n;
+   }
+
+   bool name_stuff_t::operator ==(const name_stuff_t& other) const
+   {
+      const name_stuff_base_t* this_n = &get_basename();
+      const name_stuff_base_t* other_n = &other.get_basename();
+
+      return this_n == other_n;
    }
 
    uint64_t name_stuff_t::hash() const
