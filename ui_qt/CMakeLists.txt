@@ -32,11 +32,9 @@ target_include_directories(dak_ui_qt PUBLIC
    include
 )
 
-target_include_directories(dak_ui_qt PRIVATE
-   "${CMAKE_CURRENT_SOURCE_DIR}/../utility/include"
-   "${CMAKE_CURRENT_SOURCE_DIR}/../geometry/include"
-   "${CMAKE_CURRENT_SOURCE_DIR}/../ui/include"
-)
+target_link_libraries(dak_ui_qt dak_geometry)
+target_link_libraries(dak_ui_qt dak_utility)
+target_link_libraries(dak_ui_qt dak_ui)
 
 target_include_directories(dak_ui_qt PUBLIC
    "${Qt5Core_INCLUDE_DIRS}"

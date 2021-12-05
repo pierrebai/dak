@@ -26,11 +26,8 @@ target_include_directories(dak_object PUBLIC
    include
 )
 
-target_include_directories(dak_object PRIVATE
-   include
-   "${CMAKE_CURRENT_SOURCE_DIR}/../utility/include"
-   "${CMAKE_CURRENT_SOURCE_DIR}/../any_op/include"
-)
+target_link_libraries(dak_object dak_utility)
+target_link_libraries(dak_object dak_any_op)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)

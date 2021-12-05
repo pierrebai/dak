@@ -18,10 +18,8 @@ target_include_directories(dak_ui PUBLIC
    include
 )
 
-target_include_directories(dak_ui PRIVATE
-   "${CMAKE_CURRENT_SOURCE_DIR}/../utility/include"
-   "${CMAKE_CURRENT_SOURCE_DIR}/../geometry/include"
-)
+target_link_libraries(dak_ui dak_geometry)
+target_link_libraries(dak_ui dak_utility)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
