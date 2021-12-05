@@ -16,6 +16,7 @@ namespace dak::object
    struct element_t;
    struct name_t;
    struct namespace_t;
+   struct ref_istream_t;
 
    //////////////////////////////////////////////////////////////////////////
    //
@@ -50,22 +51,17 @@ namespace dak::object
       // Make a new name with the given label in the given namespace.
       static edit_ref_t<name_stuff_t> make(const edit_ref_t<namespace_t>& a_namespace, const text_t& a_label);
 
-      // Make a new derived name of the given name, in the same namespace.
-      static edit_ref_t<name_stuff_t> make(const valid_ref_t<name_stuff_t>& a_basename);
-
       // Make a new derived name of the given name, in the given namespace.
       static edit_ref_t<name_stuff_t> make(const edit_ref_t<namespace_t>& a_namespace, const valid_ref_t<name_stuff_t>& a_basename);
 
       // Constructor for a name with the given label in the given namespace.
       name_stuff_t(const edit_ref_t<namespace_t>& a_namespace, const text_t& a_label);
 
-      // Constructor for a derived name of the given name, in the same namespace.
-      name_stuff_t(const valid_ref_t<name_stuff_t>& a_basename);
-
       // Constructor for a derived name of the given name, in the given namespace.
       name_stuff_t(const edit_ref_t<namespace_t>& a_namespace, const valid_ref_t<name_stuff_t>& a_basename);
 
       // Copy constructor.
+      // Needed for transactions involving names.
       name_stuff_t(const name_stuff_t& other) = default;
 
       // Swap with another name stuff.

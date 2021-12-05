@@ -51,7 +51,7 @@ namespace dak::object
 
    void namespace_t::add_namespace(const valid_ref_t<namespace_t>& ns)
    {
-      my_children.insert(std::pair(ns->to_text(), ns));
+      my_children.insert_or_assign(ns->to_text(), ns);
    }
 
    ref_t<namespace_t> namespace_t::get_namespace(str_ptr_t a_label) const
@@ -117,5 +117,17 @@ namespace dak::object
       }
 
       return name_t();
+   }
+
+
+   //////////////////////////////////////////////////////////////////////////
+   //
+   // Modification in a transaction.
+
+   edit_ref_t<namespace_t> namespace_t::modify(transaction_t& a_trans) const
+   {
+      edit_ref_t<namespace_t> edit_this(const_cast<namespace_t*>(this));
+      a_trans.add(edit_this);
+      return edit_this;
    }
 }

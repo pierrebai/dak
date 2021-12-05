@@ -14,7 +14,7 @@ namespace dak::object
    namespace
    {
       template <class T>
-      int64_t get_thing_id(std::map<const T, int64_t>& ids, const T& thing)
+      int64_t get_thing_id(std::unordered_map<T, int64_t>& ids, const T& thing)
       {
          if (!thing.is_valid())
             return 0;
@@ -35,10 +35,9 @@ namespace dak::object
       return get_thing_id<ref_t<object_t>>(my_object_ids, object);
    }
 
-   int64_t ref_ostream_t::get_name_id(const name_t& name) const
+   int64_t ref_ostream_t::get_name_id(const exact_name_t& name) const
    {
-      // TODO: problem: similar names will compare equal but have differen metadata...
-      return get_thing_id<name_t>(my_name_ids, name);
+      return get_thing_id<exact_name_t>(my_name_ids, name);
    }
 
    void ref_ostream_t::clear()
@@ -72,13 +71,22 @@ namespace dak::object
       if (n.is_valid())
          print(n.get_namespace());
 
-      const auto id = get_name_id(n);
+      const auto id = get_name_id(exact_name_t(n));
       *this << L" / " << id;
       if (id <= 0)
          return *this;
 
-      // TODO: write all metadata.
       *this << L" " << std::quoted(n.to_text());
+
+      const auto& metadata = n.get_metadata();
+      if (metadata.size() <= 0)
+         return *this;
+
+      *this << L" {\n";
+      for (const name_t& n : metadata)
+         *this << n << L",\n";
+
+      *this << L"}";
 
       return *this;
    }
@@ -205,16 +213,18 @@ namespace dak::object
    //
    // Input stream constructors.
 
-   ref_istream_t::ref_istream_t(std::wistream& s, const namespaces_t& known_ns)
+   ref_istream_t::ref_istream_t(std::wistream& s, transaction_t& transaction, const namespaces_t& known_ns)
       : my_stream(s)
+      , my_transaction(transaction)
       , my_top_namespace()
    {
       for (const auto& ns : known_ns)
          my_top_namespace.add_namespace(ns);
    }
 
-   ref_istream_t::ref_istream_t(std::wistream& s, const valid_ref_t<namespace_t>& known_ns)
+   ref_istream_t::ref_istream_t(std::wistream& s, transaction_t& transaction, const valid_ref_t<namespace_t>& known_ns)
       : my_stream(s)
+      , my_transaction(transaction)
       , my_top_namespace()
    {
       my_top_namespace.add_namespace(known_ns);
@@ -227,13 +237,13 @@ namespace dak::object
    namespace
    {
       template <class T>
-      void add_thing_with_id(std::map<int64_t, T>& ids, const T& thing, const int64_t id)
+      void add_thing_with_id(std::unordered_map<int64_t, T>& ids, const T& thing, const int64_t id)
       {
          ids[std::abs(id)] = thing;
       }
 
       template <class T>
-      const T& get_thing_with_id(const std::map<int64_t, T>& ids, const int64_t id)
+      const T& get_thing_with_id(const std::unordered_map<int64_t, T>& ids, const int64_t id)
       {
          const auto pos = ids.find(std::abs(id));
          if (pos != ids.end())
@@ -255,12 +265,12 @@ namespace dak::object
       return get_thing_with_id(my_object_with_ids, id);
    }
 
-   void ref_istream_t::add_name_with_id(const name_t& name, int64_t id) const
+   void ref_istream_t::add_name_with_id(const exact_name_t& name, int64_t id) const
    {
       return add_thing_with_id(my_name_with_ids, name, id);
    }
 
-   const name_t& ref_istream_t::get_name_with_id(int64_t id) const
+   const exact_name_t& ref_istream_t::get_name_with_id(int64_t id) const
    {
       return get_thing_with_id(my_name_with_ids, id);
    }
@@ -306,8 +316,29 @@ namespace dak::object
          text_t text;
          istr >> std::ws >> std::quoted(text);
          n = current_ns->get_name(text);
-         // TODO: parse metadata.
-         add_name_with_id(n, id);
+         if (!n.is_valid())
+         {
+            edit_ref_t edit_ns = current_ns->modify(my_transaction);
+            n = name_t(edit_ns, text);
+         }
+
+         // Parse metadata.
+         if (parse_optional_sigil(istr, L'{'))
+         {
+            while (istr.good())
+            {
+               name_t metaname;
+               *this >> metaname;
+
+               if (metaname.is_valid())
+                  n.add_metadata(metaname, my_transaction);
+
+               if (!parse_sigil(istr, L','))
+                  break;
+            }
+         }
+
+         add_name_with_id(exact_name_t(n), id);
       }
       else
       {

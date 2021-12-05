@@ -3,6 +3,10 @@
 
 namespace dak::object
 {
+   //////////////////////////////////////////////////////////////////////////
+   //
+   // Modifications.
+
    object_t& object_t::operator +=(const object_t & an_obj)
    {
       append(an_obj);
@@ -35,6 +39,11 @@ namespace dak::object
    {
       my_elements.swap(an_other.my_elements);
    }
+
+
+   //////////////////////////////////////////////////////////////////////////
+   //
+   // Data access.
 
    bool object_t::contains(const name_t& n) const
    {
@@ -79,6 +88,11 @@ namespace dak::object
    {
       return my_elements.end();
    }
+
+
+   //////////////////////////////////////////////////////////////////////////
+   //
+   // Modification in a transaction.
 
    object_t& object_t::modify(transaction_t& a_trans) const
    {

@@ -32,7 +32,7 @@ namespace dak::object
 
    name_t::name_t(const edit_ref_t<namespace_t>& a_namespace, const name_t& a_basename)
       : my_stuff(a_basename.is_valid()
-         ? name_stuff_t::make(a_namespace, a_basename.my_stuff)
+         ? valid_ref_t<name_stuff_t>(name_stuff_t::make(a_namespace, a_basename.my_stuff))
          : a_basename.my_stuff)
    {
    }
@@ -58,11 +58,13 @@ namespace dak::object
 
    std::strong_ordering name_t::operator <=>(const name_t& other) const
    {
+      // Compare dereferenced name stuff so that its comparison op is used.
       return *my_stuff <=> *other.my_stuff;
    }
 
    bool name_t::operator ==(const name_t& other) const
    {
+      // Compare dereferenced name stuff so that its comparison op is used.
       return *my_stuff == *other.my_stuff;
    }
 
@@ -70,6 +72,7 @@ namespace dak::object
    {
       return my_stuff->hash();
    }
+
 
    //////////////////////////////////////////////////////////////////////////
    //

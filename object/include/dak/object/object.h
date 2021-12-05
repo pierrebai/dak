@@ -69,6 +69,7 @@ namespace dak::object
       // Comparisons.
       auto operator <=> (const object_t&) const = default;
 
+      // Modification in a transaction.
       object_t& modify(transaction_t&) const;
 
    protected:

@@ -24,7 +24,7 @@ namespace dak::object
 
    void transaction_t::add_stuff(const ref_counted_t* an_object, transaction_item_t&& item)
    {
-      my_modified_objects.insert(std::pair(an_object, std::move(item)));
+      my_modified_objects.insert_or_assign(an_object, std::move(item));
    }
 
    void transaction_t::forget()

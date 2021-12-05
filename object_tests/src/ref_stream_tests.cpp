@@ -91,27 +91,76 @@ namespace dak::object::tests
             ss.str());
       }
 
+      TEST_METHOD(ostream_name_metadata)
+      {
+         timeline_t undo_redo;
+
+         //auto ns = namespace_t::make(L"custom", voc::get_namespace());
+         name_t rock_with_metadata = name_t(voc::get_namespace(), voc::rock);
+         {
+            transaction_t tr;
+
+            rock_with_metadata.add_metadata(voc::always, tr);
+
+            tr.commit(undo_redo);
+         }
+
+         wstringstream ss;
+         auto o1 = object_t::make();
+         {
+            transaction_t tr1;
+
+            auto& mo1 = o1->modify(tr1);
+
+            auto o2 = object_t::make();
+            mo1[voc::child] = o2;
+
+            auto& mo2 = o2->modify(tr1);
+            array_t& a3 = mo2[rock_with_metadata];
+
+            a3[0] = true;
+            a3[1] = weak_ref_t<object_t>(o1);
+
+            tr1.commit(undo_redo);
+         }
+         ref_ostream_t(ss) << o1;
+         Assert::AreEqual(text_t(
+            L"ref 1 {\n"
+            L" : \"\" / 1 \"child\": r ref 2 {\n"
+            L" : \"\" / 2 \"rock\" {\n"
+            L" : \"\" / 3 \"always\",\n"
+            L"}: a [\n"
+            L"b 1,\n"
+            L"w ref -1,\n"
+            L"],\n"
+            L"},\n"
+            L"}"),
+            ss.str());
+      }
+
       TEST_METHOD(istream_name)
       {
          wstringstream ss;
+         transaction_t tr;
 
          name_t expected(voc::hexagon);
          ss << expected;
 
          name_t received;
-         ref_istream_t(ss, voc::get_namespace()) >> received;
+         ref_istream_t(ss, tr, voc::get_namespace()) >> received;
          Assert::AreEqual(expected, received);
       }
 
       TEST_METHOD(istream_empty_dict)
       {
          wstringstream ss;
+         transaction_t tr;
 
          dict_t expected;
          ss << expected;
 
          dict_t received;
-         ref_istream_t istr(ss, { voc::get_namespace() });
+         ref_istream_t istr(ss, tr, { voc::get_namespace() });
          istr >> received;
          Assert::AreEqual(expected, received);
 
@@ -121,31 +170,34 @@ namespace dak::object::tests
       TEST_METHOD(istream_one_item_dict)
       {
          wstringstream ss;
+         transaction_t tr;
 
          dict_t expected;
          expected[voc::rock] = 3;
          ss << expected;
 
          dict_t received;
-         ref_istream_t(ss, voc::get_namespace()) >> received;
+         ref_istream_t(ss, tr, voc::get_namespace()) >> received;
          Assert::AreEqual(expected, received);
       }
 
       TEST_METHOD(istream_empty_array)
       {
          wstringstream ss;
+         transaction_t tr;
 
          array_t expected;
          ss << expected;
 
          array_t received;
-         ref_istream_t(ss, voc::get_namespace()) >> received;
+         ref_istream_t(ss, tr, voc::get_namespace()) >> received;
          Assert::AreEqual(expected, received);
       }
 
       TEST_METHOD(istream_three_items_array)
       {
          wstringstream ss;
+         transaction_t tr;
 
          array_t expected;
          expected.grow() = 3;
@@ -154,16 +206,17 @@ namespace dak::object::tests
          ss << expected;
 
          array_t received;
-         ref_istream_t(ss, voc::get_namespace()) >> received;
+         ref_istream_t(ss, tr, voc::get_namespace()) >> received;
          Assert::AreEqual(expected, received);
       }
 
       TEST_METHOD(istream_complex_dict)
       {
+         timeline_t undo_redo;
+
          wstringstream ss;
          auto expected = object_t::make();
          {
-            timeline_t undo_redo;
             transaction_t tr1;
 
             auto& mo1 = expected->modify(tr1);
@@ -185,7 +238,11 @@ namespace dak::object::tests
          ref_ostream_t(ss) << expected;
 
          ref_t<object_t> received;
-         ref_istream_t(ss, voc::get_namespace()) >> received;
+         {
+            transaction_t tr;
+            ref_istream_t(ss, tr, voc::get_namespace()) >> received;
+            tr.commit(undo_redo);
+         }
 
          Assert::IsTrue(received.is_valid());
          Assert::IsTrue(are_similar(valid_ref_t<object_t>(received), expected));
@@ -212,9 +269,10 @@ namespace dak::object::tests
             L"],\n"
             L"},\n"
             L"}");
+         transaction_t tr;
 
          ref_t<object_t> received;
-         ref_istream_t(ss, voc::get_namespace()) >> received;
+         ref_istream_t(ss, tr, voc::get_namespace()) >> received;
 
          Assert::IsTrue(ss.fail());
       }
@@ -230,9 +288,10 @@ namespace dak::object::tests
             L"],\n"
             L"},\n"
             L"}");
+         transaction_t tr;
 
          ref_t<object_t> received;
-         ref_istream_t(ss, voc::get_namespace()) >> received;
+         ref_istream_t(ss, tr, voc::get_namespace()) >> received;
 
          Assert::IsTrue(ss.fail());
       }
@@ -248,9 +307,10 @@ namespace dak::object::tests
             L"],\n"
             L",\n"
             L"}");
+         transaction_t tr;
 
          ref_t<object_t> received;
-         ref_istream_t(ss, voc::get_namespace()) >> received;
+         ref_istream_t(ss, tr, voc::get_namespace()) >> received;
 
          Assert::IsTrue(ss.fail());
       }
@@ -266,9 +326,10 @@ namespace dak::object::tests
             L"],\n"
             L"},\n"
             L"}");
+         transaction_t tr;
 
          ref_t<object_t> received;
-         ref_istream_t(ss, voc::get_namespace()) >> received;
+         ref_istream_t(ss, tr, voc::get_namespace()) >> received;
 
          Assert::IsTrue(ss.fail());
       }
@@ -284,9 +345,10 @@ namespace dak::object::tests
             L"],\n"
             L"},\n"
             L"}");
+         transaction_t tr;
 
          ref_t<object_t> received;
-         ref_istream_t(ss, voc::get_namespace()) >> received;
+         ref_istream_t(ss, tr, voc::get_namespace()) >> received;
 
          Assert::IsTrue(ss.fail());
       }
@@ -302,9 +364,10 @@ namespace dak::object::tests
             L",\n"
             L"},\n"
             L"}");
+         transaction_t tr;
 
          ref_t<object_t> received;
-         ref_istream_t(ss, voc::get_namespace()) >> received;
+         ref_istream_t(ss, tr, voc::get_namespace()) >> received;
 
          Assert::IsTrue(ss.fail());
       }
@@ -321,9 +384,10 @@ namespace dak::object::tests
             L"],\n"
             L"}\n"
             L"}");
+         transaction_t tr;
 
          ref_t<object_t> received;
-         ref_istream_t(ss, voc::get_namespace()) >> received;
+         ref_istream_t(ss, tr, voc::get_namespace()) >> received;
 
          Assert::IsTrue(ss.fail());
       }
@@ -339,9 +403,10 @@ namespace dak::object::tests
             L"],\n"
             L"},\n"
             L"}");
+         transaction_t tr;
 
          ref_t<object_t> received;
-         ref_istream_t(ss, voc::get_namespace()) >> received;
+         ref_istream_t(ss, tr, voc::get_namespace()) >> received;
 
          Assert::IsTrue(ss.fail());
       }

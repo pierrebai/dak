@@ -78,6 +78,9 @@ namespace dak::object
       // Comparison.
       auto operator <=>(const namespace_t&) const = default;
 
+      // Modification in a transaction.
+      edit_ref_t<namespace_t> modify(transaction_t&) const;
+
    protected:
       text_t      my_label;
       parent_t    my_parent;

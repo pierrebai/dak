@@ -8,8 +8,11 @@
 #include <dak/object/dict.h>
 #include <dak/object/object.h>
 #include <dak/object/namespace.h>
+#include <dak/object/exact_name.h>
+#include <dak/object/transaction.h>
 
 #include <iostream>
+#include <unordered_map>
 
 namespace dak::object
 {
@@ -46,7 +49,7 @@ namespace dak::object
       int64_t get_object_id(const ref_t<object_t>& object) const;
 
       // Retrieve the id of a name.
-      int64_t get_name_id(const name_t& name) const;
+      int64_t get_name_id(const exact_name_t& name) const;
 
       // Reset the tracked object references.
       void clear();
@@ -62,13 +65,13 @@ namespace dak::object
       //
       // Kept as mutable so that a temporary ref stream can be passed
       // as a const value to the stream operator.
-      mutable std::map<const ref_t<object_t>, int64_t> my_object_ids;
+      mutable std::unordered_map<ref_t<object_t>, int64_t> my_object_ids;
 
       // Map of already written names, used to avoid infinite recursion
       // due to names using each other as metadata.
       //
       // The numbering scheme is the same as for the object references.
-      mutable std::map<const name_t, int64_t> my_name_ids;
+      mutable std::unordered_map<exact_name_t, int64_t> my_name_ids;
 
       std::wostream& my_stream;
    };
@@ -140,8 +143,8 @@ namespace dak::object
       using namespaces_t = std::vector<valid_ref_t<namespace_t>>;
 
       // Wrap an input stream to handle object refs.
-      ref_istream_t(std::wistream& s, const namespaces_t& known_ns);
-      ref_istream_t(std::wistream& s, const valid_ref_t<namespace_t>& known_ns);
+      ref_istream_t(std::wistream& s, transaction_t& transaction, const namespaces_t& known_ns);
+      ref_istream_t(std::wistream& s, transaction_t& transaction, const valid_ref_t<namespace_t>& known_ns);
 
       // Get the underlying stream.
       std::wistream& get_stream() const { return my_stream; }
@@ -167,10 +170,10 @@ namespace dak::object
       void add_object_with_id(const ref_t<object_t>& obj, int64_t id) const;
 
       // Retrieve the name corresponding to the id.
-      const name_t& get_name_with_id(int64_t id) const;
+      const exact_name_t& get_name_with_id(int64_t id) const;
 
       // Add the name corresponding to the id.
-      void add_name_with_id(const name_t& obj, int64_t id) const;
+      void add_name_with_id(const exact_name_t& obj, int64_t id) const;
 
       // Reset the tracked object references.
       void clear();
@@ -178,13 +181,14 @@ namespace dak::object
    private:
       // Kept as mutable so that a temporary ref stream can be passed
       // as a const value to the stream operator.
-      mutable std::map<int64_t, ref_t<object_t>> my_object_with_ids;
+      mutable std::unordered_map<int64_t, ref_t<object_t>> my_object_with_ids;
 
       // Kept as mutable so that a temporary ref stream can be passed
       // as a const value to the stream operator.
-      mutable std::map<int64_t, name_t> my_name_with_ids;
+      mutable std::unordered_map<int64_t, exact_name_t> my_name_with_ids;
 
       std::wistream& my_stream;
+      transaction_t& my_transaction;
       namespace_t    my_top_namespace;
    };
 
