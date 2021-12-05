@@ -390,7 +390,7 @@ namespace dak::object
    {
       reset(datatype_t::name);
       if (a_name.is_valid()) {
-         my_n = valid_ref_t<name_stuff_t>(a_name.my_stuff);
+         my_n = a_name.my_stuff;
          my_n->add_ref();
       }
 

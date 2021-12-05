@@ -4,9 +4,21 @@
 
 namespace dak::object
 {
+   const valid_ref_t<name_stuff_t> name_t::get_invalid_name_stuff()
+   {
+      static edit_ref_t<namespace_t> invalid_ns = namespace_t::make();
+      static valid_ref_t<name_stuff_t> invalid = name_stuff_t::make(invalid_ns, L"");
+      return invalid;
+   }
+
    //////////////////////////////////////////////////////////////////////////
    //
    // Constructors.
+
+   name_t::name_t()
+      : my_stuff(get_invalid_name_stuff())
+   {
+   }
 
    name_t::name_t(const edit_ref_t<namespace_t>& a_namespace, str_ptr_t a_label)
       : my_stuff(name_stuff_t::make(a_namespace, a_label))
@@ -19,9 +31,9 @@ namespace dak::object
    }
 
    name_t::name_t(const edit_ref_t<namespace_t>& a_namespace, const name_t& a_basename)
-      : my_stuff(a_basename.my_stuff.is_valid()
-         ? name_stuff_t::make(a_namespace, valid_ref_t< name_stuff_t>(a_basename.my_stuff))
-         : ref_t<name_stuff_t>())
+      : my_stuff(a_basename.is_valid()
+         ? name_stuff_t::make(a_namespace, a_basename.my_stuff)
+         : a_basename.my_stuff)
    {
    }
 
@@ -46,43 +58,26 @@ namespace dak::object
 
    std::strong_ordering name_t::operator <=>(const name_t& other) const
    {
-      if (!is_valid())
-         return other.is_valid() ? std::strong_ordering::less : std::strong_ordering::equal;
-
-      if (!other.is_valid())
-         return std::strong_ordering::greater;
-
-      return *valid_ref_t<name_stuff_t>(my_stuff) <=> *valid_ref_t<name_stuff_t>(other.my_stuff);
+      return *my_stuff <=> *other.my_stuff;
    }
 
    bool name_t::operator ==(const name_t& other) const
    {
-      if (!is_valid())
-         return !other.is_valid();
-
-      if (!other.is_valid())
-         return false;
-
-      return *valid_ref_t<name_stuff_t>(my_stuff) == *valid_ref_t<name_stuff_t>(other.my_stuff);
+      return *my_stuff == *other.my_stuff;
    }
 
    uint64_t name_t::hash() const
    {
-      if (my_stuff.is_null())
-         return 0;
-
-      return valid_ref_t<name_stuff_t>(my_stuff)->hash();
+      return my_stuff->hash();
    }
 
    //////////////////////////////////////////////////////////////////////////
    //
    // Name text conversion.
 
-   str_ptr_t name_t::to_text() const
+   const text_t& name_t::to_text() const
    {
-      return my_stuff.is_valid()
-         ? valid_ref_t<name_stuff_t>(my_stuff)->my_label.c_str()
-         : L"";
+      return my_stuff->my_label;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -92,13 +87,7 @@ namespace dak::object
    // Retrieve the name namespace.
    const weak_ref_t<namespace_t>& name_t::get_namespace() const
    {
-      if (!my_stuff.is_valid())
-      {
-         static const weak_ref_t<namespace_t> empty;
-         return empty;
-      }
-
-      return valid_ref_t<name_stuff_t>(my_stuff)->my_namespace;
+      return my_stuff->my_namespace;
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -114,9 +103,8 @@ namespace dak::object
       if (!a_metadata.is_valid())
          return;
 
-      valid_ref_t<name_stuff_t> valid_mt(a_metadata.my_stuff);
       edit_ref_t<name_stuff_t> edit_my_stuff(my_stuff, tr);
-      edit_my_stuff->my_metadata.insert(valid_mt);
+      edit_my_stuff->my_metadata.insert(a_metadata.my_stuff);
    }
 
    // Removes metadata to the name.
@@ -128,9 +116,8 @@ namespace dak::object
       if (!a_metadata.is_valid())
          return;
 
-      valid_ref_t<name_stuff_t> valid_mt(a_metadata.my_stuff);
       edit_ref_t<name_stuff_t> edit_my_stuff(my_stuff, tr);
-      edit_my_stuff->my_metadata.erase(valid_mt);
+      edit_my_stuff->my_metadata.erase(a_metadata.my_stuff);
    }
 
    // Removes metadata to the name.
@@ -142,25 +129,12 @@ namespace dak::object
       if (!a_metadata.is_valid())
          return false;
 
-      valid_ref_t<name_stuff_t> valid_mt(a_metadata.my_stuff);
-      return valid_ref_t<name_stuff_t>(my_stuff)->my_metadata.contains(valid_mt);
-   }
-
-   namespace
-   {
-      const name_t::metadata_t& get_invalid_metadata()
-      {
-         static name_t::metadata_t invalid_metadata;
-         return invalid_metadata;
-      }
+      return my_stuff->my_metadata.contains(a_metadata.my_stuff);
    }
 
    // Retrieves all metadata.
    const name_t::metadata_t& name_t::get_metadata() const
    {
-      if (my_stuff.is_valid())
-         return valid_ref_t<name_stuff_t>(my_stuff)->my_metadata;
-      else
-         return get_invalid_metadata();
+      return my_stuff->my_metadata;
    }
 }

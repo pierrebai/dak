@@ -25,7 +25,7 @@ namespace dak::object
       using metadata_t = name_stuff_t::metadata_t;
 
       // Default constructor for an invalid name.
-      name_t() = default;
+      name_t();
 
       // Constructor for a name with the given label in the given namespace.
       name_t(const edit_ref_t<namespace_t>& a_namespace, str_ptr_t a_label);
@@ -43,7 +43,7 @@ namespace dak::object
       ~name_t() = default;
 
       // Return the label of the name.
-      str_ptr_t to_text() const;
+      const text_t& to_text() const;
 
       // Retrieves the name namespace, if any.
       const weak_ref_t<namespace_t>& get_namespace() const;
@@ -61,7 +61,7 @@ namespace dak::object
       const metadata_t& get_metadata() const;
 
       // Validity.
-      bool is_valid() const { return my_stuff.is_valid(); }
+      bool is_valid() const { return my_stuff != get_invalid_name_stuff(); }
 
       // Comparison and hash.
       std::strong_ordering operator <=>(const name_t&) const;
@@ -69,7 +69,9 @@ namespace dak::object
       uint64_t hash() const;
 
    protected:
-      ref_t<name_stuff_t> my_stuff;
+      static const valid_ref_t<name_stuff_t> get_invalid_name_stuff();
+
+      valid_ref_t<name_stuff_t> my_stuff;
 
       friend struct element_t;
    };

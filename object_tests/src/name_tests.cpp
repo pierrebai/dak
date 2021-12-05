@@ -35,7 +35,8 @@ namespace dak::object::tests
          Assert::IsFalse(n == voc::rock);
          Assert::IsTrue( n != voc::rock);
 
-         Assert::IsFalse(n.get_namespace().is_valid());
+         // Even the invalid name has a valid namespace.
+         Assert::IsTrue(n.get_namespace().is_valid());
 
          // A valid metadat container ref is returned even for invalid name, but it is empty.
          Assert::AreEqual<size_t>(0, n.get_metadata().size());
