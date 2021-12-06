@@ -4,19 +4,22 @@
 
 namespace dak::object
 {
+   namespace
+   {
+      void undo_redo_objects(transaction_t::modified_objects_t& objects)
+      {
+         for (auto& [dest, item] : objects)
+         {
+            item.undo_redo();
+         }
+      }
+   }
+
    //////////////////////////////////////////////////////////////////////////
    //
    // transaction
 
    //static
-   void transaction_t::undo_redo_objects(modified_objects_t& objects)
-   {
-      for (auto& [dest, item] : objects)
-      {
-         item.undo_redo();
-      }
-   }
-
    bool transaction_t::has(const ref_counted_t* an_object)
    {
       return my_modified_objects.find(an_object) != my_modified_objects.end();
@@ -24,7 +27,7 @@ namespace dak::object
 
    void transaction_t::add_stuff(const ref_counted_t* an_object, transaction_item_t&& item)
    {
-      my_modified_objects.insert_or_assign(an_object, std::move(item));
+      my_modified_objects.insert(std::pair(an_object, std::move(item)));
    }
 
    void transaction_t::forget()
@@ -32,10 +35,20 @@ namespace dak::object
       my_modified_objects.clear();
    }
 
+   //////////////////////////////////////////////////////////////////////////
+   //
    // Commit and cancel.
+
    void transaction_t::commit(timeline_t& commited)
    {
       commited.commit(std::move(my_modified_objects));
+      forget();
+   }
+
+   void transaction_t::sub_commit(struct transaction_t& parent)
+   {
+      for (auto&& item : parent.my_modified_objects)
+         my_modified_objects.insert(item);
       forget();
    }
 
@@ -72,7 +85,7 @@ namespace dak::object
          return;
 
       --my_top_commit;
-      transaction_t::undo_redo_objects(*my_top_commit);
+      undo_redo_objects(*my_top_commit);
    }
 
    void timeline_t::redo()
@@ -80,7 +93,7 @@ namespace dak::object
       if (!has_redo())
          return;
 
-      transaction_t::undo_redo_objects(*my_top_commit);
+      undo_redo_objects(*my_top_commit);
       ++my_top_commit;
    }
 }

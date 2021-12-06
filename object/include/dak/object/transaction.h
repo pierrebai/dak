@@ -69,8 +69,16 @@ namespace dak::object
       template <class T>
       void add(const edit_ref_t<T>& an_object);
 
-      // Commit and cancel. Both empty the tracked modified objects.
+      // Commits all modified objects to the given timeline.
+      // Empties the tracked modified objects.
       void commit(struct timeline_t&);
+
+      // Transfers all modified objects to the given parent transaction.
+      // Empties the tracked modified objects of this transaction.
+      void sub_commit(struct transaction_t&);
+
+      // Cancel all modified objects and restore their original tracked state.
+      // Empties the tracked modified objects.
       void cancel();
 
    private:
@@ -82,12 +90,7 @@ namespace dak::object
       // Internal implementation of adding an object to the transaction.
       void add_stuff(const ref_counted_t* an_object, transaction_item_t&& item);
 
-      // Swaps saved objects with current objects, implements undo/redo.
-      static void undo_redo_objects(modified_objects_t& objects);
-
       modified_objects_t my_modified_objects;
-
-      friend struct timeline_t;
    };
 
    template <class T>
