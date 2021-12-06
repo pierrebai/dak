@@ -213,7 +213,7 @@ namespace dak::object
    //
    // Input stream constructors.
 
-   ref_istream_t::ref_istream_t(std::wistream& s, transaction_t& transaction, const valid_ref_t<namespace_t>& into_ns)
+   ref_istream_t::ref_istream_t(std::wistream& s, const valid_ref_t<namespace_t>& into_ns, transaction_t& transaction)
       : my_stream(s)
       , my_transaction(transaction)
       , my_target_namespace(into_ns)

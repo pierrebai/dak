@@ -142,7 +142,7 @@ namespace dak::object
       // Wrap an input stream to handle reading object reference, names, namespaces, etc.
       //
       // Requires a transaction to create new names and namespace into the given base namespace.
-      ref_istream_t(std::wistream& s, transaction_t& transaction, const valid_ref_t<namespace_t>& into_ns);
+      ref_istream_t(std::wistream& s, const valid_ref_t<namespace_t>& into_ns, transaction_t& transaction);
 
       // Get the underlying stream.
       std::wistream& get_stream() const { return my_stream; }
