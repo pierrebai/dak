@@ -18,20 +18,28 @@ namespace dak::object
 
    //////////////////////////////////////////////////////////////////////////
    //
-   // The transaction data that is kept when a transaction is commited.
+   // A transaction item, tracking an object that got modified during a
+   // transaction. The initial state and final state of an object can
+   // be swapped by calling undo_redo().
 
    struct transaction_item_t
    {
+      // Constructor taking a modifiable object.
+      // 
+      // The current state of the object is kept in a copy and 
+      // a function that can swap the saved state in and out is kept alongside.
       template <class T>
       transaction_item_t(const edit_ref_t<T>& an_object)
          : _swapper(make_swapper(an_object))
       {
       }
 
-      // Swap current and saved objects.
+      // Swap the current and saved object state.
       void undo_redo() const { _swapper(); }
 
    private:
+      // Create a swapper function that keep the saved state and can swap
+      // between the current state and the save state.
       template <class T>
       std::function<void()> make_swapper(edit_ref_t<T> an_object)
       {
@@ -48,6 +56,7 @@ namespace dak::object
       std::function<void()> _swapper;
    };
 
+
    //////////////////////////////////////////////////////////////////////////
    //
    // Transation. Keep modified objects are create an undo when commited
@@ -55,14 +64,21 @@ namespace dak::object
 
    struct transaction_t
    {
+      // The objects modified during the transation.
+      // Only ony copy of the object is kept.
+      // If an object is modified mlutiple times, only the first copy is kept.
       using modified_objects_t = std::unordered_map<const ref_counted_t*, transaction_item_t>;
 
       // Constructors.
       transaction_t() = default;
-      transaction_t(const transaction_t&) = delete;
 
-      // Assignment. Copy the whole transaction.
+      // Do not allow copy, allow transfer.
+      transaction_t(const transaction_t&) = delete;
+      transaction_t(transaction_t&&) = default;
+
+      // Do not allow copy, allow transfer.
       transaction_t& operator =(const transaction_t&) = delete;
+      transaction_t& operator =(transaction_t&&) = default;
 
       // Add an object to the transaction.
       // Automatically done when an object is modified.
@@ -75,6 +91,12 @@ namespace dak::object
 
       // Transfers all modified objects to the given parent transaction.
       // Empties the tracked modified objects of this transaction.
+      // 
+      // sub-commit assumes that all modifications done in the sub-transaction
+      // have occured in one block after the ones in the parent transaction.
+      // In other words the transaction are sequential, not interweaved.
+      // (Although the parent transaction can resume doing more modifications
+      // afterward.)
       void sub_commit(struct transaction_t&);
 
       // Cancel all modified objects and restore their original tracked state.
@@ -93,6 +115,9 @@ namespace dak::object
       modified_objects_t my_modified_objects;
    };
 
+
+   //////////////////////////////////////////////////////////////////////////
+   //
    template <class T>
    void transaction_t::add(const edit_ref_t<T>& an_object)
    {

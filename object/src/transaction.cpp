@@ -47,8 +47,17 @@ namespace dak::object
 
    void transaction_t::sub_commit(struct transaction_t& parent)
    {
-      for (auto&& item : parent.my_modified_objects)
-         my_modified_objects.insert(item);
+      // Note: be sure to call insert() here, as that function guarantees
+      //       that if an object was already inserted, it won't be inserted
+      //       again, so we keep only the earlier one.
+      //
+      //       This assumes that all modifications done in the sub-transaction
+      //       have occured in one block after the ones in the parent transaction.
+      //       In other words the transaction are sequential, not interweaved.
+      //       (Although the parent transaction can resume doing more modifications
+      //        afterward.)
+      for (auto&& item : my_modified_objects)
+         parent.my_modified_objects.insert(item);
       forget();
    }
 

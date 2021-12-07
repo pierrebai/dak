@@ -131,11 +131,6 @@ namespace dak::object::tests
             transaction_t tr;
 
             {
-               object_t& o1 = *ro1->modify(tr);
-               o1[rock] = 7;
-            }
-
-            {
                transaction_t sub_tr;
 
                object_t& o1 = *ro1->modify(sub_tr);
@@ -144,7 +139,7 @@ namespace dak::object::tests
                sub_tr.cancel();
             }
 
-            Assert::AreEqual<int32_t>(7, (*ro1)[rock]);
+            Assert::AreEqual<int32_t>(5, (*ro1)[rock]);
 
             {
                transaction_t sub_tr;
@@ -159,6 +154,14 @@ namespace dak::object::tests
 
             tr.commit(undo_redo);
          }
+
+         Assert::AreEqual<int32_t>(17, (*ro1)[rock]);
+
+         undo_redo.undo();
+
+         Assert::AreEqual<int32_t>(5, (*ro1)[rock]);
+
+         undo_redo.redo();
 
          Assert::AreEqual<int32_t>(17, (*ro1)[rock]);
       }
