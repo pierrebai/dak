@@ -120,7 +120,7 @@ namespace dak::object::tests
 
       TEST_METHOD(object_const)
       {
-         valid_ref_t<object_t> ro1 = object_t::make();
+         valid_ref_t ro1 = object_t::make();
          Assert::AreEqual<index_t>(0, ro1->size());
 
          timeline_t undo_redo;

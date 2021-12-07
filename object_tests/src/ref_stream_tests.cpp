@@ -287,7 +287,7 @@ namespace dak::object::tests
          Assert::IsTrue(child.is_valid());
          Assert::IsTrue(custom_after.is_valid());
 
-         valid_ref_t<object_t> valid_rec(received);
+         valid_ref_t valid_rec(received);
 
          Assert::AreEqual<index_t>(1, valid_rec->size());
          Assert::AreEqual(datatype_t::ref, valid_rec[child].get_type());

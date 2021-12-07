@@ -79,8 +79,8 @@ namespace dak::object
          return false;
 
       return are_similar(
-         valid_ref_t<object_t>(ref_t<object_t>(a)),
-         valid_ref_t<object_t>(ref_t<object_t>(b)),
+         valid_ref_t(a),
+         valid_ref_t(b),
          visited);
    }
 

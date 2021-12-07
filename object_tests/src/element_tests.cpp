@@ -69,7 +69,7 @@ namespace dak::object::tests
 
       TEST_METHOD(element_constructors)
       {
-         valid_ref_t<object_t> o = object_t::make();
+         valid_ref_t o = object_t::make();
          data_t y;
 
          element_t e_u;

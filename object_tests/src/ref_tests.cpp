@@ -78,7 +78,7 @@ namespace dak::object::tests
          // modify it's reference to the other to be
          // weak: we will have double clearing.
          {
-            valid_ref_t<object_t> ro1{ ref_t<object_t>(wro1) };
+            valid_ref_t ro1(wro1);
 
             timeline_t timeline;
             transaction_t tr;

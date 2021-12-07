@@ -355,7 +355,7 @@ namespace dak::object
       istr >> std::ws >> id;
       if (id > 0)
       {
-         edit_ref_t<object_t> new_obj = object_t::make();
+         edit_ref_t new_obj = object_t::make();
          add_object_with_id(new_obj, id);
          parse(*new_obj);
          o = new_obj;
