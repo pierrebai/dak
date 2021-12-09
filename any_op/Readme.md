@@ -1,19 +1,22 @@
 # The Worst of Both Worlds
 
-C++ certainly is one of the most complex programming languages.
-A particularly tough part of C++ are the templates. As a late
-addition to the language, it had to fit within the existing syntax.
-On top of that, starting from the STL, the C++ language designers
-discovered that templates had more power than was initially apparent.
-In short, they had created by accident a very pure functional
-language. Unfortunately, this accidental origin meant its functional
-syntax is barely usable. But, given its power and the need to address
-the need for advance C++ techniques, the templating part of C++ keeps
-gaining new features and power.
+C++ certainly is one of the most complex programming languages
+there is. The templates are a particularly tough part of C++.
+They were a late addition to the language, it had to fit within
+he existing syntax. On top of that, the C++ language designers
+discovered that templates had more power than was initially apparent;
+they had created by accident a very pure functional language!
+Unfortunately, this accidental origin meant its syntax is barely
+usable as a functional language. Even though the syntax might
+at first repel trying to use it, given its power and the
+developping needs of advanced C++, programmer have pushed it
+further and further. The templating part of C++ keeps
+gaining new features and power with each new C++ language
+vresion.
 
-In extreme contrast, Python is often described as one of the easiest
-programming language to learn and read. It is also very dynamic,
-allowing to pass around any data to any function easily. Better,
+In extreme contrast, Python is one of the easiest programming
+language to learn and read. It is also very dynamic, allowing
+to pass around any data to any function easily. Better still,
 functions can be defined and re-defined at run-time. When you call
 a function, you are never sure what code *really* will be executed.
 
@@ -47,15 +50,16 @@ types you need. In contrast, a variadic template takes a variable
 number of types as argument. It can be zero, one, two, ...
 any number of types.
 
-In addition to receiving these types, the template must be able to
-use them. As you may already know, templates are compile-time beasts.
+Just receiving a variable number of types is just the start.
+The template must also be able to *use* them. And that's tricky.
+As you may already know, templates are compile-time beasts.
 They need to work without modifying any data. So, to manipulate
-a variable number of types, a new syntax had to be added to C++.
-The new syntax for both receing the types and using them was created
+a variable number of types, a new syntax was added to C++.
+This new syntax for receiving the types and using them was designed
 around the ellipsis: ...
 
 The basic trick is that whenever the ellipsis is used, it tells the
-C++ compiler to repeat the surrouding piece of code as many times
+C++ compiler to repeat the surrounding piece of code as many times
 as needed for each type. For example, the types of the variadic
 template are received with the ellipsis. In the following example,
 the `VARIA` template argument represents any number of types.
@@ -68,11 +72,10 @@ the `VARIA` template argument represents any number of types.
    };
    ```
 
-Later on, in the template implementation, the variadic type arguments
-can be used in the code with the ellipsis. For example, the variadic
-template above could have a function that receives arguments of the
-corresponding types and pass these values into a call to another
-function, like this:
+Afterward, in the template implementation, the variadic type arguments
+can be used with the ellipsis. For example, we could add a function to
+the variadic template that receives arguments of the corresponding types
+and pass these values into a call to another function, like this:
 
    ```C++
    // Receive a variable number of arguments...
@@ -83,14 +86,14 @@ function, like this:
    }
    ```
 
-These examples only scratch at the surface of what is possible with
-variadic templates, but they will be sufficient for our purpose in
-this article.
+These examples only scratch the surface of what is possible with variadic
+templates, but they should be enough to understand how we use them in
+the rest of this article.
 
 
 # Dynamic Dispatch Design
 
-Before delving into the design of our dynamic dispatch, we need to
+Before delving into the implementation of our dynamic dispatch, we need
 to outline our requirements more concretely. I said it should mimick
 the compile-time function overload of C++. What does that mean?
 Here is what we require the design to be capable of:
@@ -113,7 +116,7 @@ function. This allows specifying the return type of the function
 or implementing functions that take no argument at all. I'll be
 showing you an example of each later on.
 
-To support these use case, we add two requirements to the list:
+To support these use cases, we add two requirements to the list:
 
 - Not all arguments have to play a part in the type-based selection
   of the function.
@@ -121,8 +124,8 @@ To support these use case, we add two requirements to the list:
   of the function without being an argument.
 
 The result should look like compile-time function overload. For
-example here is how a call to the dynamic-dispatch `to_text` function
-looks like:
+example here is how we would call a `to_text` function using
+our dynamic dispatch mechanism:
 
    ```C++
    std::wstring result = to_text(7);
@@ -143,14 +146,14 @@ take a look at how it looks from the perspective of the programmer
 creating a new operation. How do we create a new function?
 
 To create a new operation called `foo`, declare a class to represent it.
-For our example, we named it `foo_op_t` and  derive from `op_t`.
-The `foo_op_t` class identifies the operation. It can be entirely empty.
-Afterward, we can write the `foo` function, the real entry-point
-for the operation. That is the function that the user of the `foo`
-operation will call. This function only needs to call `call<>::op()`
-(for concrete values) or `call_any<>::op()` (for `std::any` values),
-both of which are found in `foo_op_t`, which takes care of the dynamic
-dispatch:
+For our example, we named it `foo_op_t`. We make it derive from `op_t`,
+which is the class provided by our system. The `foo_op_t` class merely
+identify the operation; it can be entirely empty! Afterward, we can write
+a `foo` function, the real entry-point for the operation. That is the
+function that the user of the `foo` operation would call. This function
+simply needs to call `call<>::op()` (for concrete values) or `call_any<>::op()`
+(for `std::any` values). Both are provided by the `op_t` base class
+of our `foo_op_t`, this base class takes care of the dynamic dispatch:
 
    ```C++
    struct foo_op_t : op_t<foo_op_t> { /* empty! */ };
@@ -207,12 +210,12 @@ right there in the call to `make<>::op`, with a lambda:
    );
    ```
 
-In case you were wondering why the `call<>` and `make<>` take the
-template sigils, it is because they are themselves variadic templates.
-The optional template arguments are the extra selection types, used
-to choose a more specific overload based on types that are not passed
-as argument to the `foo` operation. We will explain this in more details
-later.
+You might be wondering why the `call<>` and `make<>` take the
+template sigils. The sigil is necessary because `call` and `make`
+are themselves variadic templates. The optional template arguments
+are the extra selection types, used to choose a more specific overload
+based on types that are *not* passed as argument to the `foo` operation.
+We will explain this in more details later.
 
 Now we are ready to get into the meat of the subject: implementing
 the dynamic function dispatch.
@@ -237,7 +240,10 @@ into a `type_index` or `std::any`:
    template <class A>
    struct type_converter_t
    {
+      // Convert to std::type_index, for the selector.
       using type_index = std::type_index;
+
+      // Convert to std::any, to be used in functin arguments.
       using any = std::any;
    };
    ```
@@ -245,8 +251,8 @@ into a `type_index` or `std::any`:
 The full type selector can then be written as a variadic template
 by applying the converter to all types given as argument and
 declaring a `tuple` type named `selector_t` with the result.
-It uses both the functions argument type, `N_ARY`, and the extra
-selection types, `EXTRA_SELECTORS`, to create the full selector.
+It uses both the function argument types, `N_ARY`, and the extra
+selection types, `EXTRA_SELECTORS`, to create the full selector:
 
    ```C++
    template <class... EXTRA_SELECTORS>
@@ -263,19 +269,13 @@ selection types, `EXTRA_SELECTORS`, to create the full selector.
    };
    ```
 
-Note how the ellipsis is applied to the line:
+How the C++ language applies the ellipsis is the black magic
+of variadic templates. Many times, you have to try and find out what works
+and what doesn't through experimentations.
 
-   ```C++
-   typename type_converter_t<EXTRA_SELECTORS>::type_index...
-   ```
-
-How the C++ language applies the ellipsis is a bit of the black magic
-of variadic templates. Sometimes, you will have to try what works
-and what doesn't.
-
-Now we have a selector type, but how do we use it? For this, we provide
-a few functions. The goal is to have a function that makes a selector
-already filled with concrete types. Naturally, we call our function `make`:
+OK, now we have a selector type, but how do we use it? The goal is to have
+a function that makes a selector already filled with concrete types. Naturally,
+we call this function `make`:
 
    ```C++
    template <class... EXTRA_SELECTORS>
@@ -295,10 +295,8 @@ already filled with concrete types. Naturally, we call our function `make`:
    };
    ```
 
-Since I want to support calls with `std::any`, we need to provide
-a `make_any` function taking `std::any` as input. (As an optimization,
-a version with the extra selector already converted to `type_index`
-is provided, named `make_extra_any`, but is not shown here.)
+Since we want to support calls with `std::any`, we need to provide
+a `make_any` function taking `std::any` as input:
 
    ```C++
    static selector_t make_any(const typename type_converter_t<N_ARY>::any&... args)
@@ -308,16 +306,19 @@ is provided, named `make_extra_any`, but is not shown here.)
          std::type_index(args.type())...);
    }
    ```
-
+(As an optimization, a version with the extra selector already converted
+to `type_index` is provided, named `make_extra_any`, but is not shown here.)
 
 # Diving into Delivery
 
 Finally, we can dive into the mechanical details of the registration
-and calling of the operations. The operation base class is declared
-as a template taking the operation itself and a list of optional
-unchanging extra arguments, `EXTRA_ARGS`, which will have fixed types.
-(Remember our earlier streaming operation example, which always
-received a `std::ostream`.)
+of implementation of our operations and how to call them.
+
+We start with the base class of all operators. It is a template taking
+the operation itself and a list of optional unchanging extra arguments,
+called `EXTRA_ARGS`, which will have fixed types. Remember the earlier
+example of a streaming operation, which would always receive a `std::ostream`
+as the first argument. That is the reason for the existence of EXTRA_ARGS.
 
    ```C++
    template <class OP, class... EXTRA_ARGS>
@@ -327,9 +328,9 @@ received a `std::ostream`.)
    };
    ```
 
-We start by showing a few types that are used repeatedly: the
-selector class, `op_sel_t`, the selector tuple, `selector_t` and the
-internal function signature of the operation, `op_func_t`.
+Now we can show a few types that are used repeatedly in the implementation
+of `op_t`: the selector class, `op_sel_t`, the selector tuple, `selector_t`
+and the internal function signature of the operation, `op_func_t`.
 
    ```C++
    using op_sel_t = typename op_selector_t<EXTRA_SELECTORS...>::template n_ary_t<N_ARY...>;
@@ -337,18 +338,18 @@ internal function signature of the operation, `op_func_t`.
    using op_func_t = std::function<std::any(EXTRA_ARGS ..., typename type_converter_t<N_ARY>::any...)>;
    ```
 
-This shows some of the inherent complexity of template programming.
+The code above shows some of the inherent complexity of template programming.
 There are many bits that would normally be totally unnecessary but
 are required due to the internal workings of templates. For example,
 `typename` is necessary to tell the compiler that what follows really
-is a type. This happens when a template refer to elements of another
-template. The C++ syntax is too ambiguous to let the compiler infer
-that we are using a type. Another very peculiar bit is the extra
+is a type. This happens when a template refers to an element of another
+template. The C++ syntax is too ambiguous to let the compiler infer by itself
+that we are using a type. Another very peculiar bit is the second extra
 `template` keyword right before accessing `n_ary_t`. It is necessary
-to let the compiler know that it really is a template.
+to let the compiler know that `n_ary_t` really is a template.
 
-We're now ready to explain the whole system, which is put together
-with just a few functions:
+With these types, we're now ready to explain the whole system, which is put
+together with just a few functions:
 
 - A public way to call the operation: `call<>::op`
 - A public way to make a new overload: `make<>::op`
@@ -360,15 +361,15 @@ details up to the finality: calling an overload.
 
 ## Keeper of Wonders
 
-The lowest implementation detail is the function that holds the
-available, already registered overloads. There is a very important
-reason why `get_ops` needs to exist. The problem it solves is that
-the overloads need to be kept in a container, but the operation
-base class is a template. We cannot keep all overloads for all operations
-together. Fortunately, the C++ language specifies that a static variable
-contained in a function in a template is specific to each instantiation
-of the template. This let us hide the registration location inside.
-The `get_ops` contains safely our list of overload:
+The lowest implementation detail is the container of registered overloads.
+The container is the function `get_ops`. There is an important reason why
+`get_ops` needs to exist. The problem is that the overloads need to be kept
+in a container, but the `op_t` base class is a template. We cannot keep all
+overloads for all derived operations together. Fortunately, the C++ language
+says that a static variable contained in a function in a template will be
+specific and unique to each instantiation of the template. Using this trick,
+we can hide the registration container inside `get_ops`: it will safely
+contain our list of overloads.
 
    ```C++
    template <class SELECTOR, class OP_FUNC>
@@ -379,19 +380,21 @@ The `get_ops` contains safely our list of overload:
    }
    ```
 
-The fact that it is templated over `SELECTOR` and `OP_FUNC` allows
-the operation to be overloaded for different numbers of arguments.
+We template `get_ops` with `SELECTOR` and `OP_FUNC` parameters
+to allow the operation to be overloaded for different numbers
+of arguments if desired.
 
 
 ## Making Up Your Op
 
 The `make<>::op` function is a template taking a concrete overload
-for concrete types, wraps it into the internal function signature
-and registers it. The wrapping takes care of converting the `std::any`
-arguments to the concrete types. This is safe, since the concrete
+implementation for concrete types. It wraps the given implementation
+to conform to the internal function signature and then registers it.
+The wrapping takes care of converting the `std::any` arguments to the
+concrete types of the overload. This is safe, since the concrete
 overload for these concrete types is only ever called when the types
-match. This is where the optional extra selection types may be given
-as the `EXTRA_SELECTORS` template arguments.
+match. The `make<>::op` templated function is where the optional extra
+selection types may be given. They are named `EXTRA_SELECTORS`.
 
    ```C++
    template <class... EXTRA_SELECTORS>
@@ -423,9 +426,9 @@ as the `EXTRA_SELECTORS` template arguments.
 
 ## Call Me Up, Call My Op
 
-We finally reach the function used to dispatch a call. There are
-three versions of the function. The only differences between them
-are if the arguments have already been converted to `std::any` or
+We finally reach the function used to dispatch a call: `call<>::op`.
+There are three versions of this function. The difference between
+them is if the arguments have already been converted to `std::any` or
 `std::type_index`. The `call<>::op` function needs to do a few things:
 
 - Create a selector from the types of its arguments, plus the optional
@@ -449,7 +452,7 @@ are if the arguments have already been converted to `std::any` or
          // Return an empty result if no overload matches.
          if (pos == ops.end())
             return std::any();
-         // Call the matching overload.
+         // Otherwise call the matching overload.
          return pos->second(extra_args..., args...);
       }
    };
@@ -466,7 +469,7 @@ The examples of operations are:
 
 - `compare`, a binary operation to compare two values.
 - `convert`, an unary operation to convert a value to another type.
-  This is an example of an operation with an extra selector argument,
+  This is an example of an operation with an extra selector argument:
   the final type of the conversion.
 - `is_compatible`, a nullary operation taking two extra selection
   types to verify if one can be converted to the other.
@@ -478,4 +481,4 @@ The examples of operations are:
 - `to_text`, an unary operation converting a value to text.
 
 The whole code base is found in the `any_op` library that is part of
-my `dak_utility` repo: https://github.com/pierrebai/dak_utility
+my `dak` repo: https://github.com/pierrebai/dak
