@@ -6,6 +6,8 @@
 
 namespace dak::object
 {
+   struct element_t;
+
    //////////////////////////////////////////////////////////////////////////
    //
    // A smart reference-counted pointer to a ref_counted_t object.
@@ -35,6 +37,9 @@ namespace dak::object
       template <class O>
       explicit ref_t(const weak_ref_t<O>& other) : ref_t<T>(other.as<O>()) {}
 
+      // Constructor from element_t.
+      ref_t(const element_t& other) { *this = other; }
+
       // Copy from other ref.
       ref_t<T>& operator =(const ref_t<T>& other) = default;
       ref_t<T>& operator =(ref_t<T>&& other) = default;
@@ -48,6 +53,9 @@ namespace dak::object
 
       template <class O>
       ref_t<T>& operator =(const weak_ref_t<O>& other) { return operator =(other.as<O>()); }
+
+      // Copy from element_t.
+      ref_t<T>& operator =(const element_t& other);
 
       // Swap with another reference.
       void swap(ref_t<T>& other) { strong_ref_base_t::swap(other); }
@@ -78,6 +86,7 @@ namespace dak::object
    template <class T>
    template <class O>
    weak_ref_t<T>& weak_ref_t<T>::operator =(const ref_t<O>& other) { return operator =(other.as<O>()); }
+
 
 }
 

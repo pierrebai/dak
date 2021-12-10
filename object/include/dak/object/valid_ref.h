@@ -35,6 +35,9 @@ namespace dak::object
       template <class O>
       explicit valid_ref_t(const weak_ref_t<O>& other) : valid_ref_t<T>(other.as<O>()) {}
 
+      // Constructor from element_t.
+      valid_ref_t(const element_t& other) { *this = other; }
+
       // Copy from other valid ref.
       valid_ref_t<T>& operator =(const valid_ref_t<T>& other) = default;
       valid_ref_t<T>& operator =(valid_ref_t<T>&& other) = default;
@@ -54,6 +57,9 @@ namespace dak::object
 
       template <class O>
       ref_t<T>& operator =(const weak_ref_t<O>& other) { return operator =(other.as<O>()); }
+
+      // Copy from element_t.
+      valid_ref_t<T>& operator =(const element_t& other);
 
       // Swap with another valid reference.
       void swap(valid_ref_t<T>& other) { ref_t<T>::swap(other); }

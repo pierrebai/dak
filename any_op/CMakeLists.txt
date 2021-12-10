@@ -5,6 +5,9 @@ add_library(dak_any_op
    include/dak/any_op/convert_op.h            src/convert_op.cpp
    include/dak/any_op/dominant_op.h           src/dominant_op.cpp
    include/dak/any_op/is_compatible_op.h      src/is_compatible_op.cpp
+   include/dak/any_op/is_integer_op.h         src/is_integer_op.cpp
+   include/dak/any_op/is_real_op.h            src/is_real_op.cpp
+   include/dak/any_op/is_unsigned_op.h        src/is_unsigned_op.cpp
    include/dak/any_op/make_op.h               src/make_op.cpp
    include/dak/any_op/op.h
    include/dak/any_op/op_selector.h           src/register_ops.cpp

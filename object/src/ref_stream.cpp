@@ -2,6 +2,9 @@
 #include "dak/object/transaction.h"
 
 #include <dak/any_op/stream_op.h>
+#include <dak/any_op/is_integer_op.h>
+#include <dak/any_op/is_unsigned_op.h>
+#include <dak/any_op/is_real_op.h>
 
 #include <iomanip>
 
@@ -71,30 +74,34 @@ namespace dak::object
       if (n.is_valid())
          print(n.get_namespace());
 
+      auto& ostr = get_stream();
+
       const auto id = get_name_id(exact_name_t(n));
-      *this << L" / " << id;
+      ostr << L" / " << id;
       if (id <= 0)
          return *this;
 
-      *this << L" " << std::quoted(n.to_text());
+      ostr << L" " << std::quoted(n.to_text());
 
       const auto& metadata = n.get_metadata();
       if (metadata.size() <= 0)
          return *this;
 
-      *this << L" {\n";
+      ostr << L" {\n";
       for (const name_t& n : metadata)
          *this << n << L",\n";
 
-      *this << L"}";
+      ostr << L"}";
 
       return *this;
    }
 
    const ref_ostream_t& ref_ostream_t::print(const ref_t<object_t>& o) const
    {
+      auto& ostr = get_stream();
+
       const auto id = get_object_id(o);
-      *this << L"ref " << id;
+      ostr << L"ref " << id;
       if (id <= 0)
          return *this;
 
@@ -108,19 +115,23 @@ namespace dak::object
 
    const ref_ostream_t& ref_ostream_t::print(const array_t& a) const
    {
-      *this << L"[\n";
+      auto& ostr = get_stream();
+
+      ostr << L"[\n";
       for (const element_t& e : a)
          *this << e << L",\n";
-      *this << L"]";
+      ostr << L"]";
       return *this;
    }
 
    const ref_ostream_t& ref_ostream_t::print(const dict_t& d) const
    {
-      *this << L"{\n";
+      auto& ostr = get_stream();
+
+      ostr << L"{\n";
       for (const auto& [n, e] : d)
          *this << n << L": " << e << L",\n";
-      *this << L"}";
+      ostr << L"}";
       return *this;
    }
 
@@ -133,10 +144,12 @@ namespace dak::object
 
    const ref_ostream_t& ref_ostream_t::print(const object_t& o) const
    {
-      *this << L"{\n";
+      auto& ostr = get_stream();
+
+      ostr << L"{\n";
       for (const auto& [n, e] : o)
          *this << n << L": " << e << L",\n";
-      *this << L"}";
+      ostr << L"}";
       return *this;
    }
 
@@ -153,11 +166,44 @@ namespace dak::object
       if (e.is_compatible(typeid(name_t)))
          return *this << L"n " << e.as_name();
 
-      if (e.is_compatible(typeid(double)))
-         return *this << L"f " << e.as_real();
+      if (t == typeid(int8_t))
+         return *this << L"i8 " << int16_t(e.as<int8_t>());
 
-      if (e.is_compatible(typeid(float)))
-         return *this << L"f " << (double)e.as<float>();
+      if (t == typeid(int16_t))
+         return *this << L"i16 " << e.as<int16_t>();
+
+      if (t == typeid(int32_t))
+         return *this << L"i32 " << e.as<int32_t>();
+
+      if (t == typeid(int64_t))
+         return *this << L"i64 " << e.as<int64_t>();
+
+      if (t == typeid(uint8_t))
+         return *this << L"u8 " << uint16_t(e.as<uint8_t>());
+
+      if (t == typeid(uint16_t))
+         return *this << L"u16 " << e.as<uint16_t>();
+
+      if (t == typeid(uint32_t))
+         return *this << L"u32 " << e.as<uint32_t>();
+
+      if (t == typeid(uint64_t))
+         return *this << L"u64 " << e.as<uint64_t>();
+
+      if (t == typeid(double))
+         return *this << L"f64 " << e.as<double>();
+
+      if (t == typeid(float))
+         return *this << L"f32 " << e.as<float>();
+
+      if (any_op::is_integer(t))
+         return *this << L"i64 " << e.as<int64_t>();
+
+      if (any_op::is_unsigned(t))
+         return *this << L"u64 " << e.as<uint64_t>();
+
+      if (any_op::is_real(t))
+         return *this << L"f64 " << e.as_real();
 
       if (e.is_compatible(typeid(array_t)))
          return *this << L"a " << e.as_array();
@@ -165,16 +211,13 @@ namespace dak::object
       if (e.is_compatible(typeid(dict_t)))
          return *this << L"d " << e.as_dict();
 
-      if (e.is_compatible(typeid(any_t)))
-         return *this << L"y " << e.as_data();
-
-      if (e.is_compatible(typeid(int64_t)))
-         return *this << L"i " << e.as_integer();
-
-      if (e.is_compatible(typeid(bool)))
+      if (t == typeid(bool))
          return *this << L"b " << e.as_boolean();
 
-      return *this << L"u unknown";
+      if (!e.is_valid())
+         return *this << L"? unknown";
+
+      return *this << L"y " << e.as_data();
    }
 
 
@@ -495,7 +538,7 @@ namespace dak::object
 
       switch (type_sigil)
       {
-      case L'u':
+      case L'?':
       {
          e.reset();
          break;
@@ -509,9 +552,50 @@ namespace dak::object
       }
       case L'i':
       {
+         int size = 0;
+         istr >> size;
          int64_t i;
          istr >> i;
-         e = i;
+
+         switch (size)
+         {
+            case 8:
+               e = int8_t(i);
+               break;
+            case 16:
+               e = int16_t(i);
+               break;
+            case 32:
+               e = int32_t(i);
+               break;
+            case 64:
+               e = int64_t(i);
+               break;
+         }
+         break;
+      }
+      case L'u':
+      {
+         int size = 0;
+         istr >> size;
+         uint64_t i;
+         istr >> i;
+
+         switch (size)
+         {
+            case 8:
+               e = uint8_t(i);
+               break;
+            case 16:
+               e = uint16_t(i);
+               break;
+            case 32:
+               e = uint32_t(i);
+               break;
+            case 64:
+               e = uint64_t(i);
+               break;
+         }
          break;
       }
       case L'r':
@@ -545,9 +629,26 @@ namespace dak::object
       }
       case L'f':
       {
-         double f;
-         istr >> f;
-         e = f;
+         int size = 0;
+         istr >> size;
+
+         switch (size)
+         {
+            case 32:
+            {
+               float f;
+               istr >> f;
+               e = f;
+               break;
+            }
+            case 64:
+            {
+               double f;
+               istr >> f;
+               e = f;
+               break;
+            }
+         }
          break;
       }
       case L'a':

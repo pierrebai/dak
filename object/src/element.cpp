@@ -34,8 +34,11 @@ namespace dak::object
       if (is_compatible(a_type))
          return;
 
-      my_data = any_op::convert(my_data, a_type);
+      if (my_data.has_value())
+         my_data = any_op::convert(my_data, a_type);
 
+      // Note: don't convert this into an 'else' of the above 'if'
+      //       because any_op_convert() can return an invalid data.
       if (!my_data.has_value())
          my_data = any_op::make(a_type);
    }
@@ -73,6 +76,24 @@ namespace dak::object
          return std::any_cast<const dict_t&>(my_data);
 
       return dict_t::empty;
+   }
+
+   const ref_t<object_t>& element_t::as_ref() const
+   {
+      if (is_compatible(typeid(ref_t<object_t>)))
+         return std::any_cast<const ref_t<object_t>&>(my_data);
+
+      static const ref_t<object_t> empty;
+      return empty;
+   }
+
+   const weak_ref_t<object_t>& element_t::as_weak_ref() const
+   {
+      if (is_compatible(typeid(weak_ref_t<object_t>)))
+         return std::any_cast<const weak_ref_t<object_t>&>(my_data);
+
+      static const weak_ref_t<object_t> empty;
+      return empty;
    }
 
    const text_t& element_t::as_text() const

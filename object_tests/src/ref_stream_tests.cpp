@@ -40,7 +40,7 @@ namespace dak::object::tests
          dict_t d2;
          d2[voc::rock] = 3;
          ss << d2;
-         Assert::AreEqual(text_t(L"{\n : \"\" / 1 \"rock\": i 3,\n}"), ss.str());
+         Assert::AreEqual(text_t(L"{\n : \"\" / 1 \"rock\": i32 3,\n}"), ss.str());
       }
 
       TEST_METHOD(ostream_one_empty_array)
@@ -59,7 +59,7 @@ namespace dak::object::tests
          a2.grow() = 5;
          a2.grow() = 7;
          ss << a2;
-         Assert::AreEqual(text_t(L"[\ni 3,\ni 5,\ni 7,\n]"), ss.str());
+         Assert::AreEqual(text_t(L"[\ni32 3,\ni32 5,\ni32 7,\n]"), ss.str());
       }
 
       TEST_METHOD(ostream_complex_dict)
@@ -295,9 +295,9 @@ namespace dak::object::tests
          valid_ref_t valid_rec(received);
 
          Assert::AreEqual<index_t>(1, valid_rec->size());
-         Assert::AreEqual(typeid(weak_ref_t<object_t>), valid_rec[child].get_type());
+         Assert::AreEqual(typeid(ref_t<object_t>), valid_rec[child].get_type());
 
-         valid_ref_t<object_t> child_obj(valid_rec[child].as_weak_ref());
+         valid_ref_t<object_t> child_obj = valid_rec[child];
 
          Assert::AreEqual<index_t>(1, child_obj->size());
          Assert::AreEqual(typeid(array_t), child_obj[custom_after].get_type());

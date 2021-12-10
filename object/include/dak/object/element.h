@@ -95,12 +95,12 @@ namespace dak::object
       // Data access. Does not change the type.
 
       template <class T>
-      T as() const { return any_op::convert<T>(my_data); }
+      T as() const { return my_data.has_value() ? any_op::convert<T>(my_data) : T{}; }
 
       bool as_boolean() const { return as<bool>(); }
       int64_t as_integer() const { return as<int64_t>(); }
-      ref_t<object_t> as_ref() const { return as<ref_t<object_t>>(); }
-      weak_ref_t<object_t> as_weak_ref() const { return as<weak_ref_t<object_t>>(); }
+      const ref_t<object_t>& as_ref() const;
+      const weak_ref_t<object_t>& as_weak_ref() const;
       name_t as_name() const { return as<name_t>(); }
       double as_real() const { return as<double>(); }
       const array_t& as_array() const;
@@ -123,8 +123,8 @@ namespace dak::object
       operator const array_t &() const { return as_array(); }
       operator const dict_t &() const { return as_dict(); }
       operator name_t() const { return as<name_t>(); }
-      operator ref_t<object_t>() const { return as<ref_t<object_t>>(); }
-      operator weak_ref_t<object_t>() const { return as<weak_ref_t<object_t>>(); }
+      operator const ref_t<object_t>&() const { return as_ref(); }
+      operator const weak_ref_t<object_t>&() const { return as_weak_ref(); }
       operator const any_t& () const { return my_data; }
 
       // Modifiable data access. Change the type if needed.
@@ -247,6 +247,40 @@ namespace dak::object
    DAK_ELEMENT_REAL_OPERATORS(/, element_t);
 
    DAK_ELEMENT_TEXT_OPERATORS(+, element_t);
+
+   //////////////////////////////////////////////////////////////////////////
+   //
+   // Now we can implement the ref_t and weak_ref_t functions taking element_t.
+
+   template <class T>
+   ref_t<T>& ref_t<T>::operator =(const element_t& other)
+   {
+      if (other.is_compatible(typeid(ref_t<T>)))
+         *this = other.as<ref_t<T>>();
+      else if (other.is_compatible(typeid(weak_ref_t<T>)))
+         *this = other.as<weak_ref_t<T>>();
+      return *this;
+   }
+
+   template <class T>
+   valid_ref_t<T>& valid_ref_t<T>::operator =(const element_t& other)
+   {
+      if (other.is_compatible(typeid(ref_t<T>)))
+         *this = other.as<ref_t<T>>();
+      else if (other.is_compatible(typeid(weak_ref_t<T>)))
+         *this = other.as<weak_ref_t<T>>();
+      return *this;
+   }
+
+   template <class T>
+   weak_ref_t<T>& weak_ref_t<T>::operator =(const element_t& other)
+   {
+      if (other.is_compatible(typeid(ref_t<T>)))
+         *this = other.as<ref_t<T>>();
+      else if (other.is_compatible(typeid(weak_ref_t<T>)))
+         *this = other.as<weak_ref_t<T>>();
+      return *this;
+   }
 }
 
 #endif /* DAK_OBJECT_ELEMENT_H */
