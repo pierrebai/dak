@@ -142,21 +142,39 @@ namespace dak::object
 
    const ref_ostream_t& ref_ostream_t::print(const element_t& e) const
    {
-      switch (e.get_type())
-      {
-         case datatype_t::unknown:  return *this << L"u unknown";
-         case datatype_t::boolean:  return *this << L"b " << (bool)e;
-         case datatype_t::integer:  return *this << L"i " << (int64_t)e;
-         case datatype_t::ref:      return *this << L"r " << (const ref_t<object_t> &) e;
-         case datatype_t::weak_ref: return *this << L"w " << (const weak_ref_t<object_t> &) e;
-         case datatype_t::name:     return *this << L"n " << (const name_t&)e;
-         case datatype_t::real:     return *this << L"f " << (double)e;
-         case datatype_t::array:    return *this << L"a " << (const array_t&)e;
-         case datatype_t::dict:     return *this << L"d " << (const dict_t&)e;
-         case datatype_t::data:     return *this << L"y " << (const any_t&)e;
-         case datatype_t::text:     return *this << L"t " << std::quoted((str_ptr_t)e);
-         default:                   return *this;
-      }
+      datatype_t t = e.get_type();
+
+      if (e.is_compatible(typeid(ref_t<object_t>)))
+         return *this << L"r " << e.as_ref();
+
+      if (e.is_compatible(typeid(weak_ref_t<object_t>)))
+         return *this << L"w " << e.as_weak_ref();
+
+      if (e.is_compatible(typeid(name_t)))
+         return *this << L"n " << e.as_name();
+
+      if (e.is_compatible(typeid(double)))
+         return *this << L"f " << e.as_real();
+
+      if (e.is_compatible(typeid(float)))
+         return *this << L"f " << (double)e.as<float>();
+
+      if (e.is_compatible(typeid(array_t)))
+         return *this << L"a " << e.as_array();
+
+      if (e.is_compatible(typeid(dict_t)))
+         return *this << L"d " << e.as_dict();
+
+      if (e.is_compatible(typeid(any_t)))
+         return *this << L"y " << e.as_data();
+
+      if (e.is_compatible(typeid(int64_t)))
+         return *this << L"i " << e.as_integer();
+
+      if (e.is_compatible(typeid(bool)))
+         return *this << L"b " << e.as_boolean();
+
+      return *this << L"u unknown";
    }
 
 

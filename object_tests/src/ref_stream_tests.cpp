@@ -13,6 +13,11 @@ namespace dak::object::tests
    TEST_CLASS(stream_tests)
    {
    public:
+      stream_tests()
+      {
+         any_op::register_ops();
+         register_object_ops();
+      }
 
       TEST_METHOD(ostream_name)
       {
@@ -290,21 +295,21 @@ namespace dak::object::tests
          valid_ref_t valid_rec(received);
 
          Assert::AreEqual<index_t>(1, valid_rec->size());
-         Assert::AreEqual(datatype_t::ref, valid_rec[child].get_type());
+         Assert::AreEqual(typeid(weak_ref_t<object_t>), valid_rec[child].get_type());
 
-         valid_ref_t<object_t> child_obj = valid_rec[child];
+         valid_ref_t<object_t> child_obj(valid_rec[child].as_weak_ref());
 
          Assert::AreEqual<index_t>(1, child_obj->size());
-         Assert::AreEqual(datatype_t::array, child_obj[custom_after].get_type());
+         Assert::AreEqual(typeid(array_t), child_obj[custom_after].get_type());
 
          const array_t arr = child_obj[custom_after];
 
          Assert::AreEqual<index_t>(2, arr.size());
 
-         Assert::AreEqual(datatype_t::boolean, arr[0].get_type());
+         Assert::AreEqual(typeid(bool), arr[0].get_type());
          Assert::IsTrue(arr[0].as_boolean());
 
-         Assert::AreEqual(datatype_t::weak_ref, arr[1].get_type());
+         Assert::AreEqual(typeid(weak_ref_t<object_t>), arr[1].get_type());
          Assert::IsTrue(arr[1].as_weak_ref() == received);
       }
 

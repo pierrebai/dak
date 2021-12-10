@@ -86,25 +86,25 @@ namespace dak::object
 
    bool element_t::is_similar(const element_t& other, const visited_refs_t& visited) const
    {
-      if (my_type != other.my_type)
+      if (get_type() != other.get_type())
          return false;
 
-      switch (my_type)
-      {
-         default:                  return false;
-         case datatype_t::unknown: return true;
-         case datatype_t::boolean:
-         case datatype_t::integer: return my_i == other.my_i;
-         case datatype_t::real:    return my_r == other.my_r;
-         case datatype_t::ref:     return are_similar(valid_ref_t<object_t>(my_o), valid_ref_t<object_t>(other.my_o), visited);
-         case datatype_t::weak_ref:
-                                   return are_similar(weak_ref_t<object_t>(my_o), weak_ref_t<object_t>(other.my_o), visited);
-         case datatype_t::name:    return my_n == other.my_n;
-         case datatype_t::array:   return are_similar(*my_a, *other.my_a, visited);
-         case datatype_t::dict:    return are_similar(*my_d, *other.my_d, visited);
-         case datatype_t::data:    return are_similar(*my_y, *other.my_y, visited);
-         case datatype_t::text:    return *my_t == *other.my_t;
-      }
+      if (is_compatible(typeid(ref_t<object_t>)))
+         return are_similar(valid_ref_t<object_t>(as_ref()), valid_ref_t<object_t>(other.as_ref()), visited);
+
+      if (is_compatible(typeid(weak_ref_t<object_t>)))
+         return are_similar(as_weak_ref(), other.as_weak_ref(), visited);
+
+      if (is_compatible(typeid(any_t)))
+         return are_similar(as_data(), other.as_data(), visited);
+
+      if (is_compatible(typeid(array_t)))
+         return are_similar(as_array(), other.as_array(), visited);
+
+      if (is_compatible(typeid(dict_t)))
+         return are_similar(as_dict(), other.as_dict(), visited);
+
+      return any_op::is(any_op::compare(my_data, other.my_data), any_op::comparison_t::equal);
    }
 
    bool are_similar(const element_t& a, const element_t& b, const visited_refs_t& visited)

@@ -12,6 +12,34 @@ namespace dak::any_op
       {
          convert_op_init_t()
          {
+            convert_op_t::make<char>::op<char, bool    >([](bool arg_b) -> char { return static_cast<char>(arg_b); });
+            convert_op_t::make<char>::op<char, char    >([](char arg_b) -> char { return static_cast<char>(arg_b); });
+            convert_op_t::make<char>::op<char, wchar_t >([](wchar_t arg_b) -> char { return static_cast<char>(arg_b); });
+            convert_op_t::make<char>::op<char, int8_t  >([](char arg_b) -> char { return static_cast<char>(arg_b); });
+            convert_op_t::make<char>::op<char, int16_t >([](int16_t arg_b) -> char { return static_cast<char>(arg_b); });
+            convert_op_t::make<char>::op<char, int32_t >([](int32_t arg_b) -> char { return static_cast<char>(arg_b); });
+            convert_op_t::make<char>::op<char, int64_t >([](int64_t arg_b) -> char { return static_cast<char>(arg_b); });
+            convert_op_t::make<char>::op<char, uint8_t >([](uint8_t arg_b) -> char { return static_cast<char>(arg_b); });
+            convert_op_t::make<char>::op<char, uint16_t>([](uint16_t arg_b) -> char { return static_cast<char>(arg_b); });
+            convert_op_t::make<char>::op<char, uint32_t>([](uint32_t arg_b) -> char { return static_cast<char>(arg_b); });
+            convert_op_t::make<char>::op<char, uint64_t>([](uint64_t arg_b) -> char { return static_cast<char>(arg_b); });
+            convert_op_t::make<char>::op<char, float   >([](float arg_b) -> char { return static_cast<char>(arg_b); });
+            convert_op_t::make<char>::op<char, double  >([](double arg_b) -> char { return static_cast<char>(arg_b); });
+
+            convert_op_t::make<wchar_t>::op<wchar_t, bool    >([](bool arg_b) -> wchar_t { return static_cast<wchar_t>(arg_b); });
+            convert_op_t::make<wchar_t>::op<wchar_t, char    >([](char arg_b) -> wchar_t { return static_cast<wchar_t>(arg_b); });
+            convert_op_t::make<wchar_t>::op<wchar_t, wchar_t >([](wchar_t arg_b) -> wchar_t { return static_cast<wchar_t>(arg_b); });
+            convert_op_t::make<wchar_t>::op<wchar_t, int8_t  >([](int8_t arg_b) -> wchar_t { return static_cast<wchar_t>(arg_b); });
+            convert_op_t::make<wchar_t>::op<wchar_t, int16_t >([](int16_t arg_b) -> wchar_t { return static_cast<wchar_t>(arg_b); });
+            convert_op_t::make<wchar_t>::op<wchar_t, int32_t >([](int32_t arg_b) -> wchar_t { return static_cast<wchar_t>(arg_b); });
+            convert_op_t::make<wchar_t>::op<wchar_t, int64_t >([](int64_t arg_b) -> wchar_t { return static_cast<wchar_t>(arg_b); });
+            convert_op_t::make<wchar_t>::op<wchar_t, uint8_t >([](uint8_t arg_b) -> wchar_t { return static_cast<wchar_t>(arg_b); });
+            convert_op_t::make<wchar_t>::op<wchar_t, uint16_t>([](uint16_t arg_b) -> wchar_t { return static_cast<wchar_t>(arg_b); });
+            convert_op_t::make<wchar_t>::op<wchar_t, uint32_t>([](uint32_t arg_b) -> wchar_t { return static_cast<wchar_t>(arg_b); });
+            convert_op_t::make<wchar_t>::op<wchar_t, uint64_t>([](uint64_t arg_b) -> wchar_t { return static_cast<wchar_t>(arg_b); });
+            convert_op_t::make<wchar_t>::op<wchar_t, float   >([](float arg_b) -> wchar_t { return static_cast<wchar_t>(arg_b); });
+            convert_op_t::make<wchar_t>::op<wchar_t, double  >([](double arg_b) -> wchar_t { return static_cast<wchar_t>(arg_b); });
+
             convert_op_t::make<int8_t>::op<int8_t, bool    >([](bool arg_b) -> int8_t { return static_cast<int8_t>(arg_b); });
             convert_op_t::make<int8_t>::op<int8_t, char    >([](char arg_b) -> int8_t { return static_cast<int8_t>(arg_b); });
             convert_op_t::make<int8_t>::op<int8_t, wchar_t >([](wchar_t arg_b) -> int8_t { return static_cast<int8_t>(arg_b); });

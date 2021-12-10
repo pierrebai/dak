@@ -15,7 +15,13 @@ namespace dak::object::tests
    TEST_CLASS(name_tests)
 	{
 	public:
-		TEST_METHOD(name_base)
+      name_tests()
+      {
+         any_op::register_ops();
+         register_object_ops();
+      }
+
+      TEST_METHOD(name_base)
 		{
          name_t n;
 

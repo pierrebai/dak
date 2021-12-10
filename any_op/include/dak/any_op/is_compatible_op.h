@@ -24,7 +24,7 @@ namespace dak::any_op
    template<class TO>
    inline bool is_compatible(const any_t& arg_b)
    {
-      const any_t result = is_compatible_op_t::call_extra_any<TO, any_t>::op(std::type_index(typeid(TO)), std::type_index(arg_b.type()));
+      any_t result = is_compatible_op_t::call_extra_any<TO, any_t>::op(std::type_index(typeid(TO)), std::type_index(arg_b.type()));
       if (result.has_value())
          return std::any_cast<bool>(result);
       else
@@ -34,7 +34,16 @@ namespace dak::any_op
    template<class TO, class FROM>
    inline bool is_compatible()
    {
-      const any_t result = is_compatible_op_t::call<TO, FROM>::op();
+      any_t result = is_compatible_op_t::call<TO, FROM>::op();
+      if (result.has_value())
+         return std::any_cast<bool>(result);
+      else
+         return false;
+   }
+
+   inline bool is_compatible(const std::type_info& arg_a, const std::type_info& arg_b)
+   {
+      any_t result = is_compatible_op_t::call_extra_any<void, void>::op(arg_a, arg_b);
       if (result.has_value())
          return std::any_cast<bool>(result);
       else

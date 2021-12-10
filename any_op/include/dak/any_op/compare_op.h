@@ -61,7 +61,7 @@ namespace dak::any_op
          return comparison_t::more;
       }
 
-      const any_t result = compare_op_t::call_any<>::op(arg_a, arg_b);
+      any_t result = compare_op_t::call_any<>::op(arg_a, arg_b);
       if (result.has_value())
          return std::any_cast<comparison_t>(result);
 
@@ -71,7 +71,7 @@ namespace dak::any_op
    template<class A>
    inline comparison_t compare(const A& arg_a, const A& arg_b)
    {
-      const any_t result = compare_op_t::call<>::op(arg_a, arg_b);
+      any_t result = compare_op_t::call<>::op(arg_a, arg_b);
       if (result.has_value())
          return std::any_cast<comparison_t>(result);
 

@@ -75,6 +75,13 @@ namespace dak::object
    protected:
       elements_t my_elements;
    };
+
+
+   //////////////////////////////////////////////////////////////////////////
+   //
+   // Register any_op operations on object_t, array_t, dict_t, element_t and ref_t<object_t>.
+
+   void register_object_ops();
 }
 
 namespace dak::object

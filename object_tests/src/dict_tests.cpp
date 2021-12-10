@@ -4,6 +4,8 @@
 #include "dak/object/voc.h"
 #include "dak/object/tests/helpers.h"
 
+#include "dak/any_op/size_op.h"
+
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace dak::object::voc;
 
@@ -12,6 +14,13 @@ namespace dak::object::tests
    TEST_CLASS(dict_tests)
 	{
 	public:
+
+      dict_tests()
+      {
+         any_op::register_ops();
+         register_object_ops();
+      }
+
 		TEST_METHOD(dict_base)
 		{
          dict_t d1;
@@ -63,7 +72,7 @@ namespace dak::object::tests
          Assert::AreEqual<double>(5.0, const_d1[sand]);
          Assert::AreEqual<text_t>(L"6", const_d1[hello]);
          Assert::AreEqual<name_t>(rock, const_d1[world]);
-         Assert::AreEqual<datatype_t>(datatype_t::unknown, const_d1[absent].get_type());
+         Assert::AreEqual<datatype_t>(typeid(void), const_d1[absent].get_type());
       }
 
       TEST_METHOD(dict_append)

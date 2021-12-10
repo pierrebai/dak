@@ -38,6 +38,12 @@ namespace dak::object::tests
    TEST_CLASS(ref_tests)
 	{
 	public:
+      ref_tests()
+      {
+         any_op::register_ops();
+         register_object_ops();
+      }
+
       TEST_METHOD_INITIALIZE(init)
       {
          reset_counts();

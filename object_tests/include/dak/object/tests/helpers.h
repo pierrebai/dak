@@ -41,6 +41,18 @@ namespace Microsoft::VisualStudio::CppUnitTestFramework
       RETURN_REF_STREAM_WIDE_STRING(*o);
    }
 
+   template<> inline std::wstring ToString<dak::object::ref_t<dak::object::object_t>>(const dak::object::ref_t<dak::object::object_t>& o)
+   {
+      if (o.is_valid())
+      {
+         RETURN_REF_STREAM_WIDE_STRING(*dak::object::valid_ref_t<dak::object::object_t>(o));
+      }
+      else
+      {
+         RETURN_REF_STREAM_WIDE_STRING(0);
+      }
+   }
+
    template<> inline std::wstring ToString<dak::object::object_t>(const dak::object::object_t& o)
    {
       RETURN_REF_STREAM_WIDE_STRING(o);
@@ -61,9 +73,14 @@ namespace Microsoft::VisualStudio::CppUnitTestFramework
       RETURN_REF_STREAM_WIDE_STRING(d);
    }
 
-   template<> inline std::wstring ToString<dak::object::datatype_t>(const dak::object::datatype_t& d)
+   template<> inline std::wstring ToString<dak::object::datatype_t>(dak::object::datatype_t d)
    {
-      RETURN_WIDE_STRING(static_cast<int>(d));
+      RETURN_WIDE_STRING(d.name());
+   }
+
+   template<> inline std::wstring ToString<std::type_info>(const std::type_info& d)
+   {
+      RETURN_WIDE_STRING(d.name());
    }
 
 }

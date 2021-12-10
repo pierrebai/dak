@@ -9,6 +9,7 @@ add_library(dak_object
    include/dak/object/name_stuff.h              src/name_stuff.cpp
    include/dak/object/namespace.h               src/namespace.cpp
    include/dak/object/object.h                  src/object.cpp
+                                                src/object_ops.cpp
    include/dak/object/ref.h
    include/dak/object/weak_ref.h
    include/dak/object/valid_ref.h

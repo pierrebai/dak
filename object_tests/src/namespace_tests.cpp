@@ -14,7 +14,13 @@ namespace dak::object::tests
    TEST_CLASS(namespace_tests)
 	{
 	public:
-		TEST_METHOD(namespace_base)
+      namespace_tests()
+      {
+         any_op::register_ops();
+         register_object_ops();
+      }
+
+      TEST_METHOD(namespace_base)
 		{
          edit_ref_t<namespace_t> root = namespace_t::make();
          edit_ref_t<namespace_t> sub_ns_a = namespace_t::make(root, L"a");

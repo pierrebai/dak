@@ -5,9 +5,11 @@
 
 #include <dak/utility/types.h>
 #include <dak/object/name.h>
-#include <dak/object/name_stuff.h>
-#include <dak/object/edit_ref.h>
 #include <dak/object/similar.h>
+#include <dak/any_op/convert_op.h>
+
+#include <typeinfo>
+#include <compare>
 
 namespace dak::object
 {
@@ -16,19 +18,12 @@ namespace dak::object
    struct dict_t;
    struct object_t;
 
-   //////////////////////////////////////////////////////////////////////////
-   //
-   // Types that can be kept in an element.
+   using datatype_t = const std::type_info&;
 
-   enum class datatype_t : uint8_t
-   {
-      unknown, boolean, integer, ref, weak_ref, name, real, array, dict, text, data
-   };
-
-   //////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
    //
-   // Element in arrays and dictionaries. Can represent all data
-   // types. Simple ones are inlined, other allocated on the heap.
+   // Element in arrays and dictionaries. Can contain any data,
+   // as the value are held in a std::any (any_t).
    //
    // All types are always copied when assigned to, so beware of assigning
    // dictionaries and arrays!
@@ -53,110 +48,94 @@ namespace dak::object
       static const element_t empty;
 
       // Create an element of an unfixed type, potentially pre-initialized to a value.
-      element_t();
+      element_t() = default;
 
       // Copy the given element.
-      element_t(const element_t &);
+      element_t(const element_t&) = default;
 
       // Constructors taking values.
 
-      explicit element_t(const text_t &);
-      explicit element_t(wchar_t);
-      explicit element_t(char);
-      explicit element_t(str_ptr_t);
-      explicit element_t(bool);
-      explicit element_t(int16_t);
-      explicit element_t(int32_t);
-      explicit element_t(int64_t);
-      explicit element_t(uint16_t);
-      explicit element_t(uint32_t);
-      explicit element_t(uint64_t);
-      explicit element_t(float);
-      explicit element_t(double);
-      explicit element_t(const array_t &);
-      explicit element_t(const dict_t &);
-      explicit element_t(const name_t &);
-      explicit element_t(const valid_ref_t<object_t>&);
-      explicit element_t(const weak_ref_t<object_t>&);
-      explicit element_t(const any_t &);
+      template <class T>
+      explicit element_t(const T& value) : my_data(value) {}
+
+      // Constructors taking values that we want to modify.
+
+      explicit element_t(str_ptr_t value) : element_t(text_t(value ? value : L"")) {}
 
       template <class T>
-      explicit element_t(const valid_ref_t<T>& r) : element_t(valid_ref_t<object_t>(r)) {}
+      explicit element_t(const valid_ref_t<T>& value) : my_data(ref_t<T>(value)) {}
 
       template <class T>
-      explicit element_t(const weak_ref_t<T>& w) : element_t(weak_ref_t<object_t>(w)) {}
+      explicit element_t(const edit_ref_t<T>& value) : my_data(ref_t<T>(value)) {}
 
-      ~element_t();
+      ~element_t() = default;
 
       // Assignments. Changes the type if needed.
-      element_t& operator =(const element_t &);
+      element_t& operator =(const element_t&) = default;
 
       // Assignments of various types. Changes the type if needed.
 
-      element_t& operator =(const text_t &);
-      element_t& operator =(wchar_t);
-      element_t& operator =(char);
-      element_t& operator =(str_ptr_t);
-      element_t& operator =(bool);
-      element_t& operator =(int16_t);
-      element_t& operator =(int32_t);
-      element_t& operator =(int64_t);
-      element_t& operator =(uint16_t);
-      element_t& operator =(uint32_t);
-      element_t& operator =(uint64_t);
-      element_t& operator =(float);
-      element_t& operator =(double);
-      element_t& operator =(const array_t &);
-      element_t& operator =(const dict_t &);
-      element_t& operator =(const name_t &);
-      element_t& operator =(const valid_ref_t<object_t>&);
-      element_t& operator =(const weak_ref_t<object_t>&);
-      element_t& operator =(const any_t&);
+      template <class T>
+      element_t& operator =(const T& value) { my_data = value; return *this; }
+
+      // Assignment of a few types that we want to modify before assignment.
+
+      element_t& operator =(str_ptr_t value) { my_data = text_t(value ? value : L""); return *this; }
 
       template <class T>
-      element_t& operator =(const valid_ref_t<T>& r) { return operator=(valid_ref_t<object_t>(r)); }
+      element_t& operator =(const valid_ref_t<T> value) { my_data = ref_t<T>(value); return *this; }
 
       template <class T>
-      element_t& operator =(const weak_ref_t<object_t>& w) { return operator=(weak_ref_t<object_t>(w)); }
+      element_t& operator =(const edit_ref_t<T> value) { my_data = ref_t<T>(value); return *this; }
+
+      // Verify if there is any data.
+      // TODO: create a is_valid() any_op.
+      bool is_valid() const { return my_data.has_value(); }
 
       // Data access. Does not change the type.
 
-      bool as_boolean() const;
-      int64_t as_integer() const;
-      valid_ref_t<object_t> as_ref() const;
-      weak_ref_t<object_t> as_weak_ref() const;
-      name_t as_name() const;
-      double as_real() const;
+      template <class T>
+      T as() const { return any_op::convert<T>(my_data); }
+
+      bool as_boolean() const { return as<bool>(); }
+      int64_t as_integer() const { return as<int64_t>(); }
+      ref_t<object_t> as_ref() const { return as<ref_t<object_t>>(); }
+      weak_ref_t<object_t> as_weak_ref() const { return as<weak_ref_t<object_t>>(); }
+      name_t as_name() const { return as<name_t>(); }
+      double as_real() const { return as<double>(); }
       const array_t& as_array() const;
       const dict_t& as_dict() const;
-      text_t as_text() const;
-      const any_t& as_data() const;
+      const text_t& as_text() const;
+      const any_t& as_data() const { return my_data; }
 
-      operator char() const;
-      operator wchar_t() const;
-      operator text_t() const;
-      operator str_ptr_t() const;
-      operator bool() const;
-      operator int16_t() const;
-      operator int32_t() const;
-      operator int64_t() const;
-      operator uint16_t() const;
-      operator uint32_t() const;
-      operator uint64_t() const;
-      operator float() const;
-      operator double() const;
-      operator const array_t &() const;
-      operator const dict_t &() const;
-      operator name_t() const;
-      operator valid_ref_t<object_t>() const;
-      operator weak_ref_t<object_t>() const;
-      operator const any_t&() const;
+      operator char() const { return as<char>(); }
+      operator wchar_t() const { return as<wchar_t>(); }
+      operator text_t() const { return as<text_t>(); }
+      operator bool() const { return as<bool>(); }
+      operator int16_t() const { return as<int16_t>(); }
+      operator int32_t() const { return as<int32_t>(); }
+      operator int64_t() const { return as<int64_t>(); }
+      operator uint16_t() const { return as<uint16_t>(); }
+      operator uint32_t() const { return as<uint32_t>(); }
+      operator uint64_t() const { return as<uint64_t>(); }
+      operator float() const { return as<float>(); }
+      operator double() const { return as<double>(); }
+      operator const array_t &() const { return as_array(); }
+      operator const dict_t &() const { return as_dict(); }
+      operator name_t() const { return as<name_t>(); }
+      operator ref_t<object_t>() const { return as<ref_t<object_t>>(); }
+      operator weak_ref_t<object_t>() const { return as<weak_ref_t<object_t>>(); }
+      operator const any_t& () const { return my_data; }
 
       // Modifiable data access. Change the type if needed.
 
-      operator text_t& ();
-      operator array_t& ();
-      operator dict_t& ();
+      array_t& as_array();
+      dict_t& as_dict();
+      text_t& as_text();
+
+      operator text_t& () { return as_text(); }
+      operator array_t& () { return as_array(); }
+      operator dict_t& () { return as_dict(); }
 
       // Array conversion + immediate array_t op.
 
@@ -186,7 +165,7 @@ namespace dak::object
       bool is_compatible(datatype_t aType) const;
 
       // Clear the old data and set the type. Clear even if same type.
-      void reset(datatype_t = datatype_t::unknown);
+      void reset(datatype_t = typeid(void));
 
       // Reset if currently not the requested type.
       // Tries to preserve as much of the old value as possible.
@@ -198,34 +177,13 @@ namespace dak::object
       bool verify(datatype_t);
 
       // Comparison.
+      std::partial_ordering operator <=> (const element_t&) const;
       bool operator == (const element_t&) const;
-      bool operator != (const element_t&) const;
 
       bool is_similar(const element_t& other, const visited_refs_t& visited) const;
 
    protected:
-      element_t(datatype_t);
-      element_t(datatype_t, int64_t);
-      element_t(datatype_t, double);
-
-      // Used by fast element sub-classes. See fast_element.h.
-      element_t& make_proxy(element_t &);
-      element_t& make_permanent();
-
-      union
-      {
-         int64_t                 my_i;
-         double                  my_r;
-         dict_t *                my_d;
-         array_t *               my_a;
-         text_t *                my_t;
-         const name_stuff_t *    my_n;
-         const object_t *        my_o;
-         any_t*                  my_y;
-      };
-      datatype_t my_type = datatype_t::unknown;
-
-      friend struct dict_t;
+      any_t my_data;
    };
 
 

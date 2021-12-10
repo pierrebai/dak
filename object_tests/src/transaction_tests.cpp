@@ -16,6 +16,12 @@ namespace dak::object::tests
    TEST_CLASS(transaction_tests)
    {
    public:
+      transaction_tests()
+      {
+         any_op::register_ops();
+         register_object_ops();
+      }
+
 
       TEST_METHOD(transaction_base)
       {
