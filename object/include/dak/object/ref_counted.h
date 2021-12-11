@@ -10,7 +10,7 @@
 namespace dak::object
 {
    struct strong_ref_base_t;
-   struct element_t;
+   struct value_t;
 
    //////////////////////////////////////////////////////////////////////////
    //
@@ -49,7 +49,7 @@ namespace dak::object
       friend struct ref_base_t;
       friend struct strong_ref_base_t;
       friend struct weak_ref_base_t;
-      friend struct element_t;
+      friend struct value_t;
    };
 
    //////////////////////////////////////////////////////////////////////////
@@ -80,7 +80,7 @@ namespace dak::object
       friend struct edit_ref_t<T>;                                \
       friend struct weak_ref_t<T>;                                \
       friend struct ref_base_t;                                   \
-      friend struct element_t;                                    \
+      friend struct value_t;                                    \
       friend struct transaction_t
 
 }

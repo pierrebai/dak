@@ -15,29 +15,29 @@ namespace dak::object
 
    void object_t::append(const object_t & an_obj)
    {
-      for (const auto& [n, e] : an_obj.my_elements)
+      for (const auto& [n, e] : an_obj.my_values)
          (*this)[n] = e;
    }
 
    bool object_t::erase(const name_t& n)
    {
-      iterator pos = my_elements.find(n);
-      if (pos == my_elements.end())
+      iterator pos = my_values.find(n);
+      if (pos == my_values.end())
          return false;
 
-      my_elements.erase(pos);
+      my_values.erase(pos);
       return true;
    }
 
    // Reset the object.
    void object_t::clear()
    {
-      my_elements.clear();
+      my_values.clear();
    }
 
    void object_t::swap(object_t& an_other)
    {
-      my_elements.swap(an_other.my_elements);
+      my_values.swap(an_other.my_values);
    }
 
 
@@ -47,46 +47,46 @@ namespace dak::object
 
    bool object_t::contains(const name_t& n) const
    {
-      return 0 != my_elements.count(n);
+      return 0 != my_values.count(n);
    }
 
    index_t object_t::size() const
    {
-      return my_elements.size();
+      return my_values.size();
    }
 
-   element_t & object_t::operator [](const name_t& n)
+   value_t & object_t::operator [](const name_t& n)
    {
-      return my_elements[n];
+      return my_values[n];
    }
 
-   const element_t & object_t::operator [](const name_t& n) const
+   const value_t & object_t::operator [](const name_t& n) const
    {
-      const_iterator pos = my_elements.find(n);
-      if(my_elements.end() == pos)
-         return element_t::empty;
+      const_iterator pos = my_values.find(n);
+      if(my_values.end() == pos)
+         return value_t::empty;
       else
          return pos->second;
    }
 
    object_t::iterator object_t::begin()
    {
-      return my_elements.begin();
+      return my_values.begin();
    }
 
    object_t::iterator object_t::end()
    {
-      return my_elements.end();
+      return my_values.end();
    }
 
    object_t::const_iterator object_t::begin() const
    {
-      return my_elements.begin();
+      return my_values.begin();
    }
 
    object_t::const_iterator object_t::end() const
    {
-      return my_elements.end();
+      return my_values.end();
    }
 
 

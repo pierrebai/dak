@@ -103,7 +103,7 @@ namespace dak::object::tests
          a1.grow() = L"6";
 
          int32_t count = 0;
-         for (const element_t& e : a1)
+         for (const value_t& e : a1)
          {
             count += 1;
             switch (count)
@@ -145,7 +145,7 @@ namespace dak::object::tests
          Assert::AreEqual<datatype_t>(typeid(void), a1[5].get_type());
          Assert::AreEqual<datatype_t>(typeid(void), a1[6].get_type());
 
-         // Note: insert inserts before the index given, so -1 inserts before the last element.
+         // Note: insert inserts before the index given, so -1 inserts before the last value.
          a1.insert(-1) = 8;
          Assert::AreEqual<index_t>(8, a1.size());
          Assert::AreEqual<int64_t>(8, a1[6]);

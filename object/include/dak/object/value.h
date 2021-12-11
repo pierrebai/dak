@@ -20,7 +20,7 @@ namespace dak::object
 
    using datatype_t = const std::type_info&;
 
-//////////////////////////////////////////////////////////////////////////
+   //////////////////////////////////////////////////////////////////////////
    //
    // Element in arrays and dictionaries. Can contain any data,
    // as the value are held in a std::any (any_t).
@@ -28,65 +28,65 @@ namespace dak::object
    // All types are always copied when assigned to, so beware of assigning
    // dictionaries and arrays!
    //
-   // When implicitely converted to a type, the element type is not changed.
+   // When implicitely converted to a type, the value type is not changed.
    // The value is converted to the closest corresponding value.
    //
    // (All integer-like types are equivalent, so you can read a boolean
    // from an integer. Same for double-like types, float and double.)
    //
    // Also, when converted to a type via the ensure() or reset() functions,
-   // if the element was not of that type, it is changed into it. So beware
+   // if the value was not of that type, it is changed into it. So beware
    // of changing a dict_t into an integer, as the dict_t content is lost!
    //
-   // To support access to elements containg dict_t and array_t, the element
-   // provides the [] operator to access the sub-elements of the container.
-   // Again, the element will be automatically converted, so if it was not
+   // To support access to values containg dict_t and array_t, the value
+   // provides the [] operator to access the sub-values of the container.
+   // Again, the value will be automatically converted, so if it was not
    // an array_t of a dict_t, its previous content will be lost.
 
-   struct element_t
+   struct value_t
    {
-      static const element_t empty;
+      static const value_t empty;
 
-      // Create an element of an unfixed type, potentially pre-initialized to a value.
-      element_t() = default;
+      // Create an value of an unfixed type, potentially pre-initialized to a value.
+      value_t() = default;
 
-      // Copy the given element.
-      element_t(const element_t&) = default;
+      // Copy the given value.
+      value_t(const value_t&) = default;
 
       // Constructors taking values.
 
       template <class T>
-      explicit element_t(const T& value) : my_data(value) {}
+      explicit value_t(const T& value) : my_data(value) {}
 
       // Constructors taking values that we want to modify.
 
-      explicit element_t(str_ptr_t value) : element_t(text_t(value ? value : L"")) {}
+      explicit value_t(str_ptr_t value) : value_t(text_t(value ? value : L"")) {}
 
       template <class T>
-      explicit element_t(const valid_ref_t<T>& value) : my_data(ref_t<T>(value)) {}
+      explicit value_t(const valid_ref_t<T>& value) : my_data(ref_t<T>(value)) {}
 
       template <class T>
-      explicit element_t(const edit_ref_t<T>& value) : my_data(ref_t<T>(value)) {}
+      explicit value_t(const edit_ref_t<T>& value) : my_data(ref_t<T>(value)) {}
 
-      ~element_t() = default;
+      ~value_t() = default;
 
       // Assignments. Changes the type if needed.
-      element_t& operator =(const element_t&) = default;
+      value_t& operator =(const value_t&) = default;
 
       // Assignments of various types. Changes the type if needed.
 
       template <class T>
-      element_t& operator =(const T& value) { my_data = value; return *this; }
+      value_t& operator =(const T& value) { my_data = value; return *this; }
 
       // Assignment of a few types that we want to modify before assignment.
 
-      element_t& operator =(str_ptr_t value) { my_data = text_t(value ? value : L""); return *this; }
+      value_t& operator =(str_ptr_t value) { my_data = text_t(value ? value : L""); return *this; }
 
       template <class T>
-      element_t& operator =(const valid_ref_t<T> value) { my_data = ref_t<T>(value); return *this; }
+      value_t& operator =(const valid_ref_t<T> value) { my_data = ref_t<T>(value); return *this; }
 
       template <class T>
-      element_t& operator =(const edit_ref_t<T> value) { my_data = ref_t<T>(value); return *this; }
+      value_t& operator =(const edit_ref_t<T> value) { my_data = ref_t<T>(value); return *this; }
 
       // Verify if there is any data.
       // TODO: create a is_valid() any_op.
@@ -139,25 +139,25 @@ namespace dak::object
 
       // Array conversion + immediate array_t op.
 
-      element_t & operator [](index_t an_index);
-      const element_t & operator [](index_t an_index) const;
+      value_t & operator [](index_t an_index);
+      const value_t & operator [](index_t an_index) const;
       bool erase(index_t an_index);
       void append(const array_t &);
-      element_t & insert(index_t an_index);
-      element_t & grow();
+      value_t & insert(index_t an_index);
+      value_t & grow();
 
       // Dict conversion + immediate dict_t op.
 
       void append(const dict_t &);
       bool erase(const name_t &);
       bool contains(const name_t &) const;
-      element_t & operator [](const name_t &);
-      const element_t & operator [](const name_t &) const;
+      value_t & operator [](const name_t &);
+      const value_t & operator [](const name_t &) const;
 
       // Array, dict_t and text return the length, others return zero.
       index_t size() const;
 
-      // Current type of data contained in the element.
+      // Current type of data contained in the value.
       datatype_t get_type() const;
 
       // All integer-like types are equivalent, so you can read a boolean
@@ -177,10 +177,10 @@ namespace dak::object
       bool verify(datatype_t);
 
       // Comparison.
-      std::partial_ordering operator <=> (const element_t&) const;
-      bool operator == (const element_t&) const;
+      std::partial_ordering operator <=> (const value_t&) const;
+      bool operator == (const value_t&) const;
 
-      bool is_similar(const element_t& other, const visited_refs_t& visited) const;
+      bool is_similar(const value_t& other, const visited_refs_t& visited) const;
 
    protected:
       any_t my_data;
@@ -193,8 +193,8 @@ namespace dak::object
 
    // This defines the operator x= for the type t.
    // For example, it defines += for int32.
-   // It does so by extracting the value t from the element, then applying
-   // the operator, then assigning the value back to the element.
+   // It does so by extracting the value t from the value, then applying
+   // the operator, then assigning the value back to the value.
 
    #define DAK_ELEMENT_OPERATOR(x, t, e) inline e& operator x=(e& a, const t& b) { t c = const_cast<const e&>(a); c x= b; a = c; return a; }
 
@@ -230,30 +230,30 @@ namespace dak::object
 
    // Define the desired operators for each type.
 
-   DAK_ELEMENT_INT_OPERATORS(+, element_t);
-   DAK_ELEMENT_INT_OPERATORS(-, element_t);
-   DAK_ELEMENT_INT_OPERATORS(*, element_t);
-   DAK_ELEMENT_INT_OPERATORS(/, element_t);
-   DAK_ELEMENT_INT_OPERATORS(&, element_t);
-   DAK_ELEMENT_INT_OPERATORS(|, element_t);
-   DAK_ELEMENT_INT_OPERATORS(^, element_t);
-   DAK_ELEMENT_INT_OPERATORS(%, element_t);
-   DAK_ELEMENT_INT_OPERATORS(<<, element_t);
-   DAK_ELEMENT_INT_OPERATORS(>>, element_t);
+   DAK_ELEMENT_INT_OPERATORS(+, value_t);
+   DAK_ELEMENT_INT_OPERATORS(-, value_t);
+   DAK_ELEMENT_INT_OPERATORS(*, value_t);
+   DAK_ELEMENT_INT_OPERATORS(/, value_t);
+   DAK_ELEMENT_INT_OPERATORS(&, value_t);
+   DAK_ELEMENT_INT_OPERATORS(|, value_t);
+   DAK_ELEMENT_INT_OPERATORS(^, value_t);
+   DAK_ELEMENT_INT_OPERATORS(%, value_t);
+   DAK_ELEMENT_INT_OPERATORS(<<, value_t);
+   DAK_ELEMENT_INT_OPERATORS(>>, value_t);
 
-   DAK_ELEMENT_REAL_OPERATORS(+, element_t);
-   DAK_ELEMENT_REAL_OPERATORS(-, element_t);
-   DAK_ELEMENT_REAL_OPERATORS(*, element_t);
-   DAK_ELEMENT_REAL_OPERATORS(/, element_t);
+   DAK_ELEMENT_REAL_OPERATORS(+, value_t);
+   DAK_ELEMENT_REAL_OPERATORS(-, value_t);
+   DAK_ELEMENT_REAL_OPERATORS(*, value_t);
+   DAK_ELEMENT_REAL_OPERATORS(/, value_t);
 
-   DAK_ELEMENT_TEXT_OPERATORS(+, element_t);
+   DAK_ELEMENT_TEXT_OPERATORS(+, value_t);
 
    //////////////////////////////////////////////////////////////////////////
    //
-   // Now we can implement the ref_t and weak_ref_t functions taking element_t.
+   // Now we can implement the ref_t and weak_ref_t functions taking value_t.
 
    template <class T>
-   ref_t<T>& ref_t<T>::operator =(const element_t& other)
+   ref_t<T>& ref_t<T>::operator =(const value_t& other)
    {
       if (other.is_compatible(typeid(ref_t<T>)))
          *this = other.as<ref_t<T>>();
@@ -263,7 +263,7 @@ namespace dak::object
    }
 
    template <class T>
-   valid_ref_t<T>& valid_ref_t<T>::operator =(const element_t& other)
+   valid_ref_t<T>& valid_ref_t<T>::operator =(const value_t& other)
    {
       if (other.is_compatible(typeid(ref_t<T>)))
          *this = other.as<ref_t<T>>();
@@ -273,7 +273,7 @@ namespace dak::object
    }
 
    template <class T>
-   weak_ref_t<T>& weak_ref_t<T>::operator =(const element_t& other)
+   weak_ref_t<T>& weak_ref_t<T>::operator =(const value_t& other)
    {
       if (other.is_compatible(typeid(ref_t<T>)))
          *this = other.as<ref_t<T>>();

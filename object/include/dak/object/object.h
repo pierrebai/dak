@@ -4,7 +4,7 @@
 #define DAK_OBJECT_OBJECT_H
 
 #include <dak/utility/types.h>
-#include "dak/object/element.h"
+#include "dak/object/value.h"
 #include <dak/object/name.h>
 #include <dak/object/ref_counted.h>
 #include <dak/object/edit_ref.h>
@@ -15,20 +15,20 @@ namespace dak::object
 {
    USING_DAK_UTILITY_TYPES;
    struct transaction_t;
-   struct element_t;
+   struct value_t;
 
    //////////////////////////////////////////////////////////////////////////
    //
    // Object. Lookup data when given a name.
    //
-   // Automatically adds elements when referenced via the [] operator.
+   // Automatically adds values when referenced via the [] operator.
 
    struct object_t : protected ref_counted_t
    {
       // Types used by the object: data container and iterators.
-      typedef std::map<name_t, element_t> elements_t;
-      typedef elements_t::iterator iterator;
-      typedef elements_t::const_iterator const_iterator;
+      typedef std::map<name_t, value_t> values_t;
+      typedef values_t::iterator iterator;
+      typedef values_t::const_iterator const_iterator;
 
       DAK_OBJECT_REF_COUNTED(object_t);
 
@@ -38,7 +38,7 @@ namespace dak::object
       // Append the given object.
       object_t& operator +=(const object_t&);
 
-      // Number of elements in the object.
+      // Number of values in the object.
       index_t size() const;
 
       // Modifications to the object.
@@ -54,13 +54,13 @@ namespace dak::object
 
       // Element retrieval.
       // Non-const version inserts when the name is not found.
-      element_t& operator [](const name_t&);
-      const element_t& operator [](const name_t&) const;
+      value_t& operator [](const name_t&);
+      const value_t& operator [](const name_t&) const;
 
-      element_t& get(const name_t& n) { return (*this)[n]; }
-      const element_t& get(const name_t& n) const { return (*this)[n]; }
+      value_t& get(const name_t& n) { return (*this)[n]; }
+      const value_t& get(const name_t& n) const { return (*this)[n]; }
 
-      // Iterations over the elements.
+      // Iterations over the values.
       iterator begin();
       iterator end();
       const_iterator begin() const;
@@ -73,13 +73,13 @@ namespace dak::object
       edit_ref_t<object_t> modify(transaction_t&) const;
 
    protected:
-      elements_t my_elements;
+      values_t my_values;
    };
 
 
    //////////////////////////////////////////////////////////////////////////
    //
-   // Register any_op operations on object_t, array_t, dict_t, element_t and ref_t<object_t>.
+   // Register any_op operations on object_t, array_t, dict_t, value_t and ref_t<object_t>.
 
    void register_object_ops();
 }
@@ -87,10 +87,10 @@ namespace dak::object
 namespace dak::object
 {
    template<class T>
-   inline const element_t& valid_ref_t<T>::operator [](const name_t& n) const { return (**this)[n]; }
+   inline const value_t& valid_ref_t<T>::operator [](const name_t& n) const { return (**this)[n]; }
 
    template<class T>
-   inline element_t& edit_ref_t<T>::operator [](const name_t& n) const { return (**this)[n]; }
+   inline value_t& edit_ref_t<T>::operator [](const name_t& n) const { return (**this)[n]; }
 }
 
 #endif /* DAK_OBJECT_OBJECT_H */

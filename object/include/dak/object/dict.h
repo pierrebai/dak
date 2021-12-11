@@ -3,7 +3,7 @@
 #define DAK_OBJECT_DICT_H
 
 #include <dak/utility/types.h>
-#include <dak/object/element.h>
+#include <dak/object/value.h>
 #include <dak/object/ref_counted.h>
 
 #include <map>
@@ -16,14 +16,14 @@ namespace dak::object
    //
    // Dictionary. Lookup data when given a name.
    //
-   // Automatically adds elements when referenced via the [] operator.
+   // Automatically adds values when referenced via the [] operator.
 
    struct dict_t
    {
       // Types used by the dictionary: data container and iterators.
-      typedef std::map<name_t, element_t> elements_t;
-      typedef elements_t::iterator iterator;
-      typedef elements_t::const_iterator const_iterator;
+      typedef std::map<name_t, value_t> values_t;
+      typedef values_t::iterator iterator;
+      typedef values_t::const_iterator const_iterator;
 
       // Constructors.
       dict_t() = default;
@@ -38,7 +38,7 @@ namespace dak::object
       // Empty dictionary.
       static const dict_t empty;
 
-      // Number of elements in the dictionary.
+      // Number of values in the dictionary.
       index_t size() const;
 
       // Modifications to the dictionary.
@@ -47,10 +47,10 @@ namespace dak::object
       bool contains(const name_t &) const;
 
       // Element retrieval.
-      element_t & operator [](const name_t &);
-      const element_t & operator [](const name_t &) const;
+      value_t & operator [](const name_t &);
+      const value_t & operator [](const name_t &) const;
 
-      // Iterations over the elements.
+      // Iterations over the values.
       iterator begin();
       iterator end();
       const_iterator begin() const;
@@ -60,12 +60,12 @@ namespace dak::object
       auto operator <=> (const dict_t&) const = default;
 
    protected:
-      elements_t my_elements;
+      values_t my_values;
 
       friend struct ref_t<dict_t>;
    };
 
-   DAK_ELEMENT_OPERATOR(+, dict_t, element_t);
+   DAK_ELEMENT_OPERATOR(+, dict_t, value_t);
 }
 
 #endif /* DAK_OBJECT_DICT_H */

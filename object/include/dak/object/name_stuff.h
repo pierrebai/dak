@@ -13,7 +13,7 @@ namespace dak::object
 {
    USING_DAK_UTILITY_TYPES;
 
-   struct element_t;
+   struct value_t;
    struct name_t;
    struct namespace_t;
    struct ref_istream_t;
@@ -88,7 +88,7 @@ namespace dak::object
       friend struct weak_ref_t<name_stuff_t>;
       friend struct ref_base_t;
       friend struct name_t;
-      friend struct element_t;
+      friend struct value_t;
       friend struct transaction_t;
    };
 }

@@ -6,7 +6,7 @@
 
 namespace dak::object
 {
-   struct element_t;
+   struct value_t;
 
    //////////////////////////////////////////////////////////////////////////
    //
@@ -37,8 +37,8 @@ namespace dak::object
       template <class O>
       ref_t(const weak_ref_t<O>& other) : ref_t<T>(other.as<O>()) {}
 
-      // Constructor from element_t.
-      ref_t(const element_t& other) { *this = other; }
+      // Constructor from value_t.
+      ref_t(const value_t& other) { *this = other; }
 
       // Copy from other ref.
       ref_t<T>& operator =(const ref_t<T>& other) = default;
@@ -54,8 +54,8 @@ namespace dak::object
       template <class O>
       ref_t<T>& operator =(const weak_ref_t<O>& other) { return operator =(other.as<O>()); }
 
-      // Copy from element_t.
-      ref_t<T>& operator =(const element_t& other);
+      // Copy from value_t.
+      ref_t<T>& operator =(const value_t& other);
 
       // Swap with another reference.
       void swap(ref_t<T>& other) { strong_ref_base_t::swap(other); }
@@ -65,7 +65,7 @@ namespace dak::object
       ref_t<T>& operator =(const T* t) { strong_ref_base_t::operator =(t); return *this; }
 
       friend T;
-      friend struct element_t;
+      friend struct value_t;
    };
 
 

@@ -12,7 +12,7 @@ namespace dak::object
 {
    struct array_t;
    struct dict_t;
-   struct element_t;
+   struct value_t;
    struct object_t;
 
    //////////////////////////////////////////////////////////////////////////
@@ -33,7 +33,7 @@ namespace dak::object
    bool are_similar(const array_t&   a, const array_t&   b, const visited_refs_t& visited = visited_refs_t());
    bool are_similar(const dict_t&    a, const dict_t&    b, const visited_refs_t& visited = visited_refs_t());
    bool are_similar(const any_t&     a, const any_t&     b, const visited_refs_t& visited = visited_refs_t());
-   bool are_similar(const element_t& a, const element_t& b, const visited_refs_t& visited = visited_refs_t());
+   bool are_similar(const value_t& a, const value_t& b, const visited_refs_t& visited = visited_refs_t());
    bool are_similar(const object_t&  a, const object_t&  b, const visited_refs_t& visited = visited_refs_t());
    bool are_similar(const valid_ref_t<object_t>& a, const valid_ref_t<object_t>& b, const visited_refs_t& visited = visited_refs_t());
    bool are_similar(const weak_ref_t<object_t>& a, const weak_ref_t<object_t>& b, const visited_refs_t& visited = visited_refs_t());

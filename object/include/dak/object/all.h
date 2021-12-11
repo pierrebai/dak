@@ -7,7 +7,7 @@
 #include <dak/object/edit_ref.h>
 #include <dak/object/name.h>
 #include <dak/object/namespace.h>
-#include <dak/object/element.h>
+#include <dak/object/value.h>
 #include <dak/object/dict.h>
 #include <dak/object/array.h>
 #include <dak/object/object.h>

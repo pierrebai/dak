@@ -1,6 +1,6 @@
 #include "CppUnitTest.h"
 
-#include "dak/object/element.h"
+#include "dak/object/value.h"
 #include "dak/object/object.h"
 #include "dak/object/voc.h"
 #include "dak/object/tests/helpers.h"
@@ -49,58 +49,58 @@ namespace dak::object::tests
    }
 
 
-   TEST_CLASS(element_tests)
+   TEST_CLASS(value_tests)
 	{
 	public:
-      element_tests()
+      value_tests()
       {
          register_data_ops();
          any_op::register_ops();
          register_object_ops();
       }
 
-		TEST_METHOD(element_base)
+		TEST_METHOD(value_base)
 		{
 
-         element_t e;
+         value_t e;
 
-         Assert::AreEqual(e, element_t());
-         Assert::AreEqual(e, element_t::empty);
-         Assert::AreNotEqual(e, element_t(1));
+         Assert::AreEqual(e, value_t());
+         Assert::AreEqual(e, value_t::empty);
+         Assert::AreNotEqual(e, value_t(1));
 
-         Assert::IsTrue( e == element_t());
-         Assert::IsTrue(e == element_t::empty);
-         Assert::IsFalse(e != element_t());
+         Assert::IsTrue( e == value_t());
+         Assert::IsTrue(e == value_t::empty);
+         Assert::IsFalse(e != value_t());
 
-         Assert::IsFalse(e == element_t(1));
-         Assert::IsFalse(element_t::empty == element_t(1));
-         Assert::IsTrue(e != element_t(1));
+         Assert::IsFalse(e == value_t(1));
+         Assert::IsFalse(value_t::empty == value_t(1));
+         Assert::IsTrue(e != value_t(1));
       }
 
-      TEST_METHOD(element_constructors)
+      TEST_METHOD(value_constructors)
       {
          valid_ref_t o = object_t::make();
          data_t y;
 
-         element_t e_u;
-         element_t e_t1(text_t(L"text"));
-         element_t e_t2(L"strptr");
-         element_t e_c1('c');
-         element_t e_c2(L'w');
-         element_t e_b(true);
-         element_t e_i2((int16_t)2);
-         element_t e_i1((int32_t)1);
-         element_t e_i3((int64_t)3);
-         element_t e_u1((uint16_t)4u);
-         element_t e_u2((uint32_t)5u);
-         element_t e_u3((uint64_t)6u);
-         element_t e_r1(7.0f);
-         element_t e_r2(8.0);
-         element_t e_a((array_t()));
-         element_t e_d((dict_t()));
-         element_t e_n(voc::rock);
-         element_t e_o(o);
-         element_t e_y(y);
+         value_t e_u;
+         value_t e_t1(text_t(L"text"));
+         value_t e_t2(L"strptr");
+         value_t e_c1('c');
+         value_t e_c2(L'w');
+         value_t e_b(true);
+         value_t e_i2((int16_t)2);
+         value_t e_i1((int32_t)1);
+         value_t e_i3((int64_t)3);
+         value_t e_u1((uint16_t)4u);
+         value_t e_u2((uint32_t)5u);
+         value_t e_u3((uint64_t)6u);
+         value_t e_r1(7.0f);
+         value_t e_r2(8.0);
+         value_t e_a((array_t()));
+         value_t e_d((dict_t()));
+         value_t e_n(voc::rock);
+         value_t e_o(o);
+         value_t e_y(y);
 
          Assert::AreEqual(typeid(void), e_u.get_type());
          Assert::AreEqual(typeid(text_t), e_t1.get_type());
@@ -123,32 +123,32 @@ namespace dak::object::tests
          Assert::AreEqual(typeid(data_t), e_y.get_type());
       }
 
-      TEST_METHOD(element_assignments)
+      TEST_METHOD(value_assignments)
       {
          auto o = object_t::make();
          data_t y;
 
-         element_t e_u;
-         element_t e_t1;
-         element_t e_t2;
-         element_t e_c1;
-         element_t e_c2;
-         element_t e_b;
-         element_t e_i2;
-         element_t e_i1;
-         element_t e_i3;
-         element_t e_u1;
-         element_t e_u2;
-         element_t e_u3;
-         element_t e_r1;
-         element_t e_r2;
-         element_t e_a;
-         element_t e_d;
-         element_t e_n;
-         element_t e_o;
-         element_t e_y;
+         value_t e_u;
+         value_t e_t1;
+         value_t e_t2;
+         value_t e_c1;
+         value_t e_c2;
+         value_t e_b;
+         value_t e_i2;
+         value_t e_i1;
+         value_t e_i3;
+         value_t e_u1;
+         value_t e_u2;
+         value_t e_u3;
+         value_t e_r1;
+         value_t e_r2;
+         value_t e_a;
+         value_t e_d;
+         value_t e_n;
+         value_t e_o;
+         value_t e_y;
 
-         e_u  = element_t();
+         e_u  = value_t();
          e_t1 = text_t(L"text");
          e_t2 = L"strptr";
          e_c1 = 'c';
@@ -189,9 +189,9 @@ namespace dak::object::tests
          Assert::AreEqual(typeid(data_t), e_y.get_type());
       }
 
-      TEST_METHOD(element_text_assignments)
+      TEST_METHOD(value_text_assignments)
       {
-         element_t e1;
+         value_t e1;
 
          e1 = L"hello";
          Assert::AreEqual<text_t>(text_t(L"hello"), e1);
@@ -212,30 +212,30 @@ namespace dak::object::tests
          Assert::AreEqual<text_t>(text_t(L"bye"), e1);
       }
 
-      TEST_METHOD(element_conversion)
+      TEST_METHOD(value_conversion)
       {
          auto o = object_t::make();
          data_t y;
 
-         element_t e_u;
-         element_t e_t1(text_t(L"text"));
-         element_t e_t2(L"strptr");
-         element_t e_c1('c');
-         element_t e_c2(L'w');
-         element_t e_b(true);
-         element_t e_i2((int16_t)2);
-         element_t e_i1((int32_t)1);
-         element_t e_i3((int64_t)3);
-         element_t e_u1((uint16_t)4u);
-         element_t e_u2((uint32_t)5u);
-         element_t e_u3((uint64_t)6u);
-         element_t e_r1(7.0f);
-         element_t e_r2(8.0);
-         element_t e_a((array_t()));
-         element_t e_d((dict_t()));
-         element_t e_n(voc::rock);
-         element_t e_o(o);
-         element_t e_y(y);
+         value_t e_u;
+         value_t e_t1(text_t(L"text"));
+         value_t e_t2(L"strptr");
+         value_t e_c1('c');
+         value_t e_c2(L'w');
+         value_t e_b(true);
+         value_t e_i2((int16_t)2);
+         value_t e_i1((int32_t)1);
+         value_t e_i3((int64_t)3);
+         value_t e_u1((uint16_t)4u);
+         value_t e_u2((uint32_t)5u);
+         value_t e_u3((uint64_t)6u);
+         value_t e_r1(7.0f);
+         value_t e_r2(8.0);
+         value_t e_a((array_t()));
+         value_t e_d((dict_t()));
+         value_t e_n(voc::rock);
+         value_t e_o(o);
+         value_t e_y(y);
 
          Assert::AreEqual<int32_t>(0, e_u);
          Assert::AreEqual<text_t>(text_t(L"text"), e_t1);
@@ -258,30 +258,30 @@ namespace dak::object::tests
          Assert::AreEqual<any_t>(any_t(y), e_y);
       }
 
-      TEST_METHOD(element_const_conversion)
+      TEST_METHOD(value_const_conversion)
       {
          auto o = object_t::make();
          data_t y;
 
-         const element_t e_u;
-         const element_t e_t1(text_t(L"text"));
-         const element_t e_t2(L"strptr");
-         const element_t e_c1('c');
-         const element_t e_c2(L'w');
-         const element_t e_b(true);
-         const element_t e_i2((int16_t)2);
-         const element_t e_i1((int32_t)1);
-         const element_t e_i3((int64_t)3);
-         const element_t e_u1((uint16_t)4u);
-         const element_t e_u2((uint32_t)5u);
-         const element_t e_u3((uint64_t)6u);
-         const element_t e_r1(7.0f);
-         const element_t e_r2(8.0);
-         const element_t e_a((array_t()));
-         const element_t e_d((dict_t()));
-         const element_t e_n(voc::rock);
-         const element_t e_o(o);
-         const element_t e_y(y);
+         const value_t e_u;
+         const value_t e_t1(text_t(L"text"));
+         const value_t e_t2(L"strptr");
+         const value_t e_c1('c');
+         const value_t e_c2(L'w');
+         const value_t e_b(true);
+         const value_t e_i2((int16_t)2);
+         const value_t e_i1((int32_t)1);
+         const value_t e_i3((int64_t)3);
+         const value_t e_u1((uint16_t)4u);
+         const value_t e_u2((uint32_t)5u);
+         const value_t e_u3((uint64_t)6u);
+         const value_t e_r1(7.0f);
+         const value_t e_r2(8.0);
+         const value_t e_a((array_t()));
+         const value_t e_d((dict_t()));
+         const value_t e_n(voc::rock);
+         const value_t e_o(o);
+         const value_t e_y(y);
 
          Assert::AreEqual<int32_t>(0, e_u);
          Assert::AreEqual<text_t>(text_t(L"text"), e_t1);
@@ -304,52 +304,52 @@ namespace dak::object::tests
          Assert::AreEqual<any_t>(any_t(y), e_y);
       }
 
-      TEST_METHOD(element_unknown_assignments)
+      TEST_METHOD(value_unknown_assignments)
       {
          auto o = object_t::make();
          data_t y;
 
-         element_t e_u;
-         element_t e_t1(text_t(L"text"));
-         element_t e_t2(L"strptr");
-         element_t e_c1('c');
-         element_t e_c2(L'w');
-         element_t e_b(true);
-         element_t e_i2((int16_t)2);
-         element_t e_i1((int32_t)1);
-         element_t e_i3((int64_t)3);
-         element_t e_u1((uint16_t)4u);
-         element_t e_u2((uint32_t)5u);
-         element_t e_u3((uint64_t)6u);
-         element_t e_r1(7.0f);
-         element_t e_r2(8.0);
-         element_t e_a((array_t()));
-         element_t e_d((dict_t()));
-         element_t e_n(voc::rock);
-         element_t e_o(o);
-         element_t e_y(y);
+         value_t e_u;
+         value_t e_t1(text_t(L"text"));
+         value_t e_t2(L"strptr");
+         value_t e_c1('c');
+         value_t e_c2(L'w');
+         value_t e_b(true);
+         value_t e_i2((int16_t)2);
+         value_t e_i1((int32_t)1);
+         value_t e_i3((int64_t)3);
+         value_t e_u1((uint16_t)4u);
+         value_t e_u2((uint32_t)5u);
+         value_t e_u3((uint64_t)6u);
+         value_t e_r1(7.0f);
+         value_t e_r2(8.0);
+         value_t e_a((array_t()));
+         value_t e_d((dict_t()));
+         value_t e_n(voc::rock);
+         value_t e_o(o);
+         value_t e_y(y);
 
-         // Assigning an empty element_t of type unknown
+         // Assigning an empty value_t of type unknown
          // should set the type to unknown and reset the value.
-         e_u = element_t();
-         e_t1 = element_t();
-         e_t2 = element_t();
-         e_c1 = element_t();
-         e_c2 = element_t();
-         e_b = element_t();
-         e_i2 = element_t();
-         e_i1 = element_t();
-         e_i3 = element_t();
-         e_u1 = element_t();
-         e_u2 = element_t();
-         e_u3 = element_t();
-         e_r1 = element_t();
-         e_r2 = element_t();
-         e_a = element_t();
-         e_d = element_t();
-         e_n = element_t();
-         e_o = element_t();
-         e_y = element_t();
+         e_u = value_t();
+         e_t1 = value_t();
+         e_t2 = value_t();
+         e_c1 = value_t();
+         e_c2 = value_t();
+         e_b = value_t();
+         e_i2 = value_t();
+         e_i1 = value_t();
+         e_i3 = value_t();
+         e_u1 = value_t();
+         e_u2 = value_t();
+         e_u3 = value_t();
+         e_r1 = value_t();
+         e_r2 = value_t();
+         e_a = value_t();
+         e_d = value_t();
+         e_n = value_t();
+         e_o = value_t();
+         e_y = value_t();
 
          Assert::AreEqual(typeid(void), e_u.get_type());
          Assert::AreEqual(typeid(void), e_t1.get_type());
@@ -392,7 +392,7 @@ namespace dak::object::tests
          Assert::AreNotEqual<any_t>(y, e_y);
       }
 
-      TEST_METHOD(element_size)
+      TEST_METHOD(value_size)
       {
          auto o = object_t::make();
          data_t y;
@@ -407,25 +407,25 @@ namespace dak::object::tests
          a.grow() = 66;
          a.grow() = 77;
 
-         const element_t e_u;
-         const element_t e_t1(text_t(L"text"));
-         const element_t e_t2(L"strptr");
-         const element_t e_c1('c');
-         const element_t e_c2(L'w');
-         const element_t e_b(true);
-         const element_t e_i2((int16_t)2);
-         const element_t e_i1((int32_t)1);
-         const element_t e_i3((int64_t)3);
-         const element_t e_u1((uint16_t)4u);
-         const element_t e_u2((uint32_t)5u);
-         const element_t e_u3((uint64_t)6u);
-         const element_t e_r1(7.0f);
-         const element_t e_r2(8.0);
-         const element_t e_a(a);
-         const element_t e_d(d);
-         const element_t e_n(voc::rock);
-         const element_t e_o(o);
-         const element_t e_y(y);
+         const value_t e_u;
+         const value_t e_t1(text_t(L"text"));
+         const value_t e_t2(L"strptr");
+         const value_t e_c1('c');
+         const value_t e_c2(L'w');
+         const value_t e_b(true);
+         const value_t e_i2((int16_t)2);
+         const value_t e_i1((int32_t)1);
+         const value_t e_i3((int64_t)3);
+         const value_t e_u1((uint16_t)4u);
+         const value_t e_u2((uint32_t)5u);
+         const value_t e_u3((uint64_t)6u);
+         const value_t e_r1(7.0f);
+         const value_t e_r2(8.0);
+         const value_t e_a(a);
+         const value_t e_d(d);
+         const value_t e_n(voc::rock);
+         const value_t e_o(o);
+         const value_t e_y(y);
 
          Assert::AreEqual<index_t>(0, e_u.size());
          Assert::AreEqual<index_t>(4, e_t1.size());
@@ -448,7 +448,7 @@ namespace dak::object::tests
          Assert::AreEqual<index_t>(77, e_y.size());
       }
 
-      TEST_METHOD(element_compatible)
+      TEST_METHOD(value_compatible)
       {
          auto o = object_t::make();
          data_t y;
@@ -463,25 +463,25 @@ namespace dak::object::tests
          a.grow() = 66;
          a.grow() = 77;
 
-         const element_t e_u;
-         const element_t e_t1(text_t(L"text"));
-         const element_t e_t2(L"strptr");
-         const element_t e_c1('c');
-         const element_t e_c2(L'w');
-         const element_t e_b(true);
-         const element_t e_i2((int16_t)2);
-         const element_t e_i1((int32_t)1);
-         const element_t e_i3((int64_t)3);
-         const element_t e_u1((uint16_t)4u);
-         const element_t e_u2((uint32_t)5u);
-         const element_t e_u3((uint64_t)6u);
-         const element_t e_r1(7.0f);
-         const element_t e_r2(8.0);
-         const element_t e_a(a);
-         const element_t e_d(d);
-         const element_t e_n(voc::rock);
-         const element_t e_o(o);
-         const element_t e_y(y);
+         const value_t e_u;
+         const value_t e_t1(text_t(L"text"));
+         const value_t e_t2(L"strptr");
+         const value_t e_c1('c');
+         const value_t e_c2(L'w');
+         const value_t e_b(true);
+         const value_t e_i2((int16_t)2);
+         const value_t e_i1((int32_t)1);
+         const value_t e_i3((int64_t)3);
+         const value_t e_u1((uint16_t)4u);
+         const value_t e_u2((uint32_t)5u);
+         const value_t e_u3((uint64_t)6u);
+         const value_t e_r1(7.0f);
+         const value_t e_r2(8.0);
+         const value_t e_a(a);
+         const value_t e_d(d);
+         const value_t e_n(voc::rock);
+         const value_t e_o(o);
+         const value_t e_y(y);
 
          Assert::IsTrue(e_t1.is_compatible(typeid(text_t)));
          Assert::IsTrue(e_t2.is_compatible(typeid(text_t)));
@@ -530,7 +530,7 @@ namespace dak::object::tests
          Assert::IsFalse(e_y.is_compatible(typeid(int64_t)));
       }
 
-      TEST_METHOD(element_reset)
+      TEST_METHOD(value_reset)
       {
          auto o = object_t::make();
          data_t y;
@@ -545,25 +545,25 @@ namespace dak::object::tests
          a.grow() = 66;
          a.grow() = 77;
 
-         element_t e_u;
-         element_t e_t1(text_t(L"text"));
-         element_t e_t2(L"strptr");
-         element_t e_c1('c');
-         element_t e_c2(L'w');
-         element_t e_b(true);
-         element_t e_i2((int16_t)2);
-         element_t e_i1((int32_t)1);
-         element_t e_i3((int64_t)3);
-         element_t e_u1((uint16_t)4u);
-         element_t e_u2((uint32_t)5u);
-         element_t e_u3((uint64_t)6u);
-         element_t e_r1(7.0f);
-         element_t e_r2(8.0);
-         element_t e_a(a);
-         element_t e_d(d);
-         element_t e_n(voc::rock);
-         element_t e_o(o);
-         element_t e_y(y);
+         value_t e_u;
+         value_t e_t1(text_t(L"text"));
+         value_t e_t2(L"strptr");
+         value_t e_c1('c');
+         value_t e_c2(L'w');
+         value_t e_b(true);
+         value_t e_i2((int16_t)2);
+         value_t e_i1((int32_t)1);
+         value_t e_i3((int64_t)3);
+         value_t e_u1((uint16_t)4u);
+         value_t e_u2((uint32_t)5u);
+         value_t e_u3((uint64_t)6u);
+         value_t e_r1(7.0f);
+         value_t e_r2(8.0);
+         value_t e_a(a);
+         value_t e_d(d);
+         value_t e_n(voc::rock);
+         value_t e_o(o);
+         value_t e_y(y);
 
          e_u.reset();
          e_t1.reset();
@@ -606,27 +606,27 @@ namespace dak::object::tests
          Assert::AreEqual(typeid(void), e_y.get_type());
       }
 
-      TEST_METHOD(element_ensure)
+      TEST_METHOD(value_ensure)
       {
-         element_t e_u;
-         element_t e_t1;
-         element_t e_t2;
-         element_t e_c1;
-         element_t e_c2;
-         element_t e_b;
-         element_t e_i2;
-         element_t e_i1;
-         element_t e_i3;
-         element_t e_u1;
-         element_t e_u2;
-         element_t e_u3;
-         element_t e_r1;
-         element_t e_r2;
-         element_t e_a;
-         element_t e_d;
-         element_t e_n;
-         element_t e_o;
-         element_t e_y;
+         value_t e_u;
+         value_t e_t1;
+         value_t e_t2;
+         value_t e_c1;
+         value_t e_c2;
+         value_t e_b;
+         value_t e_i2;
+         value_t e_i1;
+         value_t e_i3;
+         value_t e_u1;
+         value_t e_u2;
+         value_t e_u3;
+         value_t e_r1;
+         value_t e_r2;
+         value_t e_a;
+         value_t e_d;
+         value_t e_n;
+         value_t e_o;
+         value_t e_y;
 
          e_u.ensure(typeid(void));
          e_t1.ensure(typeid(text_t));
@@ -669,7 +669,7 @@ namespace dak::object::tests
          Assert::AreEqual(typeid(data_t), e_y.get_type());
       }
 
-      TEST_METHOD(element_ensure_preserve_value)
+      TEST_METHOD(value_ensure_preserve_value)
       {
          auto o = object_t::make();
          data_t y;
@@ -684,25 +684,25 @@ namespace dak::object::tests
          a.grow() = 66;
          a.grow() = 77;
 
-         element_t e_u;
-         element_t e_t1(text_t(L"text"));
-         element_t e_t2(L"strptr");
-         element_t e_c1('c');
-         element_t e_c2(L'w');
-         element_t e_b(true);
-         element_t e_i2((int16_t)2);
-         element_t e_i1((int32_t)1);
-         element_t e_i3((int64_t)3);
-         element_t e_u1((uint16_t)4u);
-         element_t e_u2((uint32_t)5u);
-         element_t e_u3((uint64_t)6u);
-         element_t e_r1(7.0f);
-         element_t e_r2(8.0);
-         element_t e_a(a);
-         element_t e_d(d);
-         element_t e_n(voc::rock);
-         element_t e_o(o);
-         element_t e_y(y);
+         value_t e_u;
+         value_t e_t1(text_t(L"text"));
+         value_t e_t2(L"strptr");
+         value_t e_c1('c');
+         value_t e_c2(L'w');
+         value_t e_b(true);
+         value_t e_i2((int16_t)2);
+         value_t e_i1((int32_t)1);
+         value_t e_i3((int64_t)3);
+         value_t e_u1((uint16_t)4u);
+         value_t e_u2((uint32_t)5u);
+         value_t e_u3((uint64_t)6u);
+         value_t e_r1(7.0f);
+         value_t e_r2(8.0);
+         value_t e_a(a);
+         value_t e_d(d);
+         value_t e_n(voc::rock);
+         value_t e_o(o);
+         value_t e_y(y);
 
          // Ensuring the same type should not reset the value.
          e_u.ensure(typeid(void));
@@ -807,7 +807,7 @@ namespace dak::object::tests
          Assert::AreEqual<bool>(true, e_y);
       }
 
-      TEST_METHOD(element_verify)
+      TEST_METHOD(value_verify)
       {
          auto o = object_t::make();
          data_t y;
@@ -822,25 +822,25 @@ namespace dak::object::tests
          a.grow() = 66;
          a.grow() = 77;
 
-         element_t e_u;
-         element_t e_t1(text_t(L"text"));
-         element_t e_t2(L"strptr");
-         element_t e_c1('c');
-         element_t e_c2(L'w');
-         element_t e_b(true);
-         element_t e_i2((int16_t)2);
-         element_t e_i1((int32_t)1);
-         element_t e_i3((int64_t)3);
-         element_t e_u1((uint16_t)4u);
-         element_t e_u2((uint32_t)5u);
-         element_t e_u3((uint64_t)6u);
-         element_t e_r1(7.0f);
-         element_t e_r2(8.0);
-         element_t e_a(a);
-         element_t e_d(d);
-         element_t e_n(voc::rock);
-         element_t e_o(o);
-         element_t e_y(y);
+         value_t e_u;
+         value_t e_t1(text_t(L"text"));
+         value_t e_t2(L"strptr");
+         value_t e_c1('c');
+         value_t e_c2(L'w');
+         value_t e_b(true);
+         value_t e_i2((int16_t)2);
+         value_t e_i1((int32_t)1);
+         value_t e_i3((int64_t)3);
+         value_t e_u1((uint16_t)4u);
+         value_t e_u2((uint32_t)5u);
+         value_t e_u3((uint64_t)6u);
+         value_t e_r1(7.0f);
+         value_t e_r2(8.0);
+         value_t e_a(a);
+         value_t e_d(d);
+         value_t e_n(voc::rock);
+         value_t e_o(o);
+         value_t e_y(y);
 
          // Verifying the same type should not reset the value.
          e_u.verify(typeid(void));
@@ -904,9 +904,9 @@ namespace dak::object::tests
          Assert::AreEqual<any_t>(y, e_y);
       }
 
-      TEST_METHOD(element_int64_operators)
+      TEST_METHOD(value_int64_operators)
       {
-         element_t e;
+         value_t e;
 
          Assert::AreEqual<int64_t>(0, e);
 
@@ -959,9 +959,9 @@ namespace dak::object::tests
          Assert::AreEqual<text_t>(L"bye", e);
       }
 
-      TEST_METHOD(element_double_operators)
+      TEST_METHOD(value_double_operators)
       {
-         element_t e;
+         value_t e;
 
          e = 0.0;
 
@@ -1016,30 +1016,30 @@ namespace dak::object::tests
          Assert::AreEqual<text_t>(L"bye", e);
       }
 
-      TEST_METHOD(element_bool_operator)
+      TEST_METHOD(value_bool_operator)
       {
          auto o = object_t::make();
          data_t y;
 
-         element_t e_u;
-         element_t e_t1(L"");
-         element_t e_t2(text_t(L""));
-         element_t e_c1('\0');
-         element_t e_c2(L'\0');
-         element_t e_b(false);
-         element_t e_i2((int16_t)0);
-         element_t e_i1((int32_t)0);
-         element_t e_i3((int64_t)0);
-         element_t e_u1((uint16_t)0);
-         element_t e_u2((uint32_t)0);
-         element_t e_u3((uint64_t)0);
-         element_t e_r1(0.f);
-         element_t e_r2(0.);
-         element_t e_a(array_t::empty);
-         element_t e_d(dict_t::empty);
-         element_t e_n((voc::rock));
-         element_t e_o(o);
-         element_t e_y(y);
+         value_t e_u;
+         value_t e_t1(L"");
+         value_t e_t2(text_t(L""));
+         value_t e_c1('\0');
+         value_t e_c2(L'\0');
+         value_t e_b(false);
+         value_t e_i2((int16_t)0);
+         value_t e_i1((int32_t)0);
+         value_t e_i3((int64_t)0);
+         value_t e_u1((uint16_t)0);
+         value_t e_u2((uint32_t)0);
+         value_t e_u3((uint64_t)0);
+         value_t e_r1(0.f);
+         value_t e_r2(0.);
+         value_t e_a(array_t::empty);
+         value_t e_d(dict_t::empty);
+         value_t e_n((voc::rock));
+         value_t e_o(o);
+         value_t e_y(y);
 
          Assert::AreEqual<bool>(false, e_u);
          Assert::AreEqual<bool>(false, e_t1);
@@ -1071,7 +1071,7 @@ namespace dak::object::tests
          a.grow() = 66;
          a.grow() = 77;
 
-         e_u = element_t();
+         e_u = value_t();
          e_t1 = text_t(L"text");
          e_t2 = L"strptr";
          e_c1 = 'c';
@@ -1112,14 +1112,14 @@ namespace dak::object::tests
          Assert::AreEqual<bool>(true, e_y);
       }
 
-      TEST_METHOD(element_array)
+      TEST_METHOD(value_array)
       {
          array_t a;
          a.grow() = 55;
          a.grow() = 66.;
          a.grow() = 77.f;
 
-         element_t e;
+         value_t e;
 
          e.grow() = 11;
          e.grow() = 22;
@@ -1138,14 +1138,14 @@ namespace dak::object::tests
          Assert::AreEqual<float>(77.f, e[4]);
       }
 
-      TEST_METHOD(element_dict)
+      TEST_METHOD(value_dict)
       {
          dict_t d;
          d[voc::rock] = 33.;
          d[voc::pebble] = 4;
          d[voc::sand] = 5.f;
 
-         element_t e;
+         value_t e;
 
          e[voc::age] = 55.;
          e.append(d);

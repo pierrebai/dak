@@ -12,18 +12,18 @@ namespace dak::object
 
    index_t array_t::size() const
    {
-      return my_elements.size();
+      return my_values.size();
    }
 
    void array_t::append(const array_t & a)
    {
-      for (const element_t& e : a)
+      for (const value_t& e : a)
       {
          grow() = e;
       }
    }
 
-   void array_t::append(const element_t& e)
+   void array_t::append(const value_t& e)
    {
       grow() = e;
    }
@@ -36,13 +36,13 @@ namespace dak::object
          if (index_t < 0)
          {
             // Note: index is negative, so subtracting adds.
-            my_elements.resize(size() - index_t);
+            my_values.resize(size() - index_t);
             index_t = 0;
          }
       }
       else if (index_t >= size())
       {
-         my_elements.resize(index_t + 1);
+         my_values.resize(index_t + 1);
       }
 
       return index_t;
@@ -70,54 +70,54 @@ namespace dak::object
       if (index_t < 0)
          return false;
 
-      my_elements.erase(my_elements.begin() + index_t);
+      my_values.erase(my_values.begin() + index_t);
       return true;
    }
 
-   element_t & array_t::insert(index_t index_t)
+   value_t & array_t::insert(index_t index_t)
    {
       index_t = make_fit(index_t);
-      return *my_elements.insert(my_elements.begin() + index_t, element_t());
+      return *my_values.insert(my_values.begin() + index_t, value_t());
    }
 
-   element_t & array_t::operator [](index_t index_t)
+   value_t & array_t::operator [](index_t index_t)
    {
       index_t = make_fit(index_t);
-      return my_elements [index_t];
+      return my_values [index_t];
    }
 
-   const element_t & array_t::operator [](index_t index_t) const
+   const value_t & array_t::operator [](index_t index_t) const
    {
       index_t = verify_fit(index_t);
 
       if (index_t < 0)
-         return element_t::empty;
+         return value_t::empty;
 
-      return my_elements [index_t];
+      return my_values [index_t];
    }
 
-   element_t & array_t::grow()
+   value_t & array_t::grow()
    {
       return (*this) [ size() ];
    }
 
    array_t::iterator array_t::begin()
    {
-      return my_elements.begin();
+      return my_values.begin();
    }
 
    array_t::iterator array_t::end()
    {
-      return my_elements.end();
+      return my_values.end();
    }
 
    array_t::const_iterator array_t::begin() const
    {
-      return my_elements.begin();
+      return my_values.begin();
    }
 
    array_t::const_iterator array_t::end() const
    {
-      return my_elements.end();
+      return my_values.end();
    }
 }

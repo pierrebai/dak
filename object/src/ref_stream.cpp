@@ -118,7 +118,7 @@ namespace dak::object
       auto& ostr = get_stream();
 
       ostr << L"[\n";
-      for (const element_t& e : a)
+      for (const value_t& e : a)
          *this << e << L",\n";
       ostr << L"]";
       return *this;
@@ -153,7 +153,7 @@ namespace dak::object
       return *this;
    }
 
-   const ref_ostream_t& ref_ostream_t::print(const element_t& e) const
+   const ref_ostream_t& ref_ostream_t::print(const value_t& e) const
    {
       datatype_t t = e.get_type();
 
@@ -447,7 +447,7 @@ namespace dak::object
          if (is_end(istr, L']'))
             break;
 
-         element_t e;
+         value_t e;
          istr >> std::ws;
          *this >> e;
          a.append(e);
@@ -478,7 +478,7 @@ namespace dak::object
          if (!parse_sigil(istr, L':'))
             break;
 
-         element_t e;
+         value_t e;
          istr >> std::ws;
          *this >> e;
          d[n] = e;
@@ -509,7 +509,7 @@ namespace dak::object
          if (!parse_sigil(istr, L':'))
             break;
 
-         element_t e;
+         value_t e;
          istr >> std::ws;
          *this >> e;
          o[n] = e;
@@ -529,7 +529,7 @@ namespace dak::object
       return *this;
    }
 
-   const ref_istream_t& ref_istream_t::parse(element_t& e) const
+   const ref_istream_t& ref_istream_t::parse(value_t& e) const
    {
       auto& istr = get_stream();
 

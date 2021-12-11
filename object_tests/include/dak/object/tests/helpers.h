@@ -31,7 +31,7 @@ namespace Microsoft::VisualStudio::CppUnitTestFramework
    template<> inline std::wstring ToString<dak::object::dict_t>(const dak::object::dict_t& d);
    template<> inline std::wstring ToString<dak::object::array_t>(const dak::object::array_t& a);
 
-   template<> inline std::wstring ToString<dak::object::element_t>(const dak::object::element_t& e)
+   template<> inline std::wstring ToString<dak::object::value_t>(const dak::object::value_t& e)
    {
       RETURN_REF_STREAM_WIDE_STRING(e);
    }

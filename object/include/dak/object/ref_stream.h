@@ -37,7 +37,7 @@ namespace dak::object
       // Empty references are printed as a zero reference id.
       const ref_ostream_t& print(const ref_t<object_t>& r) const;
       const ref_ostream_t& print(const weak_ref_t<object_t>& r) const;
-      const ref_ostream_t& print(const element_t& e) const;
+      const ref_ostream_t& print(const value_t& e) const;
       const ref_ostream_t& print(const array_t& a) const;
       const ref_ostream_t& print(const dict_t& d) const;
       const ref_ostream_t& print(const any_t& d) const;
@@ -89,7 +89,7 @@ namespace dak::object
       // Note: it is *important* to keep the chain of else-if so that the final
       //       else if *not* compiled when a constexpr conditional matches,
       //       otherwise that else will get compiled and fail.
-      if constexpr (std::is_base_of<element_t, T>())
+      if constexpr (std::is_base_of<value_t, T>())
       {
          return rstr.print(value);
       }
@@ -154,7 +154,7 @@ namespace dak::object
       // Empty references are printed as a zero reference id.
       const ref_istream_t& parse(ref_t<object_t>& r) const;
       const ref_istream_t& parse(weak_ref_t<object_t>& r) const;
-      const ref_istream_t& parse(element_t& e) const;
+      const ref_istream_t& parse(value_t& e) const;
       const ref_istream_t& parse(array_t& a) const;
       const ref_istream_t& parse(dict_t& d) const;
       const ref_istream_t& parse(any_t& d) const;
@@ -203,7 +203,7 @@ namespace dak::object
       // Note: it is *important* to keep the chain of else-if so that the final
       //       else if *not* compiled when a constexpr conditional matches,
       //       otherwise that else will get compiled and fail.
-      if constexpr (std::is_base_of<element_t, T>())
+      if constexpr (std::is_base_of<value_t, T>())
       {
          return rstr.parse(value);
       }

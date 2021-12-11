@@ -35,8 +35,8 @@ namespace dak::object
       template <class O>
       explicit valid_ref_t(const weak_ref_t<O>& other) : valid_ref_t<T>(other.as<O>()) {}
 
-      // Constructor from element_t.
-      valid_ref_t(const element_t& other) { *this = other; }
+      // Constructor from value_t.
+      valid_ref_t(const value_t& other) { *this = other; }
 
       // Copy from other valid ref.
       valid_ref_t<T>& operator =(const valid_ref_t<T>& other) = default;
@@ -58,8 +58,8 @@ namespace dak::object
       template <class O>
       ref_t<T>& operator =(const weak_ref_t<O>& other) { return operator =(other.as<O>()); }
 
-      // Copy from element_t.
-      valid_ref_t<T>& operator =(const element_t& other);
+      // Copy from value_t.
+      valid_ref_t<T>& operator =(const value_t& other);
 
       // Swap with another valid reference.
       void swap(valid_ref_t<T>& other) { ref_t<T>::swap(other); }
@@ -76,14 +76,14 @@ namespace dak::object
 
       // Element retrieval.
       // Non-const version inserts when the name is not found.
-      const element_t& operator [](const name_t& n) const;
+      const value_t& operator [](const name_t& n) const;
 
    protected:
       valid_ref_t(const T* t) : ref_t<T>(t)  { if (!t) throw std::exception("invalid valid ref"); }
       valid_ref_t<T>& operator =(const T* t) { if (!t) throw std::exception("invalid valid ref"); ref_t<T>::operator =(t); return *this; }
 
       friend T;
-      friend struct element_t;
+      friend struct value_t;
    };
 
 

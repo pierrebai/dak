@@ -4,7 +4,7 @@
 #define DAK_OBJECT_ARRAY_H
 
 #include <dak/utility/types.h>
-#include <dak/object/element.h>
+#include <dak/object/value.h>
 
 #include <vector>
 
@@ -14,9 +14,9 @@ namespace dak::object
 
    //////////////////////////////////////////////////////////////////////////
    //
-   // Array. elements are indexed by an integer, beginning at zero (0).
+   // Array. values are indexed by an integer, beginning at zero (0).
    //
-   // Indexing past the end inserts element in between.
+   // Indexing past the end inserts value in between.
    //
    // Indexing with negative index_t starts from the end of the array,
    // minus one being the last item.
@@ -24,9 +24,9 @@ namespace dak::object
    struct array_t
    {
       // Types used by the array: data container and iterators.
-      typedef std::vector<element_t> elements_t;
-      typedef elements_t::iterator iterator;
-      typedef elements_t::const_iterator const_iterator;
+      typedef std::vector<value_t> values_t;
+      typedef values_t::iterator iterator;
+      typedef values_t::const_iterator const_iterator;
 
       // Constructors.
       array_t() = default;
@@ -41,21 +41,21 @@ namespace dak::object
       // Empty array.
       static const array_t empty;
 
-      // Number of elements in the array.
+      // Number of values in the array.
       index_t size() const;
 
       // Modifications to the array.
       void append(const array_t &);
-      void append(const element_t&);
+      void append(const value_t&);
       bool erase(index_t anIndex);
-      element_t & insert(index_t anIndex);
-      element_t & grow();
+      value_t & insert(index_t anIndex);
+      value_t & grow();
 
       // Element retrieval.
-      element_t & operator [](index_t anIndex);
-      const element_t & operator [](index_t anIndex) const;
+      value_t & operator [](index_t anIndex);
+      const value_t & operator [](index_t anIndex) const;
 
-      // Iterations over the elements.
+      // Iterations over the values.
       iterator begin();
       iterator end();
       const_iterator begin() const;
@@ -73,12 +73,12 @@ namespace dak::object
       // Return the positive index or negative if the normalization failed.
       index_t verify_fit(index_t index_t) const;
 
-      elements_t my_elements;
+      values_t my_values;
 
       friend struct ref_t<array_t>;
    };
 
-   DAK_ELEMENT_OPERATOR(+, array_t, element_t);
+   DAK_ELEMENT_OPERATOR(+, array_t, value_t);
 }
 
 #endif /* DAK_OBJECT_ARRAY_H */

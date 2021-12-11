@@ -75,14 +75,14 @@ namespace dak::object
 
       // Element retrieval.
       // Non-const version inserts when the name is not found.
-      element_t& operator [](const name_t& n) const;
+      value_t& operator [](const name_t& n) const;
 
    protected:
       edit_ref_t(T* t) : valid_ref_t<T>(t) {}
       edit_ref_t<T>& operator =(const T* t) { valid_ref_t<T>::operator =(t); return *this; }
 
       friend T;
-      friend struct element_t;
+      friend struct value_t;
    };
 
 

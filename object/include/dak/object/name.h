@@ -73,7 +73,7 @@ namespace dak::object
 
       valid_ref_t<name_stuff_t> my_stuff;
 
-      friend struct element_t;
+      friend struct value_t;
    };
 
    //////////////////////////////////////////////////////////////////////////

@@ -1,6 +1,6 @@
 #include <dak/object/array.h>
 #include <dak/object/dict.h>
-#include <dak/object/element.h>
+#include <dak/object/value.h>
 #include <dak/object/object.h>
 #include <dak/object/similar.h>
 
@@ -13,10 +13,10 @@ namespace dak::object
       if (a.size() != b.size())
          return false;
 
-      for (const auto& [name, a_element] : a)
+      for (const auto& [name, a_value] : a)
       {
-         const element_t& b_element = b[name];
-         if (!are_similar(a_element, b_element, visited))
+         const value_t& b_value = b[name];
+         if (!are_similar(a_value, b_value, visited))
             return false;
       }
 
@@ -33,10 +33,10 @@ namespace dak::object
       if (a.size() != b.size())
          return false;
 
-      for (const auto& [name, a_element] : a)
+      for (const auto& [name, a_value] : a)
       {
-         const element_t& b_element = b[name];
-         if (!are_similar(a_element, b_element, visited))
+         const value_t& b_value = b[name];
+         if (!are_similar(a_value, b_value, visited))
             return false;
       }
 
@@ -52,9 +52,9 @@ namespace dak::object
 
       for (index_t i = 0; i < count; ++i)
       {
-         const auto& a_element = a[i];
-         const auto& b_element = b[i];
-         if (!are_similar(a_element, b_element, visited))
+         const auto& a_value = a[i];
+         const auto& b_value = b[i];
+         if (!are_similar(a_value, b_value, visited))
             return false;
       }
 
@@ -84,7 +84,7 @@ namespace dak::object
          visited);
    }
 
-   bool element_t::is_similar(const element_t& other, const visited_refs_t& visited) const
+   bool value_t::is_similar(const value_t& other, const visited_refs_t& visited) const
    {
       const datatype_t t = get_type();
       if (t != other.get_type())
@@ -105,7 +105,7 @@ namespace dak::object
       return any_op::is(any_op::compare(my_data, other.my_data), any_op::comparison_t::equal);
    }
 
-   bool are_similar(const element_t& a, const element_t& b, const visited_refs_t& visited)
+   bool are_similar(const value_t& a, const value_t& b, const visited_refs_t& visited)
    {
       return a.is_similar(b, visited);
    }

@@ -6,7 +6,7 @@
 
 namespace dak::object
 {
-   struct element_t;
+   struct value_t;
    struct name_t;
    template <class T> struct ref_t;
    template <class T> struct weak_ref_t;
@@ -47,7 +47,7 @@ namespace dak::object
       const ref_counted_t* my_object = nullptr;
 
       friend struct name_t;
-      friend struct element_t;
+      friend struct value_t;
 
       template <class T> friend struct ref_t;
       template <class T> friend struct valid_ref_t;
@@ -85,7 +85,7 @@ namespace dak::object
       void clear();
 
       friend struct name_t;
-      friend struct element_t;
+      friend struct value_t;
    };
 
    //////////////////////////////////////////////////////////////////////////
@@ -118,7 +118,7 @@ namespace dak::object
       void clear();
 
       friend struct name_t;
-      friend struct element_t;
+      friend struct value_t;
    };
 }
 

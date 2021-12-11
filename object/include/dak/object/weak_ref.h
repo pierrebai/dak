@@ -8,7 +8,7 @@ namespace dak::object
    template <class T> struct ref_t;
    template <class T> struct valid_ref_t;
    template <class T> struct edit_ref_t;
-   struct element_t;
+   struct value_t;
 
    //////////////////////////////////////////////////////////////////////////
    //
@@ -57,8 +57,8 @@ namespace dak::object
       template <class O>
       weak_ref_t(const edit_ref_t<O>& other);
 
-      // Constructor from element_t.
-      weak_ref_t(const element_t& other) { *this = other; }
+      // Constructor from value_t.
+      weak_ref_t(const value_t& other) { *this = other; }
 
       // Copy from other weak ref.
       weak_ref_t<T>& operator =(const weak_ref_t<T>& other) = default;
@@ -86,8 +86,8 @@ namespace dak::object
       template <class O>
       weak_ref_t<T>& operator =(const edit_ref_t<O>& other);
 
-      // Copy from element_t.
-      weak_ref_t<T>& operator =(const element_t& other);
+      // Copy from value_t.
+      weak_ref_t<T>& operator =(const value_t& other);
 
       // Swap with another reference.
       void swap(weak_ref_t<T>& other) { weak_ref_base_t::swap(other); }
@@ -97,7 +97,7 @@ namespace dak::object
       weak_ref_t<T>& operator =(const T* t) { weak_ref_base_t::operator =(t); return *this; }
 
       friend T;
-      friend struct element_t;
+      friend struct value_t;
    };
 }
 

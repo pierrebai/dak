@@ -12,7 +12,7 @@ namespace dak::any_op
    //
    // The size operation returns the size of a container value.
    //
-   // That is, the number of elements it contains.
+   // That is, the number of values it contains.
    //
    // Return zero if the value is not a known container.
 
