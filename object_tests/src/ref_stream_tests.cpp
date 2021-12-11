@@ -1,8 +1,10 @@
 #include "CppUnitTest.h"
 
-#include "dak/object/ref_stream.h"
+#include "dak/object/ref_istream_op.h"
+#include "dak/object/ref_ostream_op.h"
 #include "dak/object/similar.h"
 #include "dak/object/timeline.h"
+
 #include "dak/object/tests/helpers.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -17,13 +19,15 @@ namespace dak::object::tests
       {
          any_op::register_ops();
          register_object_ops();
+         ref_istream_op_t::register_ops();
+         ref_ostream_op_t::register_ops();
       }
 
       TEST_METHOD(ostream_name)
       {
          wstringstream ss;
          ss << voc::rock;
-         Assert::AreEqual(text_t(L" : \"\" / 1 \"rock\""), ss.str());
+         Assert::AreEqual(text_t(L"dak::object::name_t : \"\" / 1 \"rock\""), ss.str());
       }
 
       TEST_METHOD(ostream_empty_dict)
@@ -31,7 +35,7 @@ namespace dak::object::tests
          wstringstream ss;
          dict_t d1;
          ss << d1;
-         Assert::AreEqual(text_t(L"{\n}"), ss.str());
+         Assert::AreEqual(text_t(L"dak::object::dict_t {\n}"), ss.str());
       }
 
       TEST_METHOD(ostream_one_item_dict)
@@ -40,7 +44,11 @@ namespace dak::object::tests
          dict_t d2;
          d2[voc::rock] = 3;
          ss << d2;
-         Assert::AreEqual(text_t(L"{\n : \"\" / 1 \"rock\": i32 3,\n}"), ss.str());
+         Assert::AreEqual(text_t(
+            L"dak::object::dict_t {\n"
+            L"  dak::object::name_t : \"\" / 1 \"rock\": dak::object::value_t int32_t 3,"
+            L"\n"
+            L"}"), ss.str());
       }
 
       TEST_METHOD(ostream_one_empty_array)
@@ -48,7 +56,7 @@ namespace dak::object::tests
          wstringstream ss;
          array_t a1;
          ss << a1;
-         Assert::AreEqual(text_t(L"[\n]"), ss.str());
+         Assert::AreEqual(text_t(L"dak::object::array_t [\n]"), ss.str());
       }
 
       TEST_METHOD(ostream_three_items_array)
@@ -59,7 +67,12 @@ namespace dak::object::tests
          a2.grow() = 5;
          a2.grow() = 7;
          ss << a2;
-         Assert::AreEqual(text_t(L"[\ni32 3,\ni32 5,\ni32 7,\n]"), ss.str());
+         Assert::AreEqual(text_t(
+            L"dak::object::array_t [\n"
+            L"  dak::object::value_t int32_t 3,\n"
+            L"  dak::object::value_t int32_t 5,\n"
+            L"  dak::object::value_t int32_t 7,\n"
+            L"]"), ss.str());
       }
 
       TEST_METHOD(ostream_complex_dict)
@@ -85,13 +98,13 @@ namespace dak::object::tests
          }
          ref_ostream_t(ss) << o1;
          Assert::AreEqual(text_t(
-            L"ref 1 {\n"
-            L" : \"\" / 1 \"child\": r ref 2 {\n"
-            L" : \"\" / 2 \"after\": a [\n"
-            L"b 1,\n"
-            L"r ref -1,\n"
-            L"],\n"
-            L"},\n"
+            L"dak::object::edit_ref_t<object_t> 1 {\n"
+            L"  dak::object::name_t : \"\" / 1 \"child\": dak::object::value_t dak::object::ref_t<object_t> 2 {\n"
+            L"    dak::object::name_t : \"\" / 2 \"after\": dak::object::value_t dak::object::array_t [\n"
+            L"      dak::object::value_t bool 1,\n"
+            L"      dak::object::value_t dak::object::ref_t<object_t> -1,\n"
+            L"    ],\n"
+            L"  },\n"
             L"}"),
             ss.str());
       }
@@ -128,17 +141,19 @@ namespace dak::object::tests
 
             tr1.commit(undo_redo);
          }
+
          ref_ostream_t(ss) << o1;
+
          Assert::AreEqual(text_t(
-            L"ref 1 {\n"
-            L" : \"\" / 1 \"child\": r ref 2 {\n"
-            L" : \"\" / 2 \"rock\" {\n"
-            L" : \"\" / 3 \"always\",\n"
-            L"}: a [\n"
-            L"b 1,\n"
-            L"w ref -1,\n"
-            L"],\n"
-            L"},\n"
+            L"dak::object::edit_ref_t<object_t> 1 {\n"
+            L"  dak::object::name_t : \"\" / 1 \"child\": dak::object::value_t dak::object::ref_t<object_t> 2 {\n"
+            L"    dak::object::name_t : \"\" / 2 \"rock\" {\n"
+            L"      dak::object::name_t : \"\" / 3 \"always\",\n"
+            L"    }: dak::object::value_t dak::object::array_t [\n"
+            L"      dak::object::value_t bool 1,\n"
+            L"      dak::object::value_t dak::object::weak_ref_t<object_t> -1,\n"
+            L"    ],\n"
+            L"  },\n"
             L"}"),
             ss.str());
       }
@@ -266,13 +281,13 @@ namespace dak::object::tests
       TEST_METHOD(istream_parsing_create_names_and_namespaces)
       {
          std::wistringstream ss(
-            L"ref 1 {\n"
-            L" : \"\" / 1 \"child\": r ref 2 {\n"
-            L" : \"custom\" / 2 \"after\": a [\n"
-            L"b 1,\n"
-            L"w ref -1,\n"
-            L"],\n"
-            L"},\n"
+            L"dak::object::ref_t<object_t> 1 {\n"
+            L"  dak::object::name_t : \"\" / 1 \"child\": dak::object::value_t dak::object::ref_t<object_t> 2 {\n"
+            L"    dak::object::name_t : \"custom\" / 2 \"after\": dak::object::value_t dak::object::array_t [\n"
+            L"      dak::object::value_t bool 1,\n"
+            L"      dak::object::value_t dak::object::weak_ref_t<object_t> -1,\n"
+            L"    ],\n"
+            L"  },\n"
             L"}");
          transaction_t tr;
 
@@ -316,13 +331,13 @@ namespace dak::object::tests
       TEST_METHOD(istream_parsing_missing_array_comma)
       {
          std::wistringstream ss(
-            L"ref 1 {\n"
-            L" : \"\" / 1 \"child\": r ref 2 {\n"
-            L" : \"\" / 2 \"after\": a [\n"
-            L"b 1,\n"
-            L"w ref -1\n"
-            L"],\n"
-            L"},\n"
+            L"dak::object::ref_t<object_t> ref 1 {\n"
+            L"  dak::object::name_t : \"\" / 1 \"child\": dak::object::ref_t<object_t> ref 2 {\n"
+            L"    dak::object::name_t : \"\" / 2 \"after\": a [\n"
+            L"      bool 1\n"
+            L"      dak::object::ref_t<object_t> -1,\n"
+            L"    ],\n"
+            L"  },\n"
             L"}");
          transaction_t tr;
 
@@ -335,13 +350,13 @@ namespace dak::object::tests
       TEST_METHOD(istream_parsing_missing_opening_accolade)
       {
          std::wistringstream ss(
-            L"ref 1 {\n"
-            L" : \"\" / 1 \"child\": r ref 2\n"
-            L" : \"\" / 2 \"after\": a [\n"
-            L"b 1,\n"
-            L"w ref -1,\n"
-            L"],\n"
-            L"},\n"
+            L"dak::object::ref_t<object_t> ref 1 {\n"
+            L"  dak::object::name_t : \"\" / 1 \"child\": dak::object::ref_t<object_t> ref 2\n"
+            L"    dak::object::name_t : \"\" / 2 \"after\": a [\n"
+            L"      bool 1,\n"
+            L"      dak::object::ref_t<object_t> -1,\n"
+            L"    ],\n"
+            L"  },\n"
             L"}");
          transaction_t tr;
 
@@ -354,13 +369,13 @@ namespace dak::object::tests
       TEST_METHOD(istream_parsing_missing_closing_accolade)
       {
          std::wistringstream ss(
-            L"ref 1 {\n"
-            L" : \"\" / 1 \"child\": r ref 2\n"
-            L" : \"\" / 2 \"after\": a [\n"
-            L"b 1,\n"
-            L"w ref -1,\n"
-            L"],\n"
-            L",\n"
+            L"dak::object::ref_t<object_t> ref 1 {\n"
+            L"  dak::object::name_t : \"\" / 1 \"child\": dak::object::ref_t<object_t> ref 2 {\n"
+            L"    dak::object::name_t : \"\" / 2 \"after\": a [\n"
+            L"      bool 1,\n"
+            L"      dak::object::ref_t<object_t> -1,\n"
+            L"    ],\n"
+            L"  ,\n"
             L"}");
          transaction_t tr;
 
@@ -373,13 +388,13 @@ namespace dak::object::tests
       TEST_METHOD(istream_parsing_missing_column)
       {
          std::wistringstream ss(
-            L"ref 1 {\n"
-            L" : \"\" / 1 \"child\" r ref 2 {\n"
-            L" : \"\" / 2 \"after\" a [\n"
-            L"b 1,\n"
-            L"w ref -1,\n"
-            L"],\n"
-            L"},\n"
+            L"dak::object::ref_t<object_t> ref 1 {\n"
+            L"  dak::object::name_t : \"\" / 1 \"child\": dak::object::ref_t<object_t> ref 2 {\n"
+            L"    dak::object::name_t : \"\" / 2 \"after\" a [\n"
+            L"      bool 1,\n"
+            L"      dak::object::ref_t<object_t> -1,\n"
+            L"    ],\n"
+            L"  },\n"
             L"}");
          transaction_t tr;
 
@@ -392,13 +407,13 @@ namespace dak::object::tests
       TEST_METHOD(istream_parsing_missing_opening_bracket)
       {
          std::wistringstream ss(
-            L"ref 1 {\n"
-            L" : \"\" / 1 \"child\": r ref 2 {\n"
-            L" : \"\" / 2 \"after\": a\n"
-            L"b 1,\n"
-            L"w ref -1,\n"
-            L"],\n"
-            L"},\n"
+            L"dak::object::ref_t<object_t> ref 1 {\n"
+            L"  dak::object::name_t : \"\" / 1 \"child\": dak::object::ref_t<object_t> ref 2 {\n"
+            L"    dak::object::name_t : \"\" / 2 \"after\": a \n"
+            L"      bool 1,\n"
+            L"      dak::object::ref_t<object_t> -1,\n"
+            L"    ],\n"
+            L"  },\n"
             L"}");
          transaction_t tr;
 
@@ -411,13 +426,13 @@ namespace dak::object::tests
       TEST_METHOD(istream_parsing_missing_closing_bracket)
       {
          std::wistringstream ss(
-            L"ref 1 {\n"
-            L" : \"\" / 1 \"child\": r ref 2 {\n"
-            L" : \"\" / 2 \"after\": a [\n"
-            L"b 1,\n"
-            L"w ref -1,\n"
-            L",\n"
-            L"},\n"
+            L"dak::object::ref_t<object_t> ref 1 {\n"
+            L"  dak::object::name_t : \"\" / 1 \"child\": dak::object::ref_t<object_t> ref 2 {\n"
+            L"    dak::object::name_t : \"\" / 2 \"after\": a [\n"
+            L"      bool 1,\n"
+            L"      dak::object::ref_t<object_t> -1,\n"
+            L"    ,\n"
+            L"  },\n"
             L"}");
          transaction_t tr;
 

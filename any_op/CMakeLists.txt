@@ -6,6 +6,8 @@ add_library(dak_any_op
    include/dak/any_op/compare_op.h            src/compare_op.cpp
    include/dak/any_op/convert_op.h            src/convert_op.cpp
    include/dak/any_op/dominant_op.h           src/dominant_op.cpp
+   include/dak/any_op/get_type_name_op.h      src/get_type_name_op.cpp
+   include/dak/any_op/get_type_info_op.h      src/get_type_info_op.cpp
    include/dak/any_op/is_compatible_op.h      src/is_compatible_op.cpp
    include/dak/any_op/is_integer_op.h         src/is_integer_op.cpp
    include/dak/any_op/is_real_op.h            src/is_real_op.cpp

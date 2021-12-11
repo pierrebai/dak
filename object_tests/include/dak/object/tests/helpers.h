@@ -9,7 +9,7 @@
 #include "dak/object/dict.h"
 #include "dak/object/name.h"
 #include "dak/object/object.h"
-#include "dak/object/ref_stream.h"
+#include "dak/object/ref_ostream_op.h"
 #include "dak/object/voc.h"
 #include "dak/any_op/stream_op.h"
 

@@ -20,9 +20,9 @@ namespace dak::any_op
       //       op_t. It seems the complete absence of type in a nullary
       //       function fails to be automatically deduced as an empty
       //       N_ARY variadic template...
-      struct stream_op_init_t
+      struct istream_op_init_t
       {
-         stream_op_init_t()
+         istream_op_init_t()
          {
             // Note: we do *not* register op for str_ptr_t nor char:
             //          - str_ptr_t cannot be written to.
@@ -44,7 +44,7 @@ namespace dak::any_op
          }
       };
 
-      stream_op_init_t stream_op_init;
+      istream_op_init_t istream_op_init;
    }
 
    std::wistream& operator>>(std::wistream& a_stream, any_t& a_value)

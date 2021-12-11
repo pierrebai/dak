@@ -4,6 +4,8 @@
 #define DAK_ANY_OP_AS_OP_H
 
 #include <dak/any_op/op.h>
+#include <dak/any_op/is_compatible_op.h>
+#include <dak/any_op/convert_op.h>
 
 namespace dak::any_op
 {
@@ -29,6 +31,12 @@ namespace dak::any_op
    {
       if (arg_a.type() == typeid(TO))
          return std::any_cast<TO&>(arg_a);
+
+      if (is_compatible<TO>(arg_a))
+      {
+         arg_a = convert<TO>(arg_a);
+         return std::any_cast<TO&>(arg_a);
+      }
 
       static TO empty{};
       return empty;

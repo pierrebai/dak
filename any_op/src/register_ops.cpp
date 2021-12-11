@@ -8,6 +8,7 @@ namespace dak::any_op
       compare_op_t::register_ops();
       convert_op_t::register_ops();
       dominant_op_t::register_ops();
+      get_type_name_op_t::register_ops();
       is_compatible_op_t::register_ops();
       make_op_t::register_ops();
       size_op_t::register_ops();

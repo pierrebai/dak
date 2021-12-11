@@ -8,9 +8,9 @@ namespace dak::any_op
 
    namespace
    {
-      struct stream_op_init_t
+      struct ostream_op_init_t
       {
-         stream_op_init_t()
+         ostream_op_init_t()
          {
             ostream_op_t::make<>::op<bool, bool      >([](std::wostream& a_stream, bool arg_b           ) -> bool { a_stream << arg_b; return true; });
             ostream_op_t::make<>::op<bool, char      >([](std::wostream& a_stream, char arg_b           ) -> bool { a_stream << arg_b; return true; });
@@ -30,7 +30,7 @@ namespace dak::any_op
          }
       };
 
-      stream_op_init_t stream_op_init;
+      ostream_op_init_t ostream_op_init;
    }
 
    std::wostream& operator<<(std::wostream& a_stream, const any_t& a_value)
