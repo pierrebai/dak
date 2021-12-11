@@ -32,10 +32,10 @@ namespace dak::object
       ref_t(const ref_t<O>& other) : ref_t(static_cast<const O*>(other.my_object)) {}
 
       // Constructors from a weak reference.
-      explicit ref_t(const weak_ref_t<T>& other) : ref_t<T>(other.as<T>()) {}
+      ref_t(const weak_ref_t<T>& other) : ref_t<T>(other.as<T>()) {}
 
       template <class O>
-      explicit ref_t(const weak_ref_t<O>& other) : ref_t<T>(other.as<O>()) {}
+      ref_t(const weak_ref_t<O>& other) : ref_t<T>(other.as<O>()) {}
 
       // Constructor from element_t.
       ref_t(const element_t& other) { *this = other; }

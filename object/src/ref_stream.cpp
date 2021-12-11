@@ -157,13 +157,13 @@ namespace dak::object
    {
       datatype_t t = e.get_type();
 
-      if (e.is_compatible(typeid(ref_t<object_t>)))
+      if (t == typeid(ref_t<object_t>))
          return *this << L"r " << e.as_ref();
 
-      if (e.is_compatible(typeid(weak_ref_t<object_t>)))
+      if (t == typeid(weak_ref_t<object_t>))
          return *this << L"w " << e.as_weak_ref();
 
-      if (e.is_compatible(typeid(name_t)))
+      if (t == typeid(name_t))
          return *this << L"n " << e.as_name();
 
       if (t == typeid(int8_t))

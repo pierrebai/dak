@@ -86,17 +86,15 @@ namespace dak::object
 
    bool element_t::is_similar(const element_t& other, const visited_refs_t& visited) const
    {
-      if (get_type() != other.get_type())
+      const datatype_t t = get_type();
+      if (t != other.get_type())
          return false;
 
-      if (is_compatible(typeid(ref_t<object_t>)))
+      if (t == typeid(ref_t<object_t>))
          return are_similar(valid_ref_t<object_t>(as_ref()), valid_ref_t<object_t>(other.as_ref()), visited);
 
-      if (is_compatible(typeid(weak_ref_t<object_t>)))
+      if (t == typeid(weak_ref_t<object_t>))
          return are_similar(as_weak_ref(), other.as_weak_ref(), visited);
-
-      if (is_compatible(typeid(any_t)))
-         return are_similar(as_data(), other.as_data(), visited);
 
       if (is_compatible(typeid(array_t)))
          return are_similar(as_array(), other.as_array(), visited);

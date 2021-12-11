@@ -51,6 +51,9 @@ namespace dak::object
             convert_op_t::make<bool>::op<bool, ref_t<object_t>>([](const ref_t<object_t>& arg_b) -> bool { return arg_b.is_valid(); });
             convert_op_t::make<bool>::op<bool, weak_ref_t<object_t>>([](const weak_ref_t<object_t>& arg_b) -> bool { return arg_b.is_valid(); });
 
+            convert_op_t::make<ref_t<object_t>>::op<ref_t<object_t>, weak_ref_t<object_t>>([](const weak_ref_t<object_t>& arg_b) -> ref_t<object_t> { return ref_t<object_t>(arg_b); });
+            convert_op_t::make<weak_ref_t<object_t>>::op<weak_ref_t<object_t>, ref_t<object_t>>([](const ref_t<object_t>& arg_b) -> weak_ref_t<object_t> { return arg_b; });
+
             std::function<bool()> is_compatible([]() -> bool { return true; });
 
             is_compatible_op_t::make<name_t         , name_t         >::op<bool>(is_compatible);
@@ -59,6 +62,9 @@ namespace dak::object
             is_compatible_op_t::make<element_t      , element_t      >::op<bool>(is_compatible);
             is_compatible_op_t::make<ref_t<object_t>, ref_t<object_t>>::op<bool>(is_compatible);
             is_compatible_op_t::make<weak_ref_t<object_t>, weak_ref_t<object_t>>::op<bool>(is_compatible);
+
+            is_compatible_op_t::make<ref_t<object_t>, weak_ref_t<object_t>>::op<bool>(is_compatible);
+            is_compatible_op_t::make<weak_ref_t<object_t>, ref_t<object_t>>::op<bool>(is_compatible);
 
             size_op_t::make<>::op<uint64_t, array_t        >([](const array_t        & arg_b) -> uint64_t { return uint64_t(arg_b.size()); });
             size_op_t::make<>::op<uint64_t, dict_t         >([](const dict_t         & arg_b) -> uint64_t { return uint64_t(arg_b.size()); });
