@@ -217,7 +217,7 @@ namespace dak::object
       if (!e.is_valid())
          return *this << L"? unknown";
 
-      return *this << L"y " << e.as_data();
+      return *this << L"y " << e.as_any();
    }
 
 

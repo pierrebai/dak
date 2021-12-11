@@ -106,7 +106,7 @@ namespace dak::object
       const array_t& as_array() const;
       const dict_t& as_dict() const;
       const text_t& as_text() const;
-      const any_t& as_data() const { return my_data; }
+      const any_t& as_any() const { return my_data; }
 
       operator char() const { return as<char>(); }
       operator wchar_t() const { return as<wchar_t>(); }

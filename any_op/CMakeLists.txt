@@ -1,6 +1,8 @@
 
 add_library(dak_any_op
    Readme.md
+   include/dak/any_op/all.h
+   include/dak/any_op/as_op.h
    include/dak/any_op/compare_op.h            src/compare_op.cpp
    include/dak/any_op/convert_op.h            src/convert_op.cpp
    include/dak/any_op/dominant_op.h           src/dominant_op.cpp

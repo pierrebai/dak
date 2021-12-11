@@ -1,14 +1,4 @@
-#include <dak/any_op/compare_op.h>
-#include <dak/any_op/convert_op.h>
-#include <dak/any_op/dominant_op.h>
-#include <dak/any_op/is_compatible_op.h>
-#include <dak/any_op/is_integer_op.h>
-#include <dak/any_op/is_unsigned_op.h>
-#include <dak/any_op/is_real_op.h>
-#include <dak/any_op/make_op.h>
-#include <dak/any_op/size_op.h>
-#include <dak/any_op/stream_op.h>
-#include <dak/any_op/to_text_op.h>
+#include <dak/any_op/all.h>
 
 namespace dak::any_op
 {
