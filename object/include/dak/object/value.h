@@ -18,7 +18,7 @@ namespace dak::object
    struct dict_t;
    struct object_t;
 
-   using datatype_t = const std::type_info&;
+   using datatype_t = std::type_info;
 
    //////////////////////////////////////////////////////////////////////////
    //
@@ -157,23 +157,23 @@ namespace dak::object
       index_t size() const;
 
       // Current type of data contained in the value.
-      datatype_t get_type() const;
+      const datatype_t& get_type() const;
 
       // All integer-like types are equivalent, so you can read a boolean
       // from an integer. Same for double-like types, float and double.
-      bool is_compatible(datatype_t aType) const;
+      bool is_compatible(const datatype_t& a_type) const;
 
       // Clear the old data and set the type. Clear even if same type.
-      void reset(datatype_t = typeid(void));
+      void reset(const datatype_t& = typeid(void));
 
       // Reset if currently not the requested type.
       // Tries to preserve as much of the old value as possible.
-      void ensure(datatype_t);
+      void ensure(const datatype_t&);
 
       // Verify if it has the requested type or unknown, in which case set the type.
       // Returns true if the type was already correct or successfully set.
       // Returns false if the type was different.
-      bool verify(datatype_t);
+      bool verify(const datatype_t&);
 
       // Comparison.
       std::partial_ordering operator <=> (const value_t&) const;

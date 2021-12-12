@@ -19,7 +19,18 @@ namespace dak::object
 
    //////////////////////////////////////////////////////////////////////////
    //
-   // The output ref stream operation writes the value to an output ref stream.
+   // The output ref stream operation writes values to an output ref stream.
+   //
+   // The output format writes the name of the type of the value first, then
+   // the actual value. This allows auto-decoding when streaming in.
+   //
+   // This format relies on the existence of implementations of the following
+   // operations for a given type:
+   //
+   //    - get_type_name_op_t
+   //    - get_type_info_op_t
+   //    - ref_ostream_op_t
+   //    - ref_istream_op_t
 
    struct ref_ostream_op_t : any_op::op_t<ref_ostream_op_t, const ref_ostream_t&>
    {

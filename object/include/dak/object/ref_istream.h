@@ -21,6 +21,9 @@ namespace dak::object
    //////////////////////////////////////////////////////////////////////////
    //
    // Input stream wrapper to input object from a stream.
+   // 
+   // Input to the stream is done via the operator >> defined by the
+   // ref_istream_op_t and the implementation registered by various types.
    //
    // Most functions are const so that a temporary ref stream can be passed
    // as a const value to the stream operator. This allows creating the
@@ -59,7 +62,14 @@ namespace dak::object
       const exact_name_t& get_name_with_id(int64_t id) const;
 
       // Add the name corresponding to the id.
-      void add_name_with_id(const exact_name_t& obj, int64_t id) const;
+      void add_name_with_id(const exact_name_t& name, int64_t id) const;
+
+      // Retrieve the type corresponding to the id.
+      // Returns typeid(void) for unknown ids.
+      const datatype_t& get_type_with_id(int64_t id) const;
+
+      // Add the type corresponding to the id.
+      void add_type_with_id(const datatype_t& a_type, int64_t id) const;
 
       // Reset the tracked object references.
       void clear();
@@ -87,13 +97,12 @@ namespace dak::object
       }
 
    private:
-      // Kept as mutable so that a temporary ref stream can be passed
-      // as a const value to the stream operator.
-      mutable std::unordered_map<int64_t, edit_ref_t<object_t>> my_object_with_ids;
+      // Internal data is kept as mutable so that a temporary ref stream
+      // can be passed as a const value to the stream operator.
 
-      // Kept as mutable so that a temporary ref stream can be passed
-      // as a const value to the stream operator.
+      mutable std::unordered_map<int64_t, edit_ref_t<object_t>> my_object_with_ids;
       mutable std::unordered_map<int64_t, exact_name_t> my_name_with_ids;
+      mutable std::unordered_map<int64_t, const datatype_t*> my_type_with_ids;
 
       std::wistream&             my_stream;
       transaction_t&             my_transaction;

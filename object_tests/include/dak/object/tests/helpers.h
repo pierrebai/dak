@@ -90,7 +90,7 @@ namespace Microsoft::VisualStudio::CppUnitTestFramework
       RETURN_REF_STREAM_WIDE_STRING(d);
    }
 
-   template<> inline std::wstring ToString<dak::object::datatype_t>(dak::object::datatype_t d)
+   template<> inline std::wstring ToString<const dak::object::datatype_t&>(const dak::object::datatype_t& d)
    {
       RETURN_WIDE_STRING(d.name());
    }

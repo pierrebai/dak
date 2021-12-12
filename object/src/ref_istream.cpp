@@ -19,7 +19,7 @@ namespace dak::object
 
    //////////////////////////////////////////////////////////////////////////
    //
-   // Input stream tracked objects and names.
+   // Input stream tracked objects, types and names.
 
       void ref_istream_t::add_object_with_id(const edit_ref_t<object_t>& obj, int64_t id) const
    {
@@ -51,11 +51,24 @@ namespace dak::object
       return empty;
    }
 
+   void ref_istream_t::add_type_with_id(const datatype_t& type, int64_t id) const
+   {
+      my_type_with_ids[std::abs(id)] = &type;
+   }
+
+   const datatype_t& ref_istream_t::get_type_with_id(int64_t id) const
+   {
+      const auto pos = my_type_with_ids.find(std::abs(id));
+      if (pos != my_type_with_ids.end())
+         return *pos->second;
+
+      return typeid(void);
+   }
+
    void ref_istream_t::clear()
    {
       my_object_with_ids.clear();
       my_name_with_ids.clear();
-      get_stream().clear();
    }
 
 

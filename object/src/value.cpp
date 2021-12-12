@@ -19,17 +19,17 @@ namespace dak::object
    //
    // Inner helpers.
 
-   void value_t::reset(datatype_t a_type)
+   void value_t::reset(const datatype_t& a_type)
    {
       my_data = any_op::construct(a_type);
    }
 
-   bool value_t::is_compatible(datatype_t a_type) const
+   bool value_t::is_compatible(const datatype_t& a_type) const
    {
       return any_op::is_compatible(get_type(), a_type);
    }
 
-   void value_t::ensure(datatype_t a_type)
+   void value_t::ensure(const datatype_t& a_type)
    {
       if (is_compatible(a_type))
          return;
@@ -43,7 +43,7 @@ namespace dak::object
          my_data = any_op::construct(a_type);
    }
 
-   bool value_t::verify(datatype_t a_type)
+   bool value_t::verify(const datatype_t& a_type)
    {
       if (is_compatible(a_type))
          return true;
@@ -212,7 +212,7 @@ namespace dak::object
       return static_cast<index_t>(any_op::size(my_data));
    }
 
-   datatype_t value_t::get_type() const
+   const datatype_t& value_t::get_type() const
    {
       return my_data.type();
    }

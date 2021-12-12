@@ -8,10 +8,14 @@ namespace dak::object
 
    namespace
    {
+      bool is_valid(const ref_t<object_t>& object) { return object.is_valid(); }
+      bool is_valid(const exact_name_t& name) { return name.is_valid(); }
+      bool is_valid(const datatype_t* a_type) { return a_type && *a_type != typeid(void); }
+
       template <class T>
       int64_t get_thing_id(std::unordered_map<T, int64_t>& ids, const T& thing)
       {
-         if (!thing.is_valid())
+         if (!is_valid(thing))
             return 0;
 
          const auto pos = ids.find(thing);
@@ -35,10 +39,16 @@ namespace dak::object
       return get_thing_id<exact_name_t>(my_name_ids, name);
    }
 
+   int64_t ref_ostream_t::get_type_id(const datatype_t& a_type) const
+   {
+      return get_thing_id<const datatype_t*>(my_type_ids, &a_type);
+   }
+
    void ref_ostream_t::clear()
    {
       my_object_ids.clear();
       my_name_ids.clear();
+      my_type_ids.clear();
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -65,15 +75,16 @@ namespace dak::object
       return *this;
    }
 
-   ref_ostream_indent_t::ref_ostream_indent_t(const ref_ostream_t& ostr, const text_t& open, const text_t& close)
-      : my_ostr(ostr), my_close(close)
+   ref_ostream_indent_t::ref_ostream_indent_t(const ref_ostream_t& ostr,
+      const text_t& open, const text_t& close, int32_t indent_by)
+      : my_ostr(ostr), my_close(close), my_indent_by(indent_by)
    {
       ostr.get_stream() << open;
-      ostr.my_indentation += 2;
+      ostr.my_indentation += indent_by;
    }
    ref_ostream_indent_t::~ref_ostream_indent_t()
    {
-      my_ostr.my_indentation -= 2;
+      my_ostr.my_indentation -= my_indent_by;
       my_ostr.end_line();
       my_ostr.get_stream() << my_close;
    }
