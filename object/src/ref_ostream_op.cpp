@@ -140,25 +140,51 @@ namespace dak::object
          return true;
       }
 
+      bool print_type(const ref_ostream_t& ref_ostr, const any_t& arg_a)
+      {
+         const auto id = ref_ostr.get_type_id(arg_a.type());
+
+         auto& ostr = ref_ostr.get_stream();
+         ostr << L"@ " << id << L' ';
+
+         if (id > 0)
+         {
+            const text_t tn = any_op::get_type_name(arg_a);
+            if (tn.empty())
+            {
+               // Note: if it has an unknown, unsupported type, then we either
+               //       write the void type name and no data or abort the streaming.
+               if (ref_ostr.abort_on_unknown())
+                  ostr.setstate(std::ios::failbit);
+               else
+                  ostr << L"void ";
+               return false;
+            }
+
+            ostr << tn << L' ';
+         }
+         return true;
+      }
+
       struct ref_ostream_op_init_t
       {
          ref_ostream_op_init_t()
          {
-            ref_ostream_op_t::make<>::op<bool, bool      >([](const ref_ostream_t& a_stream, bool          arg_b) -> bool { a_stream.get_stream() << arg_b; return true; });
-            ref_ostream_op_t::make<>::op<bool, char      >([](const ref_ostream_t& a_stream, char          arg_b) -> bool { a_stream.get_stream() << arg_b; return true; });
-            ref_ostream_op_t::make<>::op<bool, wchar_t   >([](const ref_ostream_t& a_stream, wchar_t       arg_b) -> bool { a_stream.get_stream() << arg_b; return true; });
-            ref_ostream_op_t::make<>::op<bool, int8_t    >([](const ref_ostream_t& a_stream, int8_t        arg_b) -> bool { a_stream.get_stream() << int16_t(arg_b); return true; });
-            ref_ostream_op_t::make<>::op<bool, int16_t   >([](const ref_ostream_t& a_stream, int16_t       arg_b) -> bool { a_stream.get_stream() << arg_b; return true; });
-            ref_ostream_op_t::make<>::op<bool, int32_t   >([](const ref_ostream_t& a_stream, int32_t       arg_b) -> bool { a_stream.get_stream() << arg_b; return true; });
-            ref_ostream_op_t::make<>::op<bool, int64_t   >([](const ref_ostream_t& a_stream, int64_t       arg_b) -> bool { a_stream.get_stream() << arg_b; return true; });
-            ref_ostream_op_t::make<>::op<bool, uint8_t   >([](const ref_ostream_t& a_stream, uint8_t       arg_b) -> bool { a_stream.get_stream() << uint16_t(arg_b); return true; });
-            ref_ostream_op_t::make<>::op<bool, uint16_t  >([](const ref_ostream_t& a_stream, uint16_t      arg_b) -> bool { a_stream.get_stream() << arg_b; return true; });
-            ref_ostream_op_t::make<>::op<bool, uint32_t  >([](const ref_ostream_t& a_stream, uint32_t      arg_b) -> bool { a_stream.get_stream() << arg_b; return true; });
-            ref_ostream_op_t::make<>::op<bool, uint64_t  >([](const ref_ostream_t& a_stream, uint64_t      arg_b) -> bool { a_stream.get_stream() << arg_b; return true; });
-            ref_ostream_op_t::make<>::op<bool, float     >([](const ref_ostream_t& a_stream, float         arg_b) -> bool { a_stream.get_stream() << arg_b; return true; });
-            ref_ostream_op_t::make<>::op<bool, double    >([](const ref_ostream_t& a_stream, double        arg_b) -> bool { a_stream.get_stream() << arg_b; return true; });
-            ref_ostream_op_t::make<>::op<bool, text_t    >([](const ref_ostream_t& a_stream, const text_t& arg_b) -> bool { a_stream.get_stream() << arg_b; return true; });
-            ref_ostream_op_t::make<>::op<bool, str_ptr_t >([](const ref_ostream_t& a_stream, str_ptr_t     arg_b) -> bool { a_stream.get_stream() << (arg_b ? arg_b : L""); return true; });
+            ref_ostream_op_t::make<>::op<bool, bool      >([](const ref_ostream_t& ref_ostr, bool          arg_b) -> bool { ref_ostr.get_stream() << arg_b; return true; });
+            ref_ostream_op_t::make<>::op<bool, char      >([](const ref_ostream_t& ref_ostr, char          arg_b) -> bool { ref_ostr.get_stream() << arg_b; return true; });
+            ref_ostream_op_t::make<>::op<bool, wchar_t   >([](const ref_ostream_t& ref_ostr, wchar_t       arg_b) -> bool { ref_ostr.get_stream() << arg_b; return true; });
+            ref_ostream_op_t::make<>::op<bool, int8_t    >([](const ref_ostream_t& ref_ostr, int8_t        arg_b) -> bool { ref_ostr.get_stream() << int16_t(arg_b); return true; });
+            ref_ostream_op_t::make<>::op<bool, int16_t   >([](const ref_ostream_t& ref_ostr, int16_t       arg_b) -> bool { ref_ostr.get_stream() << arg_b; return true; });
+            ref_ostream_op_t::make<>::op<bool, int32_t   >([](const ref_ostream_t& ref_ostr, int32_t       arg_b) -> bool { ref_ostr.get_stream() << arg_b; return true; });
+            ref_ostream_op_t::make<>::op<bool, int64_t   >([](const ref_ostream_t& ref_ostr, int64_t       arg_b) -> bool { ref_ostr.get_stream() << arg_b; return true; });
+            ref_ostream_op_t::make<>::op<bool, uint8_t   >([](const ref_ostream_t& ref_ostr, uint8_t       arg_b) -> bool { ref_ostr.get_stream() << uint16_t(arg_b); return true; });
+            ref_ostream_op_t::make<>::op<bool, uint16_t  >([](const ref_ostream_t& ref_ostr, uint16_t      arg_b) -> bool { ref_ostr.get_stream() << arg_b; return true; });
+            ref_ostream_op_t::make<>::op<bool, uint32_t  >([](const ref_ostream_t& ref_ostr, uint32_t      arg_b) -> bool { ref_ostr.get_stream() << arg_b; return true; });
+            ref_ostream_op_t::make<>::op<bool, uint64_t  >([](const ref_ostream_t& ref_ostr, uint64_t      arg_b) -> bool { ref_ostr.get_stream() << arg_b; return true; });
+            ref_ostream_op_t::make<>::op<bool, float     >([](const ref_ostream_t& ref_ostr, float         arg_b) -> bool { ref_ostr.get_stream() << arg_b; return true; });
+            ref_ostream_op_t::make<>::op<bool, double    >([](const ref_ostream_t& ref_ostr, double        arg_b) -> bool { ref_ostr.get_stream() << arg_b; return true; });
+            ref_ostream_op_t::make<>::op<bool, text_t    >([](const ref_ostream_t& ref_ostr, const text_t& arg_b) -> bool { ref_ostr.get_stream() << arg_b; return true; });
+            ref_ostream_op_t::make<>::op<bool, str_ptr_t >([](const ref_ostream_t& ref_ostr, str_ptr_t     arg_b) -> bool { ref_ostr.get_stream() << (arg_b ? arg_b : L""); return true; });
 
             ref_ostream_op_t::make<>::op<bool, value_t              >(std::function<bool(const ref_ostream_t&, const value_t&)              >(print_value));
             ref_ostream_op_t::make<>::op<bool, dict_t               >(std::function<bool(const ref_ostream_t&, const dict_t&)               >(print_dict));
@@ -180,38 +206,16 @@ namespace dak::object
       // All that is needed is to enter this file to create the globals.
    }
 
-   const ref_ostream_t& operator <<(const ref_ostream_t& a_stream, const any_t& arg_a)
+   const ref_ostream_t& operator <<(const ref_ostream_t& ref_ostr, const any_t& arg_a)
    {
-      auto& ostr = a_stream.get_stream();
+      if (!print_type(ref_ostr, arg_a))
+         return ref_ostr;
 
-      // TODO: move type output to its own function.
-
-      // TODO: should we really abort everything for a single item having an unknown type?
-      const auto id = a_stream.get_type_id(arg_a.type());
-      if (id == 0)
-      {
-         ostr.setstate(std::ios::failbit);
-         return a_stream;
-      }
-
-      ostr << L"@ " << id << L' ';
-      if (id > 0)
-      {
-         const any_t tn = any_op::get_type_name(arg_a);
-         if (!tn.has_value())
-         {
-            ostr.setstate(std::ios::failbit);
-            return a_stream;
-         }
-
-         ostr << any_op::as<text_t>(tn) << L' ';
-      }
-
-      any_t res = ref_ostream_op_t::call_any<>::op(a_stream, arg_a);
+      any_t res = ref_ostream_op_t::call_any<>::op(ref_ostr, arg_a);
       if (!res.has_value() || !any_op::as<bool>(res))
-         a_stream.get_stream().setstate(std::ios::failbit);
+         ref_ostr.get_stream().setstate(std::ios::failbit);
 
-      return a_stream;
+      return ref_ostr;
    }
 }
 

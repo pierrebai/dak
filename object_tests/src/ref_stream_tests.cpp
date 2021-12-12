@@ -23,6 +23,31 @@ namespace dak::object::tests
          ref_ostream_op_t::register_ops();
       }
 
+      TEST_METHOD(ostream_invalid)
+      {
+         wstringstream ss;
+         struct unknown_t {} unknown;
+
+         ss << unknown;
+         Assert::AreEqual(text_t(L"@ 1 void "), ss.str());
+
+         Assert::IsFalse(ss.fail());
+      }
+
+      TEST_METHOD(ostream_invalid_and_abort)
+      {
+         wstringstream ss;
+         struct unknown_t {} unknown;
+
+         ref_ostream_t rostr(ss);
+         rostr.set_abort_on_unknown(true);
+
+         rostr << unknown;
+         Assert::AreEqual(text_t(L"@ 1 "), ss.str());
+
+         Assert::IsTrue(ss.fail());
+      }
+
       TEST_METHOD(ostream_name)
       {
          wstringstream ss;
@@ -156,6 +181,38 @@ namespace dak::object::tests
             L"  },\n"
             L"}"),
             ss.str());
+      }
+
+      TEST_METHOD(istream_invalid)
+      {
+         struct unknown_t {} unknown;
+
+         wstringstream ss;
+         transaction_t tr;
+
+         ss << unknown;
+
+         unknown_t received;
+         ref_istream_t(ss, voc::get_namespace(), tr) >> received;
+
+         Assert::IsFalse(ss.fail());
+      }
+
+      TEST_METHOD(istream_invalid_and_abort)
+      {
+         struct unknown_t {} unknown;
+
+         wstringstream ss;
+         transaction_t tr;
+
+         ss << unknown;
+
+         unknown_t received;
+         ref_istream_t ristr(ss, voc::get_namespace(), tr);
+         ristr.set_abort_on_unknown(true);
+         ristr >> received;
+
+         Assert::IsTrue(ss.fail());
       }
 
       TEST_METHOD(istream_name)

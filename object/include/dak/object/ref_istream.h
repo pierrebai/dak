@@ -47,6 +47,9 @@ namespace dak::object
 
       transaction_t& get_transaction() const { return my_transaction; }
 
+      bool abort_on_unknown() const { return my_abort_on_unknown; }
+      void set_abort_on_unknown(bool abort) { my_abort_on_unknown = abort; }
+
 
       //////////////////////////////////////////////////////////////////////////
       //
@@ -107,6 +110,7 @@ namespace dak::object
       std::wistream&             my_stream;
       transaction_t&             my_transaction;
       valid_ref_t<namespace_t>   my_target_namespace;
+      bool                       my_abort_on_unknown = false;
    };
 }
 

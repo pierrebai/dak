@@ -43,6 +43,9 @@ namespace dak::object
 
       std::wostream& get_stream() const { return my_stream; }
 
+      bool abort_on_unknown() const { return my_abort_on_unknown; }
+      void set_abort_on_unknown(bool abort) { my_abort_on_unknown = abort; }
+
 
       //////////////////////////////////////////////////////////////////////////
       //
@@ -102,6 +105,7 @@ namespace dak::object
       mutable int32_t my_indentation = 0;
 
       std::wostream& my_stream;
+      bool           my_abort_on_unknown = false;
 
       friend struct ref_ostream_indent_t;
    };
