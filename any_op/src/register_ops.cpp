@@ -10,7 +10,7 @@ namespace dak::any_op
       dominant_op_t::register_ops();
       get_type_name_op_t::register_ops();
       is_compatible_op_t::register_ops();
-      make_op_t::register_ops();
+      construct_op_t::register_ops();
       size_op_t::register_ops();
       ostream_op_t::register_ops();
       to_text_op_t::register_ops();

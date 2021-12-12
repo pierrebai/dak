@@ -14,8 +14,11 @@ namespace dak::object
    //
    // The make operation creates an object with default initialization
    // and returns the a reference, ref_t<T>.
+   //
+   // Note: no templated version is provided since when you already have
+   //       the type it is simpler to call its static make() function directly!
 
-   struct make_object_op_t : any_op::op_t<make_object_op_t>
+   struct make_op_t : any_op::op_t<make_op_t>
    {
       // Note: pre-defined operations implementation are automatically registered,
       //       but these static variables do not get initialized by the testing framework.
@@ -23,16 +26,9 @@ namespace dak::object
       static void register_ops();
    };
 
-   template<class T>
-   inline ref_t<T> make_object()
+   inline any_t make(const std::type_info& arg_a)
    {
-      any_t result = make_object_op_t::call<T>::op();
-      return any_op::as<ref_t<T>>(result);
-   }
-
-   inline any_t make_object(const std::type_info& arg_a)
-   {
-      return make_object_op_t::call_extra_any<void>::op(arg_a);
+      return make_op_t::call_extra_any<void>::op(arg_a);
    }
 }
 

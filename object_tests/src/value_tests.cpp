@@ -7,7 +7,7 @@
 
 #include <dak/any_op/compare_op.h>
 #include <dak/any_op/size_op.h>
-#include <dak/any_op/make_op.h>
+#include <dak/any_op/construct_op.h>
 #include <dak/any_op/convert_op.h>
 #include <dak/any_op/is_compatible_op.h>
 
@@ -42,7 +42,7 @@ namespace dak::object::tests
 
          size_op_t::make<>::op<uint64_t, data_t>([](const data_t& arg_a) -> uint64_t { return 77u; });
          is_compatible_op_t::make<data_t, data_t>::op<bool>(is_compatible);
-         make_op_t::make<data_t>::op<data_t>((std::function<data_t()>)[]() -> data_t { return data_t(); });
+         construct_op_t::make<data_t>::op<data_t>((std::function<data_t()>)[]() -> data_t { return data_t(); });
          convert_op_t::make<bool>::op<bool, data_t>([](const data_t& arg_b) -> bool { return true; });
          convert_op_t::make<data_t>::op<data_t, data_t>([](const data_t& arg_b) -> data_t { return arg_b; });
       }

@@ -5,7 +5,7 @@
 
 #include <dak/any_op/compare_op.h>
 #include <dak/any_op/size_op.h>
-#include <dak/any_op/make_op.h>
+#include <dak/any_op/construct_op.h>
 #include <dak/any_op/is_compatible_op.h>
 
 #include <exception>
@@ -21,7 +21,7 @@ namespace dak::object
 
    void value_t::reset(datatype_t a_type)
    {
-      my_data = any_op::make(a_type);
+      my_data = any_op::construct(a_type);
    }
 
    bool value_t::is_compatible(datatype_t a_type) const
@@ -40,7 +40,7 @@ namespace dak::object
       // Note: don't convert this into an 'else' of the above 'if'
       //       because any_op_convert() can return an invalid data.
       if (!my_data.has_value())
-         my_data = any_op::make(a_type);
+         my_data = any_op::construct(a_type);
    }
 
    bool value_t::verify(datatype_t a_type)

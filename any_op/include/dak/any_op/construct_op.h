@@ -11,8 +11,11 @@ namespace dak::any_op
    //////////////////////////////////////////////////////////////////////////
    //
    // The make operation creates a value with default initialization.
+   //
+   // Note: no templated version is provided since when you already have
+   //       the type it is simpler to call the constructor directly!
 
-   struct make_op_t : op_t<make_op_t>
+   struct construct_op_t : op_t<construct_op_t>
    {
       // Note: pre-defined operations implementation are automatically registered,
       //       but these static variables do not get initialized by the testing framework.
@@ -20,16 +23,9 @@ namespace dak::any_op
       static void register_ops();
    };
 
-   template<class T>
-   inline T make()
+   inline any_t construct(const std::type_info& arg_a)
    {
-      any_t result = make_op_t::call<T>::op();
-      return as<T>(result);
-   }
-
-   inline any_t make(const std::type_info& arg_a)
-   {
-      return make_op_t::call_extra_any<void>::op(arg_a);
+      return construct_op_t::call_extra_any<void>::op(arg_a);
    }
 }
 
