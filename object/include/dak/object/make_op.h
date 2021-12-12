@@ -28,7 +28,7 @@ namespace dak::object
 
    inline any_t make(const std::type_info& arg_a)
    {
-      return make_op_t::call_extra_any<void>::op(arg_a);
+      return make_op_t::call_any_with_types<void>::op(arg_a);
    }
 }
 

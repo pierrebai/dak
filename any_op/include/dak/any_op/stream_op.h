@@ -57,7 +57,7 @@ namespace dak::any_op
 
    inline std::wistream& stream(std::wistream& a_stream, any_t& arg_a)
    {
-      any_t result = istream_op_t::call_extra_any<any_t>::op(a_stream, std::type_index(std::type_index(arg_a.type())));
+      any_t result = istream_op_t::call_any_with_types<any_t>::op(a_stream, std::type_index(std::type_index(arg_a.type())));
       if (result.has_value())
          arg_a = result;
       return a_stream;
@@ -66,7 +66,7 @@ namespace dak::any_op
    template<class A>
    inline std::wistream& stream(std::wistream& a_stream, A& arg_a)
    {
-      any_t result = istream_op_t::call_extra_any<any_t>::op(a_stream, std::type_index(typeid(A)));
+      any_t result = istream_op_t::call_any_with_types<any_t>::op(a_stream, std::type_index(typeid(A)));
       arg_a = as<A>(result);
       return a_stream;
    }

@@ -52,22 +52,29 @@ namespace dak::any_op
          // The selector_t type is a tuple of type index.
          using selector_t = std::tuple<typename type_converter_t<EXTRA_SELECTORS>::type_index..., typename type_converter_t<N_ARY>::type_index...>;
 
-         // Make a selector using the compile-time type index of the binary types plus the extra selectors.
+         // Make a selector using the compile-time types of the extra selectors
+         // template parameters plus those of some concrete types.
          static selector_t make()
          {
             return selector_t(std::type_index(typeid(EXTRA_SELECTORS))..., std::type_index(typeid(N_ARY))...);
          }
 
-         // Make a selector using the provided type index of the arguments.
-         // This is used to create a selector from any_t in op_t::call::op.
+         // Make a selector the compile-time types of the extra selectors
+         // template parameters plus those of the given any_t.
+         //
+         // This is used to create a selector from any_t in op_t::call_any::op.
          static selector_t make_any(const typename type_converter_t<N_ARY>::any&... args)
          {
             return selector_t(std::type_index(typeid(EXTRA_SELECTORS))..., std::type_index(args.type())...);
          }
 
-         // Make a selector using the provided type index of the arguments plus of the extra selectors.
-         // This is used to create a selector from any_t in op_t::call_any::op.
-         static selector_t make_extra_any(const typename type_converter_t<EXTRA_SELECTORS>::type_index&... selectors, const typename type_converter_t<N_ARY>::any&... args)
+         // Make a selector using the provided type index of the extra selectors
+         // plus those of the given any_t
+         // 
+         // This is used to create a selector from type index and any_t in op_t::call_any_with_types::op.
+         static selector_t make_any_with_types(
+            const typename type_converter_t<EXTRA_SELECTORS>::type_index&... selectors,
+            const typename type_converter_t<N_ARY>::any&... args)
          {
             return selector_t(selectors..., std::type_index(args.type())...);
          }

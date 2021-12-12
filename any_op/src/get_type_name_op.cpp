@@ -57,7 +57,7 @@ namespace dak::any_op
 
    text_t get_type_name(const std::type_info& arg_a)
    {
-      any_t result = get_type_name_op_t::call_extra_any<void>::op(arg_a);
+      any_t result = get_type_name_op_t::call_any_with_types<void>::op(arg_a);
       return as<text_t>(result);
    }
 

@@ -286,7 +286,7 @@ namespace dak::object
          type = &ref_istr.get_type_with_id(-id);
       }
 
-      any_t result = ref_istream_op_t::call_extra_any<any_t>::op(ref_istr, std::type_index(*type));
+      any_t result = ref_istream_op_t::call_any_with_types<any_t>::op(ref_istr, std::type_index(*type));
       if (!result.has_value())
       {
          istr.setstate(std::ios::failbit);

@@ -137,9 +137,11 @@ namespace dak::any_op
 
       // Call a n-ary operation with the optional extra args and selected with the extra selectors
       // receiving the std::type_index of the extra selector explicitly. This is used when there
-      // are extra selectors but the function has any_t values instead of compile-time types.
+      // are extra selectors for which the type info is already available. (Or conversely, the
+      // concrete types are not.) This happens when the caller is holding any_t instead of concrete
+      // types.
       template <class... EXTRA_SELECTORS>
-      struct call_extra_any
+      struct call_any_with_types
       {
          template <class... N_ARY>
          static any_t op(EXTRA_ARGS... extra_args, N_ARY... args, const typename type_converter_t<EXTRA_SELECTORS>::type_index... selectors)
@@ -149,7 +151,7 @@ namespace dak::any_op
             using op_func_t = std::function<any_t(EXTRA_ARGS ..., typename type_converter_t<N_ARY>::any...)>;
 
             const auto& ops = get_ops<selector_t, op_func_t>();
-            const auto pos = ops.find(op_sel_t::make_extra_any(selectors..., args...));
+            const auto pos = ops.find(op_sel_t::make_any_with_types(selectors..., args...));
             if (pos == ops.end())
                return any_t();
             return pos->second(extra_args..., args...);

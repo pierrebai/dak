@@ -25,7 +25,7 @@ namespace dak::any_op
 
    inline any_t construct(const std::type_info& arg_a)
    {
-      return construct_op_t::call_extra_any<void>::op(arg_a);
+      return construct_op_t::call_any_with_types<void>::op(arg_a);
    }
 }
 
