@@ -4,6 +4,7 @@
 #define DAK_ANY_OP_GET_TYPE_NAME_OP_H
 
 #include <dak/any_op/op.h>
+#include <dak/any_op/as_op.h>
 
 namespace dak::any_op
 {
@@ -23,10 +24,7 @@ namespace dak::any_op
    inline text_t get_type_name(const std::type_info& arg_a)
    {
       any_t result = get_type_name_op_t::call_extra_any<void>::op(arg_a);
-      if (result.has_value())
-         return std::any_cast<text_t>(result);
-      else
-         return text_t();
+      return as<text_t>(result);
    }
 
    inline text_t get_type_name(const any_t& arg_a)

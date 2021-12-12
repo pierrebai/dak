@@ -1,8 +1,11 @@
+#include <dak/object/make_object_op.h>
 #include "dak/object/name.h"
 #include "dak/object/value.h"
 #include "dak/object/array.h"
 #include "dak/object/dict.h"
 #include "dak/object/object.h"
+#include "dak/object/namespace.h"
+#include "dak/object/name_stuff.h"
 
 #include <dak/any_op/compare_op.h>
 #include <dak/any_op/size_op.h>
@@ -22,12 +25,15 @@ namespace dak::object
       {
          object_ops_init_t()
          {
-            make_op_t::make<name_t         >::op<name_t         >((std::function<name_t()         >)[]() -> name_t          { return name_t(); });
-            make_op_t::make<array_t        >::op<array_t        >((std::function<array_t()        >)[]() -> array_t         { return array_t(); });
-            make_op_t::make<dict_t         >::op<dict_t         >((std::function<dict_t()         >)[]() -> dict_t          { return dict_t(); });
-            make_op_t::make<value_t        >::op<value_t        >((std::function<value_t()        >)[]() -> value_t         { return value_t(); });
-            make_op_t::make<ref_t<object_t>>::op<ref_t<object_t>>((std::function<ref_t<object_t>()>)[]() -> ref_t<object_t> { return ref_t<object_t>(); });
-            make_op_t::make<weak_ref_t<object_t>>::op<weak_ref_t<object_t>>((std::function<weak_ref_t<object_t>()>)[]() -> weak_ref_t<object_t> { return weak_ref_t<object_t>(); });
+            any_op::make_op_t::make<name_t         >::op<name_t         >((std::function<name_t()         >)[]() -> name_t          { return name_t(); });
+            any_op::make_op_t::make<array_t        >::op<array_t        >((std::function<array_t()        >)[]() -> array_t         { return array_t(); });
+            any_op::make_op_t::make<dict_t         >::op<dict_t         >((std::function<dict_t()         >)[]() -> dict_t          { return dict_t(); });
+            any_op::make_op_t::make<value_t        >::op<value_t        >((std::function<value_t()        >)[]() -> value_t         { return value_t(); });
+            any_op::make_op_t::make<ref_t<object_t>>::op<ref_t<object_t>>((std::function<ref_t<object_t>()>)[]() -> ref_t<object_t> { return ref_t<object_t>(); });
+            any_op::make_op_t::make<weak_ref_t<object_t>>::op<weak_ref_t<object_t>>((std::function<weak_ref_t<object_t>()>)[]() -> weak_ref_t<object_t> { return weak_ref_t<object_t>(); });
+
+            object::make_object_op_t::make<object_t    >::op<ref_t<object_t>    >((std::function<ref_t<object_t>()    >)[]() -> ref_t<object_t>     { return object_t::make(); });
+            object::make_object_op_t::make<namespace_t >::op<ref_t<namespace_t> >((std::function<ref_t<namespace_t>() >)[]() -> ref_t<namespace_t>  { return namespace_t::make(); });
 
             compare_op_t::make<>::op<comparison_t, name_t,          name_t         >([](const name_t&          arg_a, const name_t&          arg_b) -> comparison_t { if (arg_a < arg_b) return comparison_t::less; if (arg_a > arg_b) return comparison_t::more; return comparison_t::equal; });
             compare_op_t::make<>::op<comparison_t, array_t,         array_t        >([](const array_t&         arg_a, const array_t&         arg_b) -> comparison_t { if (arg_a < arg_b) return comparison_t::less; if (arg_a > arg_b) return comparison_t::more; return comparison_t::equal; });
@@ -112,6 +118,12 @@ namespace dak::object
    }
 
    void register_object_ops()
+   {
+      // Needed so that the global operations are initialized in the tests.
+      // All that is needed is to enter this file to create the globals.
+   }
+
+   void make_object_op_t::register_ops()
    {
       // Needed so that the global operations are initialized in the tests.
       // All that is needed is to enter this file to create the globals.

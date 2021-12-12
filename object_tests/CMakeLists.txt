@@ -3,6 +3,7 @@ add_library(dak_object_tests SHARED
    src/array_tests.cpp
    src/dict_tests.cpp
    src/value_tests.cpp
+   src/make_op_tests.cpp
    src/name_tests.cpp
    src/namespace_tests.cpp
    src/object_tests.cpp

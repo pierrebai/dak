@@ -89,7 +89,6 @@ namespace dak::object
       value_t& operator =(const edit_ref_t<T> value) { my_data = ref_t<T>(value); return *this; }
 
       // Verify if there is any data.
-      // TODO: create a is_valid() any_op.
       bool is_valid() const { return my_data.has_value(); }
 
       // Data access. Does not change the type.

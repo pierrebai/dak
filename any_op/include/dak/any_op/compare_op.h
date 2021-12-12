@@ -4,6 +4,7 @@
 #define DAK_ANY_OP_COMPARE_OP_H
 
 #include <dak/any_op/op.h>
+#include <dak/any_op/as_op.h>
 
 namespace dak::any_op
 {
@@ -63,7 +64,7 @@ namespace dak::any_op
 
       any_t result = compare_op_t::call_any<>::op(arg_a, arg_b);
       if (result.has_value())
-         return std::any_cast<comparison_t>(result);
+         return as<comparison_t>(result);
 
       return comparison_t::incomparable;
    }
@@ -73,7 +74,7 @@ namespace dak::any_op
    {
       any_t result = compare_op_t::call<>::op(arg_a, arg_b);
       if (result.has_value())
-         return std::any_cast<comparison_t>(result);
+         return as<comparison_t>(result);
 
       return comparison_t::incomparable;
    }

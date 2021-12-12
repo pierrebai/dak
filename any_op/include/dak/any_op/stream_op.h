@@ -4,6 +4,7 @@
 #define DAK_ANY_OP_STREAM_OP_H
 
 #include <dak/any_op/op.h>
+#include <dak/any_op/as_op.h>
 
 #include <ostream>
 #include <istream>
@@ -39,7 +40,6 @@ namespace dak::any_op
    std::wostream& operator<<(std::wostream& a_stream, const any_t& a_value);
 
 
-
    //////////////////////////////////////////////////////////////////////////
    //
    // The input stream operation reads the value to an input stream.
@@ -67,8 +67,7 @@ namespace dak::any_op
    inline std::wistream& stream(std::wistream& a_stream, A& arg_a)
    {
       any_t result = istream_op_t::call_extra_any<any_t>::op(a_stream, std::type_index(typeid(A)));
-      if (result.has_value())
-         arg_a = std::any_cast<A>(result);;
+      arg_a = as<A>(result);
       return a_stream;
    }
 

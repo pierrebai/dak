@@ -21,7 +21,7 @@ namespace dak::object
 
    void value_t::reset(datatype_t a_type)
    {
-      my_data = any_op::make<void>();
+      my_data = any_op::make(a_type);
    }
 
    bool value_t::is_compatible(datatype_t a_type) const

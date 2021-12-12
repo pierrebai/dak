@@ -4,6 +4,7 @@
 #define DAK_ANY_OP_TO_TEXT_OP_H
 
 #include <dak/any_op/op.h>
+#include <dak/any_op/as_op.h>
 
 namespace dak::any_op
 {
@@ -23,20 +24,14 @@ namespace dak::any_op
    inline text_t to_text(const any_t& arg_a)
    {
       any_t result = to_text_op_t::call_any<>::op(arg_a);
-      if (result.has_value())
-         return *std::any_cast<text_t>(&result);
-      else
-         return {};
+      return as<text_t>(result);
    }
 
    template<class A>
    inline text_t to_text(const A& arg_a)
    {
       any_t result = to_text_op_t::call<>::op(arg_a);
-      if (result.has_value())
-         return *std::any_cast<text_t>(&result);
-      else
-         return {};
+      return as<text_t>(result);
    }
 
 }

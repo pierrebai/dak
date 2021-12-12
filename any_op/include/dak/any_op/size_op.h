@@ -4,6 +4,7 @@
 #define DAK_ANY_OP_SIZE_OP_H
 
 #include <dak/any_op/op.h>
+#include <dak/any_op/as_op.h>
 
 namespace dak::any_op
 {
@@ -27,20 +28,14 @@ namespace dak::any_op
    inline uint64_t size(const any_t& arg_a)
    {
       any_t result = size_op_t::call_any<>::op(arg_a);
-      if (result.has_value())
-         return std::any_cast<uint64_t>(result);
-      else
-         return 0;
+      return as<uint64_t>(result);
    }
 
    template<class A>
    inline uint64_t size(const A& arg_a)
    {
       any_t result = size_op_t::call<>::op(arg_a);
-      if (result.has_value())
-         return std::any_cast<uint64_t>(result);
-      else
-         return 0;
+      return as<uint64_t>(result);
    }
 
 }

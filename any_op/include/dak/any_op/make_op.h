@@ -4,6 +4,7 @@
 #define DAK_ANY_OP_MAKE_OP_H
 
 #include <dak/any_op/op.h>
+#include <dak/any_op/as_op.h>
 
 namespace dak::any_op
 {
@@ -20,22 +21,15 @@ namespace dak::any_op
    };
 
    template<class T>
-   inline any_t make()
+   inline T make()
    {
       any_t result = make_op_t::call<T>::op();
-      if (result.has_value())
-         return result;
-      else
-         return any_t();
+      return as<T>(result);
    }
 
    inline any_t make(const std::type_info& arg_a)
    {
-      any_t result = make_op_t::call_extra_any<void>::op(arg_a);
-      if (result.has_value())
-         return result;
-      else
-         return any_t();
+      return make_op_t::call_extra_any<void>::op(arg_a);
    }
 }
 

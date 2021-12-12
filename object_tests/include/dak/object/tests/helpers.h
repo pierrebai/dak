@@ -53,9 +53,26 @@ namespace Microsoft::VisualStudio::CppUnitTestFramework
       }
    }
 
+   template<> inline std::wstring ToString<dak::object::weak_ref_t<dak::object::object_t>>(const dak::object::weak_ref_t<dak::object::object_t>& o)
+   {
+      if (o.is_valid())
+      {
+         RETURN_REF_STREAM_WIDE_STRING(*dak::object::valid_ref_t<dak::object::object_t>(o));
+      }
+      else
+      {
+         RETURN_REF_STREAM_WIDE_STRING(0);
+      }
+   }
+
    template<> inline std::wstring ToString<dak::object::object_t>(const dak::object::object_t& o)
    {
       RETURN_REF_STREAM_WIDE_STRING(o);
+   }
+
+   template<> inline std::wstring ToString<dak::object::namespace_t>(const dak::object::namespace_t& ns)
+   {
+      RETURN_REF_STREAM_WIDE_STRING(ns);
    }
 
    template<> inline std::wstring ToString<dak::utility::uint16_t>(const dak::utility::uint16_t& e)

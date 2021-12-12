@@ -43,7 +43,7 @@ namespace dak::object
       ostr << any_op::as<text_t>(tn) << L' ';
 
       any_t res = ref_ostream_op_t::call_any<>::op(a_stream, arg_a);
-      if (!res.has_value() || !std::any_cast<bool>(res))
+      if (!res.has_value() || !any_op::as<bool>(res))
          a_stream.get_stream().setstate(std::ios::failbit);
 
       return a_stream;

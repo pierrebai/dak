@@ -3,6 +3,7 @@ add_library(dak_object
    include/dak/object/all.h
    include/dak/object/array.h                   src/array.cpp
    include/dak/object/dict.h                    src/dict.cpp
+   include/dak/object/make_object_op.h
    include/dak/object/name.h                    src/name.cpp
    include/dak/object/exact_name.h              src/exact_name.cpp
    include/dak/object/name_stuff.h              src/name_stuff.cpp

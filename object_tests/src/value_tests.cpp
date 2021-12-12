@@ -197,13 +197,13 @@ namespace dak::object::tests
          Assert::AreEqual<text_t>(text_t(L"hello"), e1);
 
          e1 = (str_ptr_t)nullptr;
-         Assert::AreEqual<text_t>(text_t(L""), e1);
+         Assert::AreEqual<text_t>(text_t(), e1);
 
          e1 = L"bye";
          Assert::AreEqual<text_t>(text_t(L"bye"), e1);
 
          e1.reset(typeid(text_t));
-         Assert::AreEqual<text_t>(text_t(L""), e1);
+         Assert::AreEqual<text_t>(text_t(), e1);
 
          e1 = L"bye";
          Assert::AreEqual<text_t>(text_t(L"bye"), e1);
@@ -604,6 +604,46 @@ namespace dak::object::tests
          Assert::AreEqual(typeid(void), e_n.get_type());
          Assert::AreEqual(typeid(void), e_o.get_type());
          Assert::AreEqual(typeid(void), e_y.get_type());
+
+         e_u.reset(typeid(void));
+         e_t1.reset(typeid(text_t));
+         e_t2.reset(typeid(text_t));
+         e_c1.reset(typeid(char));
+         e_c2.reset(typeid(wchar_t));
+         e_b.reset(typeid(bool));
+         e_i2.reset(typeid(int16_t));
+         e_i1.reset(typeid(int32_t));
+         e_i3.reset(typeid(int64_t));
+         e_u1.reset(typeid(uint16_t));
+         e_u2.reset(typeid(uint32_t));
+         e_u3.reset(typeid(uint64_t));
+         e_r1.reset(typeid(float));
+         e_r2.reset(typeid(double));
+         e_a.reset(typeid(array_t));
+         e_d.reset(typeid(dict_t));
+         e_n.reset(typeid(name_t));
+         e_o.reset(typeid(ref_t<object_t>));
+         e_y.reset(typeid(data_t));
+
+         Assert::AreEqual(typeid(void), e_u.get_type());
+         Assert::AreEqual(typeid(text_t), e_t1.get_type());
+         Assert::AreEqual(typeid(text_t), e_t2.get_type());
+         Assert::AreEqual(typeid(char), e_c1.get_type());
+         Assert::AreEqual(typeid(wchar_t), e_c2.get_type());
+         Assert::AreEqual(typeid(bool), e_b.get_type());
+         Assert::AreEqual(typeid(int16_t), e_i2.get_type());
+         Assert::AreEqual(typeid(int32_t), e_i1.get_type());
+         Assert::AreEqual(typeid(int64_t), e_i3.get_type());
+         Assert::AreEqual(typeid(uint16_t), e_u1.get_type());
+         Assert::AreEqual(typeid(uint32_t), e_u2.get_type());
+         Assert::AreEqual(typeid(uint64_t), e_u3.get_type());
+         Assert::AreEqual(typeid(float), e_r1.get_type());
+         Assert::AreEqual(typeid(double), e_r2.get_type());
+         Assert::AreEqual(typeid(array_t), e_a.get_type());
+         Assert::AreEqual(typeid(dict_t), e_d.get_type());
+         Assert::AreEqual(typeid(name_t), e_n.get_type());
+         Assert::AreEqual(typeid(ref_t<object_t>), e_o.get_type());
+         Assert::AreEqual(typeid(data_t), e_y.get_type());
       }
 
       TEST_METHOD(value_ensure)

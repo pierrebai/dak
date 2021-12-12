@@ -4,6 +4,7 @@
 #define DAK_ANY_OP_IS_INTEGER_OP_H
 
 #include <dak/any_op/op.h>
+#include <dak/any_op/as_op.h>
 
 namespace dak::any_op
 {
@@ -24,19 +25,13 @@ namespace dak::any_op
    inline bool is_integer()
    {
       any_t result = is_integer_op_t::call<T>::op();
-      if (result.has_value())
-         return std::any_cast<bool>(result);
-      else
-         return false;
+      return as<bool>(result);
    }
 
    inline bool is_integer(const std::type_info& arg_a)
    {
       any_t result = is_integer_op_t::call_extra_any<void>::op(arg_a);
-      if (result.has_value())
-         return std::any_cast<bool>(result);
-      else
-         return false;
+      return as<bool>(result);
    }
 
 }
