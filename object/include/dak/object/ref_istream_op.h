@@ -40,29 +40,7 @@ namespace dak::object
       static void register_ops();
    };
 
-   inline const ref_istream_t& operator >>(const ref_istream_t& a_stream, any_t& arg_a)
-   {
-      auto& istr = a_stream.get_stream();
-
-      text_t tn;
-      istr >> std::ws >> tn >> std::ws;
-      const std::type_info& info = any_op::get_type_info(tn);
-      if (info == typeid(void))
-      {
-         istr.setstate(std::ios::failbit);
-         return a_stream;
-      }
-
-      any_t result = ref_istream_op_t::call_extra_any<any_t>::op(a_stream, std::type_index(info));
-      if (!result.has_value())
-      {
-         istr.setstate(std::ios::failbit);
-         return a_stream;
-      }
-
-      arg_a = result;
-      return a_stream;
-   }
+   const ref_istream_t& operator >>(const ref_istream_t& a_stream, any_t& arg_a);
 
    template<class T>
    inline const ref_istream_t& operator >>(const ref_istream_t& a_stream, T& arg_a)

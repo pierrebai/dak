@@ -40,25 +40,7 @@ namespace dak::object
       static void register_ops();
    };
 
-   inline const ref_ostream_t& operator <<(const ref_ostream_t& a_stream, const any_t& arg_a)
-   {
-      auto& ostr = a_stream.get_stream();
-
-      const any_t tn = any_op::get_type_name(arg_a);
-      if (!tn.has_value())
-      {
-         ostr.setstate(std::ios::failbit);
-         return a_stream;
-      }
-
-      ostr << any_op::as<text_t>(tn) << L' ';
-
-      any_t res = ref_ostream_op_t::call_any<>::op(a_stream, arg_a);
-      if (!res.has_value() || !any_op::as<bool>(res))
-         a_stream.get_stream().setstate(std::ios::failbit);
-
-      return a_stream;
-   }
+   const ref_ostream_t& operator <<(const ref_ostream_t& a_stream, const any_t& arg_a);
 
    template<class A>
    inline const ref_ostream_t& operator <<(const ref_ostream_t& a_stream, const A& arg_a)

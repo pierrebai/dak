@@ -27,7 +27,7 @@ namespace dak::object::tests
       {
          wstringstream ss;
          ss << voc::rock;
-         Assert::AreEqual(text_t(L"dak::object::name_t : \"\" / 1 \"rock\""), ss.str());
+         Assert::AreEqual(text_t(L"@ 1 dak::object::name_t / 1 : \"\" / \"rock\""), ss.str());
       }
 
       TEST_METHOD(ostream_empty_dict)
@@ -35,7 +35,7 @@ namespace dak::object::tests
          wstringstream ss;
          dict_t d1;
          ss << d1;
-         Assert::AreEqual(text_t(L"dak::object::dict_t {\n}"), ss.str());
+         Assert::AreEqual(text_t(L"@ 1 dak::object::dict_t {\n}"), ss.str());
       }
 
       TEST_METHOD(ostream_one_item_dict)
@@ -45,8 +45,8 @@ namespace dak::object::tests
          d2[voc::rock] = 3;
          ss << d2;
          Assert::AreEqual(text_t(
-            L"dak::object::dict_t {\n"
-            L"  dak::object::name_t : \"\" / 1 \"rock\": dak::object::value_t int32_t 3,"
+            L"@ 1 dak::object::dict_t {\n"
+            L"  @ 2 dak::object::name_t / 1 : \"\" / \"rock\": @ 3 dak::object::value_t @ 4 int32_t 3,"
             L"\n"
             L"}"), ss.str());
       }
@@ -56,7 +56,7 @@ namespace dak::object::tests
          wstringstream ss;
          array_t a1;
          ss << a1;
-         Assert::AreEqual(text_t(L"dak::object::array_t [\n]"), ss.str());
+         Assert::AreEqual(text_t(L"@ 1 dak::object::array_t [\n]"), ss.str());
       }
 
       TEST_METHOD(ostream_three_items_array)
@@ -68,10 +68,10 @@ namespace dak::object::tests
          a2.grow() = 7;
          ss << a2;
          Assert::AreEqual(text_t(
-            L"dak::object::array_t [\n"
-            L"  dak::object::value_t int32_t 3,\n"
-            L"  dak::object::value_t int32_t 5,\n"
-            L"  dak::object::value_t int32_t 7,\n"
+            L"@ 1 dak::object::array_t [\n"
+            L"  @ 2 dak::object::value_t @ 3 int32_t 3,\n"
+            L"  @ -2 @ -3 5,\n"
+            L"  @ -2 @ -3 7,\n"
             L"]"), ss.str());
       }
 
@@ -98,11 +98,11 @@ namespace dak::object::tests
          }
          ref_ostream_t(ss) << o1;
          Assert::AreEqual(text_t(
-            L"dak::object::edit_ref_t<object_t> 1 {\n"
-            L"  dak::object::name_t : \"\" / 1 \"child\": dak::object::value_t dak::object::ref_t<object_t> 2 {\n"
-            L"    dak::object::name_t : \"\" / 2 \"after\": dak::object::value_t dak::object::array_t [\n"
-            L"      dak::object::value_t bool 1,\n"
-            L"      dak::object::value_t dak::object::ref_t<object_t> -1,\n"
+            L"@ 1 dak::object::edit_ref_t<object_t> 1 {\n"
+            L"  @ 2 dak::object::name_t / 1 : \"\" / \"child\": @ 3 dak::object::value_t @ 4 dak::object::ref_t<object_t> 2 {\n"
+            L"    @ -2 / 2 : \"\" / \"after\": @ -3 @ 5 dak::object::array_t [\n"
+            L"      @ -3 @ 6 bool 1,\n"
+            L"      @ -3 @ -4 -1,\n"
             L"    ],\n"
             L"  },\n"
             L"}"),
@@ -145,13 +145,13 @@ namespace dak::object::tests
          ref_ostream_t(ss) << o1;
 
          Assert::AreEqual(text_t(
-            L"dak::object::edit_ref_t<object_t> 1 {\n"
-            L"  dak::object::name_t : \"\" / 1 \"child\": dak::object::value_t dak::object::ref_t<object_t> 2 {\n"
-            L"    dak::object::name_t : \"\" / 2 \"rock\" {\n"
-            L"      dak::object::name_t : \"\" / 3 \"always\",\n"
-            L"    }: dak::object::value_t dak::object::array_t [\n"
-            L"      dak::object::value_t bool 1,\n"
-            L"      dak::object::value_t dak::object::weak_ref_t<object_t> -1,\n"
+            L"@ 1 dak::object::edit_ref_t<object_t> 1 {\n"
+            L"  @ 2 dak::object::name_t / 1 : \"\" / \"child\": @ 3 dak::object::value_t @ 4 dak::object::ref_t<object_t> 2 {\n"
+            L"    @ -2 / 2 : \"\" / \"rock\" {\n"
+            L"      @ -2 / 3 : \"\" / \"always\",\n"
+            L"    }: @ -3 @ 5 dak::object::array_t [\n"
+            L"      @ -3 @ 6 bool 1,\n"
+            L"      @ -3 @ 7 dak::object::weak_ref_t<object_t> -1,\n"
             L"    ],\n"
             L"  },\n"
             L"}"),
@@ -281,11 +281,11 @@ namespace dak::object::tests
       TEST_METHOD(istream_parsing_create_names_and_namespaces)
       {
          std::wistringstream ss(
-            L"dak::object::ref_t<object_t> 1 {\n"
-            L"  dak::object::name_t : \"\" / 1 \"child\": dak::object::value_t dak::object::ref_t<object_t> 2 {\n"
-            L"    dak::object::name_t : \"custom\" / 2 \"after\": dak::object::value_t dak::object::array_t [\n"
-            L"      dak::object::value_t bool 1,\n"
-            L"      dak::object::value_t dak::object::weak_ref_t<object_t> -1,\n"
+            L"@ 1 dak::object::ref_t<object_t> 1 {\n"
+            L"  @ 2 dak::object::name_t / 1 : \"\" / \"child\": @ 3 dak::object::value_t @ -1 2 {\n"
+            L"    @ -2 / 2 : \"custom\" / \"after\": @ -3 @ 4 dak::object::array_t [\n"
+            L"      @ -3 @ 5 bool 1,\n"
+            L"      @ -3 @ 6 dak::object::weak_ref_t<object_t> -1,\n"
             L"    ],\n"
             L"  },\n"
             L"}");

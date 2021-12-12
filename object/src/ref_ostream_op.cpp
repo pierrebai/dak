@@ -28,16 +28,13 @@ namespace dak::object
 
          print_weak_ref_ns(ref_ostr, valid_ns->get_parent());
 
-         ostr << L": " << std::quoted(valid_ns->to_text()) << L' ';
+         ostr << L" : " << std::quoted(valid_ns->to_text());
 
          return true;
       }
 
       bool print_name(const ref_ostream_t& ref_ostr, const name_t& n)
       {
-         if (n.is_valid())
-            print_weak_ref_ns(ref_ostr, n.get_namespace());
-
          auto& ostr = ref_ostr.get_stream();
 
          const auto id = ref_ostr.get_name_id(exact_name_t(n));
@@ -45,7 +42,9 @@ namespace dak::object
          if (id <= 0)
             return true;
 
-         ostr << L" " << std::quoted(n.to_text());
+         print_weak_ref_ns(ref_ostr, n.get_namespace());
+
+         ostr << L" / " << std::quoted(n.to_text());
 
          const auto& metadata = n.get_metadata();
          if (metadata.size() <= 0)
@@ -179,6 +178,40 @@ namespace dak::object
    {
       // Needed so that the global operations are initialized in the tests.
       // All that is needed is to enter this file to create the globals.
+   }
+
+   const ref_ostream_t& operator <<(const ref_ostream_t& a_stream, const any_t& arg_a)
+   {
+      auto& ostr = a_stream.get_stream();
+
+      // TODO: move type output to its own function.
+
+      // TODO: should we really abort everything for a single item having an unknown type?
+      const auto id = a_stream.get_type_id(arg_a.type());
+      if (id == 0)
+      {
+         ostr.setstate(std::ios::failbit);
+         return a_stream;
+      }
+
+      ostr << L"@ " << id << L' ';
+      if (id > 0)
+      {
+         const any_t tn = any_op::get_type_name(arg_a);
+         if (!tn.has_value())
+         {
+            ostr.setstate(std::ios::failbit);
+            return a_stream;
+         }
+
+         ostr << any_op::as<text_t>(tn) << L' ';
+      }
+
+      any_t res = ref_ostream_op_t::call_any<>::op(a_stream, arg_a);
+      if (!res.has_value() || !any_op::as<bool>(res))
+         a_stream.get_stream().setstate(std::ios::failbit);
+
+      return a_stream;
    }
 }
 
