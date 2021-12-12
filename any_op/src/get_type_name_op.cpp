@@ -54,4 +54,11 @@ namespace dak::any_op
       // Needed so that the global operations are initialized in the tests.
       // All that is needed is to enter this file to create the globals.
    }
+
+   text_t get_type_name(const std::type_info& arg_a)
+   {
+      any_t result = get_type_name_op_t::call_extra_any<void>::op(arg_a);
+      return as<text_t>(result);
+   }
+
 }

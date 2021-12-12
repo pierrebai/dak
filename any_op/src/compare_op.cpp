@@ -42,4 +42,23 @@ namespace dak::any_op
       // Needed so that the global operations are initialized in the tests.
       // All that is needed is to enter this file to create the globals.
    }
+
+   comparison_t compare(const any_t& arg_a, const any_t& arg_b)
+   {
+      if (!arg_a.has_value())
+      {
+         return !arg_b.has_value() ? comparison_t::equal : comparison_t::less;
+      }
+      else if (!arg_b.has_value())
+      {
+         return comparison_t::more;
+      }
+
+      any_t result = compare_op_t::call_any<>::op(arg_a, arg_b);
+      if (result.has_value())
+         return as<comparison_t>(result);
+
+      return comparison_t::incomparable;
+   }
+
 }

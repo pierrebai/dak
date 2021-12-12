@@ -40,4 +40,11 @@ namespace dak::any_op
       // Needed so that the global operations are initialized in the tests.
       // All that is needed is to enter this file to create the globals.
    }
+
+   text_t to_text(const any_t& arg_a)
+   {
+      any_t result = to_text_op_t::call_any<>::op(arg_a);
+      return as<text_t>(result);
+   }
+
 }

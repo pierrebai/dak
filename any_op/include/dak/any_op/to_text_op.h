@@ -21,17 +21,12 @@ namespace dak::any_op
       static void register_ops();
    };
 
-   inline text_t to_text(const any_t& arg_a)
-   {
-      any_t result = to_text_op_t::call_any<>::op(arg_a);
-      return as<text_t>(result);
-   }
+   text_t to_text(const any_t& arg_a);
 
    template<class A>
    inline text_t to_text(const A& arg_a)
    {
-      any_t result = to_text_op_t::call<>::op(arg_a);
-      return as<text_t>(result);
+      return to_text(any_t(arg_a));
    }
 
 }

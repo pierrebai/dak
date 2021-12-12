@@ -21,11 +21,7 @@ namespace dak::any_op
       static void register_ops();
    };
 
-   inline text_t get_type_name(const std::type_info& arg_a)
-   {
-      any_t result = get_type_name_op_t::call_extra_any<void>::op(arg_a);
-      return as<text_t>(result);
-   }
+   text_t get_type_name(const std::type_info& arg_a);
 
    inline text_t get_type_name(const any_t& arg_a)
    {

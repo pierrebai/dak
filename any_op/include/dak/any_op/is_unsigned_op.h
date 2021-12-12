@@ -21,19 +21,13 @@ namespace dak::any_op
       static void register_ops();
    };
 
+   bool is_unsigned(const std::type_info& arg_a);
+
    template<class T>
    inline bool is_unsigned()
    {
-      any_t result = is_unsigned_op_t::call<T>::op();
-      return as<bool>(result);
+      return is_unsigned(typeid(T));
    }
-
-   inline bool is_unsigned(const std::type_info& arg_a)
-   {
-      any_t result = is_unsigned_op_t::call_extra_any<void>::op(arg_a);
-      return as<bool>(result);
-   }
-
 }
 
 #endif /* DAK_ANY_OP_IS_UNSIGNED_OP_H */

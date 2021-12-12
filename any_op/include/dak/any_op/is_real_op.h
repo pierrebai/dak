@@ -21,17 +21,16 @@ namespace dak::any_op
       static void register_ops();
    };
 
-   template<class T>
-   inline bool is_real()
-   {
-      any_t result = is_real_op_t::call<T>::op();
-      return as<bool>(result);
-   }
-
    inline bool is_real(const std::type_info& arg_a)
    {
       any_t result = is_real_op_t::call_extra_any<void>::op(arg_a);
       return as<bool>(result);
+   }
+
+   template<class T>
+   inline bool is_real()
+   {
+      return is_real(typeid(T));
    }
 
 }

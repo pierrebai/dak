@@ -21,19 +21,13 @@ namespace dak::any_op
       static void register_ops();
    };
 
+   bool is_integer(const std::type_info& arg_a);
+
    template<class T>
    inline bool is_integer()
    {
-      any_t result = is_integer_op_t::call<T>::op();
-      return as<bool>(result);
+      return is_integer(typeid(T));
    }
-
-   inline bool is_integer(const std::type_info& arg_a)
-   {
-      any_t result = is_integer_op_t::call_extra_any<void>::op(arg_a);
-      return as<bool>(result);
-   }
-
 }
 
 #endif /* DAK_ANY_OP_IS_INTEGER_OP_H */

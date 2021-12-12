@@ -25,4 +25,11 @@ namespace dak::any_op
       // Needed so that the global operations are initialized in the tests.
       // All that is needed is to enter this file to create the globals.
    }
+
+   uint64_t size(const any_t& arg_a)
+   {
+      any_t result = size_op_t::call_any<>::op(arg_a);
+      return as<uint64_t>(result);
+   }
+
 }

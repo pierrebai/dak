@@ -40,11 +40,7 @@ namespace dak::any_op
    template<class OTHER, class FROM>
    inline any_t dominant(const FROM& arg_a)
    {
-      any_t result = dominant_op_t::call<OTHER>::op(arg_a);
-      if (result.has_value())
-         return result;
-      else
-         return arg_a;
+      return dominant<OTHER>(any_t(arg_a));
    }
 
 }
