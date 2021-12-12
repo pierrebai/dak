@@ -86,19 +86,5 @@ namespace dak::object
       istr.setstate(std::ios::failbit);
       return false;
    }
-
-   bool ref_istream_t::parse_sigil(const str_ptr_t expected_sigil) const
-   {
-      std::wistream& istr = get_stream();
-
-      text_t sigil;
-      istr >> std::ws >> sigil;
-      if (sigil == expected_sigil)
-         return true;
-
-      istr.setstate(std::ios::failbit);
-      return false;
-   }
-
 }
 

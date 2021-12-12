@@ -75,6 +75,14 @@ namespace dak::object::tests
          Assert::IsFalse(e == value_t(1));
          Assert::IsFalse(value_t::empty == value_t(1));
          Assert::IsTrue(e != value_t(1));
+
+         Assert::IsTrue(value_t(2) > value_t(1));
+         Assert::IsTrue(value_t(1) < value_t(2));
+
+         Assert::IsFalse(value_t(1) > value_t(2));
+         Assert::IsFalse(value_t(2) < value_t(1));
+
+         Assert::IsFalse(value_t(2) < value_t(L"hello"));
       }
 
       TEST_METHOD(value_constructors)
@@ -217,6 +225,12 @@ namespace dak::object::tests
          auto o = object_t::make();
          data_t y;
 
+         dict_t d;
+         d[voc::rock] = 45;
+
+         array_t a;
+         a.grow() = 3.0;
+
          value_t e_u;
          value_t e_t1(text_t(L"text"));
          value_t e_t2(L"strptr");
@@ -231,8 +245,8 @@ namespace dak::object::tests
          value_t e_u3((uint64_t)6u);
          value_t e_r1(7.0f);
          value_t e_r2(8.0);
-         value_t e_a((array_t()));
-         value_t e_d((dict_t()));
+         value_t e_a(a);
+         value_t e_d(d);
          value_t e_n(voc::rock);
          value_t e_o(o);
          value_t e_y(y);
@@ -251,17 +265,29 @@ namespace dak::object::tests
          Assert::AreEqual<uint64_t>((uint64_t)6u, e_u3);
          Assert::AreEqual<float>(7.0f, e_r1);
          Assert::AreEqual<double>(8.0, e_r2);
-         Assert::AreEqual<array_t>((array_t()), e_a);
-         Assert::AreEqual<dict_t>((dict_t()), e_d);
+         Assert::AreEqual<array_t>(a, e_a);
+         Assert::AreEqual<dict_t>(d, e_d);
          Assert::AreEqual<name_t>(voc::rock, e_n);
          Assert::AreEqual<ref_t<object_t>>(o, e_o);
          Assert::AreEqual<any_t>(any_t(y), e_y);
+
+         Assert::IsFalse(e_i3[voc::rock].is_valid());
+         Assert::IsFalse(e_i3[2].is_valid());
+
+         Assert::AreEqual<int32_t>(45, e_d[voc::rock]);
+         Assert::AreEqual<double>(3.0, e_a[0]);
       }
 
       TEST_METHOD(value_const_conversion)
       {
          auto o = object_t::make();
          data_t y;
+
+         dict_t d;
+         d[voc::rock] = 45;
+
+         array_t a;
+         a.grow() = 3.0;
 
          const value_t e_u;
          const value_t e_t1(text_t(L"text"));
@@ -277,8 +303,8 @@ namespace dak::object::tests
          const value_t e_u3((uint64_t)6u);
          const value_t e_r1(7.0f);
          const value_t e_r2(8.0);
-         const value_t e_a((array_t()));
-         const value_t e_d((dict_t()));
+         const value_t e_a(a);
+         const value_t e_d(d);
          const value_t e_n(voc::rock);
          const value_t e_o(o);
          const value_t e_y(y);
@@ -297,11 +323,17 @@ namespace dak::object::tests
          Assert::AreEqual<uint64_t>((uint64_t)6u, e_u3);
          Assert::AreEqual<float>(7.0f, e_r1);
          Assert::AreEqual<double>(8.0, e_r2);
-         Assert::AreEqual<array_t>((array_t()), e_a);
-         Assert::AreEqual<dict_t>((dict_t()), e_d);
+         Assert::AreEqual<array_t>(a, e_a);
+         Assert::AreEqual<dict_t>(d, e_d);
          Assert::AreEqual<name_t>(voc::rock, e_n);
          Assert::AreEqual<ref_t<object_t>>(o, e_o);
          Assert::AreEqual<any_t>(any_t(y), e_y);
+
+         Assert::IsFalse(e_i3[voc::rock].is_valid());
+         Assert::IsFalse(e_i3[2].is_valid());
+
+         Assert::AreEqual<int32_t>(45, e_d[voc::rock]);
+         Assert::AreEqual<double>(3.0, e_a[0]);
       }
 
       TEST_METHOD(value_unknown_assignments)

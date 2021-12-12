@@ -79,11 +79,6 @@ namespace dak::object
       // Set the stream fail flag and return false if not found.
       bool parse_sigil(const wchar_t expected_sigil) const;
 
-      // Try to read the given sigil text.
-      // Consumes it and return true if found.
-      // Set the stream fail flag and return false if not found.
-      bool parse_sigil(const str_ptr_t expected_sigil) const;
-
       // Parse option end sigil, just like parse_optional_sigil
       // but with a different name to make parsing code clearer.
       bool is_end(const wchar_t possible_end) const
