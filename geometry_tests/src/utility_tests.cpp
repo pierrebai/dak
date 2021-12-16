@@ -4,7 +4,7 @@
 
 #include <dak/geometry/tests/helpers.h>
 
-#include "CppUnitTest.h"
+#include <CppUnitTest.h>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace dak::geometry;

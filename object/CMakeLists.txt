@@ -16,12 +16,6 @@ add_library(dak_object
    include/dak/object/edit_ref.h
    include/dak/object/ref_base.h                src/ref_base.cpp
    include/dak/object/ref_counted.h             src/ref_counted.cpp
-   include/dak/object/ref_input.h               src/ref_input.cpp
-   include/dak/object/ref_istream.h             src/ref_istream.cpp
-   include/dak/object/ref_istream_op.h          src/ref_istream_op.cpp
-   include/dak/object/ref_ostream.h             src/ref_ostream.cpp
-   include/dak/object/ref_ostream_op.h          src/ref_ostream_op.cpp
-   include/dak/object/ref_output.h              src/ref_output.cpp
    include/dak/object/similar.h                 src/similar.cpp
    include/dak/object/timeline.h
    include/dak/object/transaction.h             src/transaction.cpp

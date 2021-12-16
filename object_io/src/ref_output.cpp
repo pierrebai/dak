@@ -1,4 +1,4 @@
-#include "dak/object/ref_ostream.h"
+#include <dak/object_io/ref_ostream.h>
 
 namespace dak::object
 {

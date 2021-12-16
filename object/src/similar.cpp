@@ -86,7 +86,7 @@ namespace dak::object
 
    bool value_t::is_similar(const value_t& other, const visited_refs_t& visited) const
    {
-      const const datatype_t& t = get_type();
+      const datatype_t& t = get_type();
       if (t != other.get_type())
          return false;
 

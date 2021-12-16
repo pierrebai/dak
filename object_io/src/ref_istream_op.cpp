@@ -1,9 +1,9 @@
-#include "dak/object/ref_istream_op.h"
+#include <dak/object_io/ref_istream_op.h>
 
-#include "dak/object/array.h"
-#include "dak/object/dict.h"
-#include "dak/object/object.h"
-#include "dak/object/weak_ref.h"
+#include <dak/object/array.h>
+#include <dak/object/dict.h>
+#include <dak/object/object.h>
+#include <dak/object/weak_ref.h>
 
 #include <dak/any_op/stream_op.h>
 

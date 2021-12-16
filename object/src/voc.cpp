@@ -18,7 +18,7 @@ namespace dak::object::voc
 
    #define DAK_OBJECT_VOC_MAKE_NAME(n) const name_t n(get_namespace(), L ## #n)
 
-   #include "dak/object/voc_internal.h"
+   #include <dak/object/voc_internal.h>
 
    #undef DAK_OBJECT_VOC_MAKE_NAME
 }

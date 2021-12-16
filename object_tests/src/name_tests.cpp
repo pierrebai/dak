@@ -1,10 +1,10 @@
-#include "CppUnitTest.h"
+#include <CppUnitTest.h>
 
-#include "dak/object/name.h"
-#include "dak/object/transaction.h"
-#include "dak/object/timeline.h"
-#include "dak/object/voc.h"
-#include "dak/object/tests/helpers.h"
+#include <dak/object/name.h>
+#include <dak/object/transaction.h>
+#include <dak/object/timeline.h>
+#include <dak/object/voc.h>
+#include <dak/object/tests/helpers.h>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace dak::object;

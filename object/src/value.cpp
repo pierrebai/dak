@@ -1,7 +1,7 @@
-#include "dak/object/value.h"
-#include "dak/object/dict.h"
-#include "dak/object/array.h"
-#include "dak/object/object.h"
+#include <dak/object/value.h>
+#include <dak/object/dict.h>
+#include <dak/object/array.h>
+#include <dak/object/object.h>
 
 #include <dak/any_op/compare_op.h>
 #include <dak/any_op/size_op.h>

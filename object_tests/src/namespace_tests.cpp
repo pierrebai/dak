@@ -1,8 +1,8 @@
-#include "CppUnitTest.h"
+#include <CppUnitTest.h>
 
-#include "dak/object/namespace.h"
-#include "dak/object/name.h"
-#include "dak/object/tests/helpers.h"
+#include <dak/object/namespace.h>
+#include <dak/object/name.h>
+#include <dak/object/tests/helpers.h>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace dak::object;

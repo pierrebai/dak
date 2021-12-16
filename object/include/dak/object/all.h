@@ -14,7 +14,6 @@
 #include <dak/object/dict.h>
 #include <dak/object/array.h>
 #include <dak/object/object.h>
-#include <dak/object/ref_stream.h>
 #include <dak/object/similar.h>
 #include <dak/object/transaction.h>
 #include <dak/object/timeline.h>

@@ -1,9 +1,9 @@
-#include "CppUnitTest.h"
+#include <CppUnitTest.h>
 
-#include "dak/object/value.h"
-#include "dak/object/object.h"
-#include "dak/object/voc.h"
-#include "dak/object/tests/helpers.h"
+#include <dak/object/value.h>
+#include <dak/object/object.h>
+#include <dak/object/voc.h>
+#include <dak/object/tests/helpers.h>
 
 #include <dak/any_op/compare_op.h>
 #include <dak/any_op/size_op.h>

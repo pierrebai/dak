@@ -7,13 +7,13 @@ add_library(dak_object_tests SHARED
    src/name_tests.cpp
    src/namespace_tests.cpp
    src/object_tests.cpp
-   src/ref_stream_tests.cpp
    src/ref_tests.cpp
    src/transaction_tests.cpp
    include/dak/object/tests/helpers.h
 )
 
 target_link_libraries(dak_object_tests PUBLIC
+   dak_object_io
    dak_object
    dak_any_op
    dak_utility

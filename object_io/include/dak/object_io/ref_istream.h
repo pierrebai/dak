@@ -3,7 +3,7 @@
 #ifndef DAK_OBJECT_REF_ISTREAM_H
 #define DAK_OBJECT_REF_ISTREAM_H
 
-#include <dak/object/ref_input.h>
+#include <dak/object_io/ref_input.h>
 
 #include <iostream>
 

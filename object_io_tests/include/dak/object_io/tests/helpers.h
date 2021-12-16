@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef DAK_OBJECT_TESTS_HELPERS_H
-#define DAK_OBJECT_TESTS_HELPERS_H
+#ifndef DAK_OBJECT_IO_TESTS_HELPERS_H
+#define DAK_OBJECT_IO_TESTS_HELPERS_H
 
 #include <CppUnitTest.h>
 
@@ -9,10 +9,8 @@
 #include <dak/object/dict.h>
 #include <dak/object/name.h>
 #include <dak/object/object.h>
-#include <dak/object/voc.h>
-
 #include <dak/object_io/ref_ostream_op.h>
-
+#include <dak/object/voc.h>
 #include <dak/any_op/stream_op.h>
 
 namespace Microsoft::VisualStudio::CppUnitTestFramework
@@ -104,4 +102,4 @@ namespace Microsoft::VisualStudio::CppUnitTestFramework
 
 }
 
-#endif /* DAK_OBJECT_TESTS_HELPERS_H */
+#endif /* DAK_OBJECT_IO_TESTS_HELPERS_H */

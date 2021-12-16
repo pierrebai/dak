@@ -1,4 +1,4 @@
-#include "dak/object/dict.h"
+#include <dak/object/dict.h>
 
 namespace dak::object
 {

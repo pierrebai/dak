@@ -1,11 +1,11 @@
-#include "CppUnitTest.h"
+#include <CppUnitTest.h>
 
-#include "dak/object/ref_istream_op.h"
-#include "dak/object/ref_ostream_op.h"
-#include "dak/object/similar.h"
-#include "dak/object/timeline.h"
+#include <dak/object_io/ref_istream_op.h>
+#include <dak/object_io/ref_ostream_op.h>
+#include <dak/object/similar.h>
+#include <dak/object/timeline.h>
 
-#include "dak/object/tests/helpers.h"
+#include <dak/object_io/tests/helpers.h>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace std;
@@ -18,7 +18,7 @@ namespace dak::object::tests
       stream_tests()
       {
          any_op::register_ops();
-         register_object_ops();
+         object::register_object_ops();
          ref_istream_op_t::register_ops();
          ref_ostream_op_t::register_ops();
       }

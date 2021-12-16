@@ -1,7 +1,7 @@
-#include "CppUnitTest.h"
+#include <CppUnitTest.h>
 
-#include "dak/object/array.h"
-#include "dak/object/tests/helpers.h"
+#include <dak/object/array.h>
+#include <dak/object/tests/helpers.h>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 

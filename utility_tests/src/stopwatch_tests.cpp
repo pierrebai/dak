@@ -1,6 +1,6 @@
 #include <dak/utility/stopwatch.h>
 
-#include "CppUnitTest.h"
+#include <CppUnitTest.h>
 
 #include <thread>
 #include <chrono>

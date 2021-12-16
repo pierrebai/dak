@@ -1,10 +1,10 @@
-#include "CppUnitTest.h"
+#include <CppUnitTest.h>
 
-#include "dak/object/dict.h"
-#include "dak/object/voc.h"
-#include "dak/object/tests/helpers.h"
+#include <dak/object/dict.h>
+#include <dak/object/voc.h>
+#include <dak/object/tests/helpers.h>
 
-#include "dak/any_op/size_op.h"
+#include <dak/any_op/size_op.h>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace dak::object::voc;

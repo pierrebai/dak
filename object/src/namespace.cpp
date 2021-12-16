@@ -1,6 +1,6 @@
-#include "dak/object/namespace.h"
-#include "dak/object/name.h"
-#include "dak/object/name_stuff.h"
+#include <dak/object/namespace.h>
+#include <dak/object/name.h>
+#include <dak/object/name_stuff.h>
 
 #include <mutex>
 
