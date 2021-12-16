@@ -97,12 +97,12 @@ namespace dak::any_op
          }
       };
 
-      // Call a n-ary operation with the optional extra args and selected with the extra selectors.
+      // Find a n-ary operation with the optional extra args and selected with the extra selectors.
       template <class... EXTRA_SELECTORS>
-      struct call
+      struct find
       {
          template <class... N_ARY>
-         static any_t op(EXTRA_ARGS... extra_args, N_ARY... args)
+         static auto* op(N_ARY... args)
          {
             using op_sel_t = typename op_selector_t<EXTRA_SELECTORS...>::template n_ary_t<N_ARY...>;
             using selector_t = typename op_sel_t::selector_t;
@@ -110,9 +110,40 @@ namespace dak::any_op
 
             const auto& ops = get_ops<selector_t, op_func_t>();
             const auto pos = ops.find(op_sel_t::make());
-            if (pos == ops.end())
+            const op_func_t* func = (pos == ops.end()) ? nullptr : &pos->second;
+            return func;
+         }
+      };
+
+      // Call a n-ary operation with the optional extra args and selected with the extra selectors.
+      template <class... EXTRA_SELECTORS>
+      struct call
+      {
+         template <class... N_ARY>
+         static any_t op(EXTRA_ARGS... extra_args, N_ARY... args)
+         {
+            auto* func = find<EXTRA_SELECTORS...>::template op<N_ARY...>(args...);
+            if (func == nullptr)
                return any_t();
-            return pos->second(extra_args..., args...);
+            return (*func)(extra_args..., args...);
+         }
+      };
+
+      // Find a n-ary operation with the optional extra args and selected with the extra selectors.
+      template <class... EXTRA_SELECTORS>
+      struct find_any
+      {
+         template <class... N_ARY>
+         static auto* op(N_ARY... args)
+         {
+            using op_sel_t = typename op_selector_t<EXTRA_SELECTORS...>::template n_ary_t<N_ARY...>;
+            using selector_t = typename op_sel_t::selector_t;
+            using op_func_t = std::function<any_t(EXTRA_ARGS ..., typename type_converter_t<N_ARY>::any...)>;
+
+            const auto& ops = get_ops<selector_t, op_func_t>();
+            const auto pos = ops.find(op_sel_t::make_any(args...));
+            const op_func_t* func = (pos == ops.end()) ? nullptr : &pos->second;
+            return func;
          }
       };
 
@@ -123,15 +154,32 @@ namespace dak::any_op
          template <class... N_ARY>
          static any_t op(EXTRA_ARGS... extra_args, N_ARY... args)
          {
+            auto* func = find_any<EXTRA_SELECTORS...>::template op<N_ARY...>(args...);
+            if (func == nullptr)
+               return any_t();
+            return (*func)(extra_args..., args...);
+         }
+      };
+
+      // Find a n-ary operation with the optional extra args and selected with the extra selectors
+      // receiving the std::type_index of the extra selector explicitly. This is used when there
+      // are extra selectors for which the type info is already available. (Or conversely, the
+      // concrete types are not.) This happens when the caller is holding any_t instead of concrete
+      // types.
+      template <class... EXTRA_SELECTORS>
+      struct find_any_with_types
+      {
+         template <class... N_ARY>
+         static auto* op(N_ARY... args, const typename type_converter_t<EXTRA_SELECTORS>::type_index... selectors)
+         {
             using op_sel_t = typename op_selector_t<EXTRA_SELECTORS...>::template n_ary_t<N_ARY...>;
             using selector_t = typename op_sel_t::selector_t;
             using op_func_t = std::function<any_t(EXTRA_ARGS ..., typename type_converter_t<N_ARY>::any...)>;
 
             const auto& ops = get_ops<selector_t, op_func_t>();
-            const auto pos = ops.find(op_sel_t::make_any(args...));
-            if (pos == ops.end())
-               return any_t();
-            return pos->second(extra_args..., args...);
+            const auto pos = ops.find(op_sel_t::make_any_with_types(selectors..., args...));
+            const op_func_t* func = (pos == ops.end()) ? nullptr : &pos->second;
+            return func;
          }
       };
 
@@ -146,15 +194,10 @@ namespace dak::any_op
          template <class... N_ARY>
          static any_t op(EXTRA_ARGS... extra_args, N_ARY... args, const typename type_converter_t<EXTRA_SELECTORS>::type_index... selectors)
          {
-            using op_sel_t = typename op_selector_t<EXTRA_SELECTORS...>::template n_ary_t<N_ARY...>;
-            using selector_t = typename op_sel_t::selector_t;
-            using op_func_t = std::function<any_t(EXTRA_ARGS ..., typename type_converter_t<N_ARY>::any...)>;
-
-            const auto& ops = get_ops<selector_t, op_func_t>();
-            const auto pos = ops.find(op_sel_t::make_any_with_types(selectors..., args...));
-            if (pos == ops.end())
+            auto* func = find_any_with_types<EXTRA_SELECTORS...>::template op<N_ARY...>(args..., selectors...);
+            if (func == nullptr)
                return any_t();
-            return pos->second(extra_args..., args...);
+            return (*func)(extra_args..., args...);
          }
       };
 

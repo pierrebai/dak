@@ -170,22 +170,6 @@ namespace dak::object
       {
          ref_ostream_op_init_t()
          {
-            ref_ostream_op_t::make<>::op<bool, bool      >([](const ref_ostream_t& ref_ostr, bool          arg_b) -> bool { ref_ostr.get_stream() << arg_b; return true; });
-            ref_ostream_op_t::make<>::op<bool, char      >([](const ref_ostream_t& ref_ostr, char          arg_b) -> bool { ref_ostr.get_stream() << arg_b; return true; });
-            ref_ostream_op_t::make<>::op<bool, wchar_t   >([](const ref_ostream_t& ref_ostr, wchar_t       arg_b) -> bool { ref_ostr.get_stream() << arg_b; return true; });
-            ref_ostream_op_t::make<>::op<bool, int8_t    >([](const ref_ostream_t& ref_ostr, int8_t        arg_b) -> bool { ref_ostr.get_stream() << int16_t(arg_b); return true; });
-            ref_ostream_op_t::make<>::op<bool, int16_t   >([](const ref_ostream_t& ref_ostr, int16_t       arg_b) -> bool { ref_ostr.get_stream() << arg_b; return true; });
-            ref_ostream_op_t::make<>::op<bool, int32_t   >([](const ref_ostream_t& ref_ostr, int32_t       arg_b) -> bool { ref_ostr.get_stream() << arg_b; return true; });
-            ref_ostream_op_t::make<>::op<bool, int64_t   >([](const ref_ostream_t& ref_ostr, int64_t       arg_b) -> bool { ref_ostr.get_stream() << arg_b; return true; });
-            ref_ostream_op_t::make<>::op<bool, uint8_t   >([](const ref_ostream_t& ref_ostr, uint8_t       arg_b) -> bool { ref_ostr.get_stream() << uint16_t(arg_b); return true; });
-            ref_ostream_op_t::make<>::op<bool, uint16_t  >([](const ref_ostream_t& ref_ostr, uint16_t      arg_b) -> bool { ref_ostr.get_stream() << arg_b; return true; });
-            ref_ostream_op_t::make<>::op<bool, uint32_t  >([](const ref_ostream_t& ref_ostr, uint32_t      arg_b) -> bool { ref_ostr.get_stream() << arg_b; return true; });
-            ref_ostream_op_t::make<>::op<bool, uint64_t  >([](const ref_ostream_t& ref_ostr, uint64_t      arg_b) -> bool { ref_ostr.get_stream() << arg_b; return true; });
-            ref_ostream_op_t::make<>::op<bool, float     >([](const ref_ostream_t& ref_ostr, float         arg_b) -> bool { ref_ostr.get_stream() << arg_b; return true; });
-            ref_ostream_op_t::make<>::op<bool, double    >([](const ref_ostream_t& ref_ostr, double        arg_b) -> bool { ref_ostr.get_stream() << arg_b; return true; });
-            ref_ostream_op_t::make<>::op<bool, text_t    >([](const ref_ostream_t& ref_ostr, const text_t& arg_b) -> bool { ref_ostr.get_stream() << arg_b; return true; });
-            ref_ostream_op_t::make<>::op<bool, str_ptr_t >([](const ref_ostream_t& ref_ostr, str_ptr_t     arg_b) -> bool { ref_ostr.get_stream() << (arg_b ? arg_b : L""); return true; });
-
             ref_ostream_op_t::make<>::op<bool, value_t              >(std::function<bool(const ref_ostream_t&, const value_t&)              >(print_value));
             ref_ostream_op_t::make<>::op<bool, dict_t               >(std::function<bool(const ref_ostream_t&, const dict_t&)               >(print_dict));
             ref_ostream_op_t::make<>::op<bool, array_t              >(std::function<bool(const ref_ostream_t&, const array_t&)              >(print_array));
@@ -211,10 +195,23 @@ namespace dak::object
       if (!print_type(ref_ostr, arg_a))
          return ref_ostr;
 
-      any_t res = ref_ostream_op_t::call_any<>::op(ref_ostr, arg_a);
-      if (!res.has_value() || !any_op::as<bool>(res))
-         ref_ostr.get_stream().setstate(std::ios::failbit);
+      auto* ros_func = ref_ostream_op_t::find_any<>::op(arg_a);
+      if (ros_func)
+      {
+         any_t res = (*ros_func)(ref_ostr, arg_a);
+         if (res.has_value() && any_op::as<bool>(res))
+            return ref_ostr;
+      }
 
+      auto* os_func = any_op::ostream_op_t::find_any<>::op(arg_a);
+      if (os_func)
+      {
+         any_t res = (*os_func)(ref_ostr.get_stream(), arg_a);
+         if (res.has_value() && any_op::as<bool>(res))
+            return ref_ostr;
+      }
+
+      ref_ostr.get_stream().setstate(std::ios::failbit);
       return ref_ostr;
    }
 }

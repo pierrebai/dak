@@ -12,6 +12,7 @@ namespace dak::any_op
       is_compatible_op_t::register_ops();
       construct_op_t::register_ops();
       size_op_t::register_ops();
+      istream_op_t::register_ops();
       ostream_op_t::register_ops();
       to_text_op_t::register_ops();
       is_integer_op_t::register_ops();

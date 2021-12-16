@@ -224,20 +224,6 @@ namespace dak::object
       {
          ref_istream_op_init_t()
          {
-            ref_istream_op_t::make<bool    >::op<bool    >(std::function<bool    (const ref_istream_t&)>([](const ref_istream_t& ref_istr) -> bool     { bool     value; ref_istr.get_stream() >> value; return value; }));
-            ref_istream_op_t::make<wchar_t >::op<wchar_t >(std::function<wchar_t (const ref_istream_t&)>([](const ref_istream_t& ref_istr) -> wchar_t  { wchar_t  value; ref_istr.get_stream() >> value; return value; }));
-            ref_istream_op_t::make<int8_t  >::op<int8_t  >(std::function<int8_t  (const ref_istream_t&)>([](const ref_istream_t& ref_istr) -> int8_t   { int16_t  value; ref_istr.get_stream() >> value; return int8_t(value); }));
-            ref_istream_op_t::make<int16_t >::op<int16_t >(std::function<int16_t (const ref_istream_t&)>([](const ref_istream_t& ref_istr) -> int16_t  { int16_t  value; ref_istr.get_stream() >> value; return value; }));
-            ref_istream_op_t::make<int32_t >::op<int32_t >(std::function<int32_t (const ref_istream_t&)>([](const ref_istream_t& ref_istr) -> int32_t  { int32_t  value; ref_istr.get_stream() >> value; return value; }));
-            ref_istream_op_t::make<int64_t >::op<int64_t >(std::function<int64_t (const ref_istream_t&)>([](const ref_istream_t& ref_istr) -> int64_t  { int64_t  value; ref_istr.get_stream() >> value; return value; }));
-            ref_istream_op_t::make<uint8_t >::op<uint8_t >(std::function<uint8_t (const ref_istream_t&)>([](const ref_istream_t& ref_istr) -> uint8_t  { uint16_t value; ref_istr.get_stream() >> value; return uint8_t(value); }));
-            ref_istream_op_t::make<uint16_t>::op<uint16_t>(std::function<uint16_t(const ref_istream_t&)>([](const ref_istream_t& ref_istr) -> uint16_t { uint16_t value; ref_istr.get_stream() >> value; return value; }));
-            ref_istream_op_t::make<uint32_t>::op<uint32_t>(std::function<uint32_t(const ref_istream_t&)>([](const ref_istream_t& ref_istr) -> uint32_t { uint32_t value; ref_istr.get_stream() >> value; return value; }));
-            ref_istream_op_t::make<uint64_t>::op<uint64_t>(std::function<uint64_t(const ref_istream_t&)>([](const ref_istream_t& ref_istr) -> uint64_t { uint64_t value; ref_istr.get_stream() >> value; return value; }));
-            ref_istream_op_t::make<float   >::op<float   >(std::function<float   (const ref_istream_t&)>([](const ref_istream_t& ref_istr) -> float    { float    value; ref_istr.get_stream() >> value; return value; }));
-            ref_istream_op_t::make<double  >::op<double  >(std::function<double  (const ref_istream_t&)>([](const ref_istream_t& ref_istr) -> double   { double   value; ref_istr.get_stream() >> value; return value; }));
-            ref_istream_op_t::make<text_t  >::op<text_t  >(std::function<text_t  (const ref_istream_t&)>([](const ref_istream_t& ref_istr) -> text_t   { text_t   value; ref_istr.get_stream() >> value; return value; }));
-
             ref_istream_op_t::make<value_t              >::op<value_t              >(std::function<value_t              (const ref_istream_t&)>(parse_value          ));
             ref_istream_op_t::make<dict_t               >::op<dict_t               >(std::function<dict_t               (const ref_istream_t&)>(parse_dict           ));
             ref_istream_op_t::make<array_t              >::op<array_t              >(std::function<array_t              (const ref_istream_t&)>(parse_array          ));
@@ -290,14 +276,27 @@ namespace dak::object
          type = &ref_istr.get_type_with_id(-id);
       }
 
-      any_t result = ref_istream_op_t::call_any_with_types<any_t>::op(ref_istr, std::type_index(*type));
-      if (!result.has_value())
+      auto* ris_func = ref_istream_op_t::find_any_with_types<any_t>::op(std::type_index(*type));
+      if (ris_func)
       {
-         istr.setstate(std::ios::failbit);
-         return ref_istr;
+         arg_a = (*ris_func)(ref_istr);
+         if (arg_a.has_value())
+         {
+            return ref_istr;
+         }
       }
 
-      arg_a = result;
+      auto* is_func = any_op::istream_op_t::find_any_with_types<any_t>::op(std::type_index(*type));
+      if (is_func)
+      {
+         arg_a = (*is_func)(ref_istr.get_stream());
+         if (arg_a.has_value())
+         {
+            return ref_istr;
+         }
+      }
+
+      istr.setstate(std::ios::failbit);
       return ref_istr;
    }
 }
