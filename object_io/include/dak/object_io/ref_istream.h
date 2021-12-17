@@ -16,8 +16,13 @@ namespace dak::object
    //
    // Input stream wrapper to input object from a stream.
    // 
-   // Input to the stream is done via the operator >> defined by the
-   // ref_istream_op_t and the implementation registered by various types.
+   // Input from the stream is done via the operator >> defined by the
+   // ref_istream_op_t and the type-specific implementations of this
+   // ref-istream-op registered by various types.
+   //
+   // The ref-istream itself only serves to hold the underlying stream and
+   // record the object references, names and types that have already been
+   // read. The magic really occurs within ref-istream-op and its >> op.
    //
    // Most functions are const so that a temporary ref stream can be passed
    // as a const value to the stream operator. This allows creating the

@@ -18,7 +18,10 @@ namespace dak::object
 
    //////////////////////////////////////////////////////////////////////////
    //
-   // Output object into a file or stream.
+   // Support base class to output objects into a file or stream.
+   // 
+   // This base class provides functions to registers object references,
+   // types, and names and associate them with numeric ids.
    // 
    // Output to the stream is done via the operator << defined by the
    // ref_ostream_op_t and the implementation registered by various types.

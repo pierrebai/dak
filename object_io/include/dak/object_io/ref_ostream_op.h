@@ -15,22 +15,33 @@ namespace dak::object
 {
    USING_DAK_UTILITY_TYPES;
 
-   using ref_ostream_t = dak::object::ref_ostream_t;
-
    //////////////////////////////////////////////////////////////////////////
    //
    // The output ref stream operation writes values to an output ref stream.
    //
    // The output format writes the name of the type of the value first, then
-   // the actual value. This allows auto-decoding when streaming in.
+   // the actual value. This allows auto-decoding when streaming in. Since
+   // the value can be a complex type, this process is recursive.
+   // 
+   // This format is enforced by the << operator.
+   // 
+   // It prints the name of the type being output (via get_type_name_op_t)
+   // followed by a numeric id that will represent the type if encountered
+   // again. The association between the type and its id is registered in
+   // the ref-ostream.
+   // 
+   // The value is printed via either ref_ostream_op_t or ostream_op_t.
+   // A type that needs to write a reference or a name or contains sub-values
+   // that may need to write such types, refs or names must implement the
+   // ref-ostream-op. For simple types, ostream-op is sufficient. This is
+   // good: most types don't need to known about the object library, only
+   // the any-op library and its ostream-op.
    //
    // This format relies on the existence of implementations of the following
    // operations for a given type:
    //
-   //    - get_type_name_op_t
-   //    - get_type_info_op_t
-   //    - ref_ostream_op_t
-   //    - ref_istream_op_t
+   //    - get_type_name_op_t : converts a C++ std::type_info to a type name
+   //    - ref_ostream_op_t or ostream_op_t : writes a value
 
    struct ref_ostream_op_t : any_op::op_t<ref_ostream_op_t, const ref_ostream_t&>
    {

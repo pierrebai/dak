@@ -16,8 +16,13 @@ namespace dak::object
    //
    // Output stream wrapper to output object into a stream.
    // 
-   // Output to the stream is done via the operator << defined by the
-   // ref_ostream_op_t and the implementation registered by various types.
+   // Output to the ref-ostream is done via the operator << defined by the
+   // ref_ostream_op_t and the type-specific implementations of this
+   // ref-ostream-op registered by various types.
+   // 
+   // The ref-ostream itself only serves to hold the underlying stream and
+   // record the object references, names and types that have already been
+   // streamed. The magic really occurs within ref-ostream-op and its << op.
    //
    // Most functions are const so that a temporary ref stream can be passed
    // as a const value to the stream operator. This allows creating the

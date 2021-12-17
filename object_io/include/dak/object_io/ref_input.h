@@ -20,7 +20,13 @@ namespace dak::object
 
    //////////////////////////////////////////////////////////////////////////
    //
-   // Input object from a file or stream.
+   // Support base class to input objects from a file or stream.
+   // 
+   // This base class provides functions to registers object references,
+   // types, and names and associate them with numeric ids.
+   // 
+   // It also holds the namespace into which the new names are added and
+   // the transaction necessary to insert these new names.
    // 
    // Most functions are const so that a temporary ref stream can be passed
    // as a const value to the stream operator. This allows creating the
