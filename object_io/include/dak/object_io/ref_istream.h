@@ -35,6 +35,9 @@ namespace dak::object
       // Requires a transaction to create new names and namespace into the given base namespace.
       ref_istream_t(std::wistream& s, const valid_ref_t<namespace_t>& into_ns, transaction_t& transaction);
 
+      // Abort the input, called on errors, when abort_on_unknown() is true.
+      void abort() const override;
+
       // Underlying stream.
       std::wistream& get_stream() const { return my_stream; }
 

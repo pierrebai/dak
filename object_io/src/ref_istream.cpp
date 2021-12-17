@@ -15,6 +15,12 @@ namespace dak::object
    {
    }
 
+   // Abort the input, called on errors, when abort_on_unknown() is true.
+   void ref_istream_t::abort() const
+   {
+      get_stream().setstate(std::ios::failbit);
+   }
+
 
    //////////////////////////////////////////////////////////////////////////
    //
@@ -40,7 +46,7 @@ namespace dak::object
       if (parse_optional_sigil(expected_sigil))
          return true;
 
-      istr.setstate(std::ios::failbit);
+      abort();
       return false;
    }
 }

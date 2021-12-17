@@ -1,6 +1,7 @@
 
 add_library(dak_object_io_tests SHARED
-   src/ref_stream_tests.cpp
+   src/ref_istream_tests.cpp
+   src/ref_ostream_tests.cpp
    include/dak/object_io/tests/helpers.h
 )
 

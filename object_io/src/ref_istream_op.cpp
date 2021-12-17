@@ -75,6 +75,9 @@ namespace dak::object
          {
             while (istr.good())
             {
+               if (ref_istr.is_end(L'}'))
+                  break;
+
                name_t metaname;
                ref_istr >> metaname;
 

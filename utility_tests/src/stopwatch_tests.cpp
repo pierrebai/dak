@@ -102,5 +102,33 @@ namespace dak::utility::tests
          Assert::AreEqual(nt3, nt4);
          Assert::AreEqual(wt3, wt4);
       }
+
+      TEST_METHOD(test_stopwatch_long_time_buffer)
+      {
+         double time = 0;
+         stopwatch_t stopwatch(time);
+
+         stopwatch.set_elapsed(300.5);
+         Assert::AreEqual(300.5, time);
+
+         stopwatch.set_elapsed(30000.5);
+         Assert::AreEqual(30000.5, time);
+      }
+
+      TEST_METHOD(test_stopwatch_long_time_formatted_buffer)
+      {
+         std::string narrow_time;
+         std::wstring wide_time;
+         stopwatch_t stopwatch(nullptr, &narrow_time, &wide_time);
+
+         stopwatch.set_elapsed(300.5);
+         Assert::AreEqual<std::string>("5m 0s 500ms", narrow_time);
+         Assert::AreEqual<std::wstring>(L"5m 0s 500ms", wide_time);
+
+         stopwatch.set_elapsed(7265.5);
+         Assert::AreEqual<std::string>("2h 1m 5s 500ms", narrow_time);
+         Assert::AreEqual<std::wstring>(L"2h 1m 5s 500ms", wide_time);
+
+      }
    };
 }

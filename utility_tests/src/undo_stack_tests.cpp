@@ -17,6 +17,9 @@ namespace dak::utility::tests
       {
          undo_stack_t undo;
 
+         int change_count = 0;
+         undo.changed = [&change_count](undo_stack_t&) { change_count++; };
+
          Assert::IsFalse(undo.has_undo());
          Assert::IsFalse(undo.has_redo());
 
@@ -56,6 +59,7 @@ namespace dak::utility::tests
 
          Assert::IsFalse(undo.has_undo());
          Assert::IsFalse(undo.has_redo());
+         Assert::AreEqual(1, change_count);
 
          Assert::AreEqual(7., my_data.a);
          Assert::AreEqual(49., my_data.a_squared);
@@ -70,6 +74,7 @@ namespace dak::utility::tests
 
          Assert::IsTrue(undo.has_undo());
          Assert::IsFalse(undo.has_redo());
+         Assert::AreEqual(2, change_count);
 
          Assert::AreEqual(9., my_data.a);
          Assert::AreEqual(81., my_data.a_squared);
@@ -82,6 +87,7 @@ namespace dak::utility::tests
 
          Assert::IsFalse(undo.has_undo());
          Assert::IsTrue(undo.has_redo());
+         Assert::AreEqual(3, change_count);
 
          Assert::AreEqual(7., my_data.a);
          Assert::AreEqual(49., my_data.a_squared);
@@ -90,6 +96,7 @@ namespace dak::utility::tests
 
          Assert::IsTrue(undo.has_undo());
          Assert::IsFalse(undo.has_redo());
+         Assert::AreEqual(4, change_count);
 
          Assert::AreEqual(9., my_data.a);
          Assert::AreEqual(81., my_data.a_squared);
@@ -98,6 +105,7 @@ namespace dak::utility::tests
 
          Assert::IsFalse(undo.has_undo());
          Assert::IsFalse(undo.has_redo());
+         Assert::AreEqual(5, change_count);
       }
 
       TEST_METHOD(undo_stack_without_deaded_awaken)
@@ -178,5 +186,30 @@ namespace dak::utility::tests
          undo.redo();
       }
 
-	};
+      TEST_METHOD(undo_stack_commit_clip_redo)
+      {
+         undo_stack_t undo;
+
+         undo.commit({ { 1.5 } });
+         undo.commit({ { 3.5 } });
+
+         Assert::IsTrue(undo.has_undo());
+         Assert::IsFalse(undo.has_redo());
+         Assert::AreEqual<size_t>(2, undo.contents().size());
+
+         undo.undo();
+
+         Assert::IsFalse(undo.has_undo());
+         Assert::IsTrue(undo.has_redo());
+         Assert::AreEqual<size_t>(2, undo.contents().size());
+
+         // This will clip the redo.
+         undo.commit({ { 3.5 } });
+
+         Assert::IsTrue(undo.has_undo());
+         Assert::IsFalse(undo.has_redo());
+         // Still two because one redo weas clipped.
+         Assert::AreEqual<size_t>(2, undo.contents().size());
+      }
+   };
 }

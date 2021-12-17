@@ -44,6 +44,10 @@ namespace dak::utility
       // Updates all linked buffers that were given in constructors if not previously stopped.
       double elapsed();
 
+      // Set the elapsed time.
+      // Updates all linked buffers that were given in constructors if not previously stopped.
+      void set_elapsed(double seconds);
+
    private:
       using clock_t = std::chrono::steady_clock;
 

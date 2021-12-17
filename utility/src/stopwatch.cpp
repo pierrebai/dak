@@ -67,7 +67,16 @@ namespace dak::utility
    {
       const auto end_time = clock_t::now();
 
-      my_seconds = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - my_begin_time).count() / 1000.;
+      set_elapsed(std::chrono::duration_cast<std::chrono::milliseconds>(end_time - my_begin_time).count() / 1000.);
+
+      return my_seconds;
+   }
+
+   // Set the elapsed time.
+   // Updates all linked buffers that were given in constructors if not previously stopped.
+   void stopwatch_t::set_elapsed(double seconds)
+   {
+      my_seconds = seconds;
 
       if (my_seconds_buffer)
          *my_seconds_buffer = my_seconds;
@@ -77,8 +86,6 @@ namespace dak::utility
 
       if (my_wide_formatted_time)
          *my_wide_formatted_time = format_time<std::wostringstream>(my_seconds);
-
-      return my_seconds;
    }
 }
 

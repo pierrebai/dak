@@ -28,6 +28,9 @@ namespace dak::object
       if (pos != my_object_with_ids.end())
          return pos->second;
 
+      if (abort_on_unknown())
+         abort();
+
       static const edit_ref_t<object_t> empty = object_t::make();
       return empty;
    }
@@ -43,6 +46,9 @@ namespace dak::object
       if (pos != my_name_with_ids.end())
          return pos->second;
 
+      if (abort_on_unknown())
+         abort();
+
       static const exact_name_t empty;
       return empty;
    }
@@ -57,6 +63,9 @@ namespace dak::object
       const auto pos = my_type_with_ids.find(std::abs(id));
       if (pos != my_type_with_ids.end())
          return *pos->second;
+
+      if (abort_on_unknown())
+         abort();
 
       return typeid(void);
    }
