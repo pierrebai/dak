@@ -41,7 +41,7 @@ namespace dak::geometry::tests
          Assert::IsTrue(p1 != p2);
          Assert::IsTrue(polygon_t() != p2);
 
-         const polygon_t p3({ point_t(2., 1.), point_t(5., 7.), point_t(3., 6.) });
+         const polygon_t p3({ point_t(2., 1.), point_t(5., 7.), point_t(3., 6.), point_t(1000, 2000) }, 0, 3);
          Assert::AreEqual(2., p3.points[0].x);
          Assert::AreEqual(1., p3.points[0].y);
          Assert::AreEqual(5., p3.points[1].x);
@@ -97,6 +97,22 @@ namespace dak::geometry::tests
          Assert::IsFalse(p1.is_inside(point_t(3., -4.)));
          Assert::IsFalse(p1.is_inside(point_t(4., 2.)));
          Assert::IsFalse(p1.is_inside(point_t(100., -400.)));
+
+         const rectangle_t r1 = p1.bounds();
+         Assert::AreEqual(point_t(-3., -3.), r1.top_left());
+         Assert::AreEqual(point_t( 3.,  3.), r1.bottom_right());
+      }
+
+      TEST_METHOD(polygon_intersection)
+      {
+         const polygon_t p1({ point_t(3., 3.), point_t(3., -3.), point_t(-3., -3.), point_t(-3., 3.), });
+         const polygon_t p2({ point_t(4., 4.), point_t(4., -4.), point_t(-4., -4.), point_t(-4., 4.), });
+         const polygon_t p3({ point_t(3., 3.), point_t(1., 1.), point_t(2., 2.) });
+
+         Assert::IsTrue(p1.intersects(p2));
+         Assert::IsTrue(p2.intersects(p1));
+         Assert::IsTrue(p3.intersects(p1));
+         Assert::IsTrue(p1.intersects(p3));
       }
 
       TEST_METHOD(polygon_regular)

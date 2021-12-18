@@ -1,6 +1,7 @@
 #include <dak/geometry/point.h>
 #include <dak/geometry/transform.h>
 #include <dak/geometry/constants.h>
+#include <dak/geometry/utility.h>
 
 #include <dak/geometry/tests/helpers.h>
 
@@ -122,6 +123,24 @@ namespace dak::geometry::tests
 
          Assert::AreEqual(64., p1.distance_2_to_line(p2, p3));
          Assert::AreEqual(8., p1.distance_to_line(p2, p3));
+
+         Assert::AreEqual(9., point_t(-7., -8.).distance_2_to_line(p2, p3));
+         Assert::AreEqual(3., point_t(-7., -8.).distance_to_line(p2, p3));
+
+         Assert::AreEqual(4., point_t(-7., 7.).distance_2_to_line(p2, p3));
+         Assert::AreEqual(2., point_t(-7., 7.).distance_to_line(p2, p3));
+      }
+
+      TEST_METHOD(point_param_on_line)
+      {
+         const point_t p1(3.3, -2);
+         const point_t p2(3.3,  2.);
+
+         Assert::AreEqual(0., p1.parameterization_on_line(p1, p2));
+         Assert::AreEqual(1., p2.parameterization_on_line(p1, p2));
+         Assert::AreEqual(0.50, (p1 + (p2 - p1).scale(0.50)).parameterization_on_line(p1, p2), 0.0000001);
+         Assert::AreEqual(0.25, (p1 + (p2 - p1).scale(0.25)).parameterization_on_line(p1, p2), 0.0000001);
+         Assert::AreEqual(0.75, (p1 + (p2 - p1).scale(0.75)).parameterization_on_line(p1, p2), 0.0000001);
       }
 
 		TEST_METHOD(point_calculations)
@@ -201,6 +220,18 @@ namespace dak::geometry::tests
 
          Assert::AreEqual(PI / 2, point_t::origin().sweep(point_t::unit_x(), point_t::unit_y()));
          Assert::AreEqual(3 * PI / 2, point_t::origin().sweep(point_t::unit_y(), point_t::unit_x()));
+      }
+
+      TEST_METHOD(points_transform)
+      {
+         {
+            const std::vector<point_t> pts{ point_t(1., 2.), point_t(3., 2.) };
+
+            const auto trf_pts = geometry::apply(transform_t::rotate(PI / 2), pts);
+
+            Assert::AreEqual(point_t(-2., 1.), trf_pts[0]);
+            Assert::AreEqual(point_t(-2., 3.), trf_pts[1]);
+         }
       }
 
       TEST_METHOD(point_transform)

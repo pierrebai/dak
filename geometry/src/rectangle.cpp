@@ -5,6 +5,14 @@
 
 namespace dak::geometry
 {
+   bool rectangle_t::operator ==(const rectangle_t& other) const
+   {
+      if (is_invalid())
+         return other.is_invalid();
+
+      return utility::near(x, other.x) && utility::near(y, other.y) && utility::near(width, other.width) && utility::near(height, other.height);
+   }
+
    rectangle_t rectangle_t::apply(const transform_t& trf) const
    {
       rectangle_t applied(top_left().apply(trf), bottom_right().apply(trf));

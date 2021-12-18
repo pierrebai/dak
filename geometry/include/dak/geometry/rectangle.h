@@ -67,13 +67,7 @@ namespace dak::geometry
       }
 
       // Comparison. Two invalid are equal.
-      bool operator ==(const rectangle_t& other) const
-      {
-         if (is_invalid())
-            return other.is_invalid();
-
-         return x == other.x && y == other.y && width == other.width && height == other.height;
-      }
+      bool operator ==(const rectangle_t& other) const;
 
       bool operator !=(const rectangle_t& other) const
       {

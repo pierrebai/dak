@@ -14,10 +14,10 @@ namespace dak::geometry
    polygon_t::polygon_t(const std::vector<point_t>& pts, int start, int end)
       : points(pts)
    {
-      if (end > 0)
-         points.erase(pts.begin() + end, pts.end());
-      if (start > 0)
-         points.erase(pts.begin(), pts.begin() + start);
+      if (end > 0 && end < points.size())
+         points.erase(points.begin() + end, points.end());
+      if (start > 0 && start < points.size())
+         points.erase(points.begin(), points.begin() + start);
    }
 
    polygon_t polygon_t::make_regular(int n)

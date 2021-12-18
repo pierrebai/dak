@@ -37,23 +37,10 @@ namespace dak::geometry
       // Make a polygon from a rectangle.
       static polygon_t from_rect(const rectangle_t& r) { return polygon_t(r.points()); }
 
-      // Comparison.
-      bool operator ==(const polygon_t& other) const
-      {
-         return points == other.points;
-      }
-
-      bool operator !=(const polygon_t& other) const
-      {
-         return !(points == other.points);
-      }
-
-      // Compare the points of the polygon.
+      // Comparisons.
       // The points are not re-ordered, so they may compare different even though they contain the same points.
-      bool operator <(const polygon_t& other) const
-      {
-         return points < other.points;
-      }
+      auto operator <=>(const polygon_t& other) const = default;
+      bool operator ==(const polygon_t& other) const = default;
 
       // Apply a transform to the polygon.
       polygon_t apply(const transform_t& T) const;

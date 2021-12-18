@@ -109,12 +109,25 @@ namespace dak::geometry::tests
          Assert::AreEqual(rectangle_t(0, -4, 24, 20), r1.combine(r2));
          Assert::AreEqual(rectangle_t(4, 0, 6, 10), r1.intersect(r2));
 
+         Assert::AreEqual(r1, r1.combine(point_t(1, 1)));
+         Assert::AreEqual(r1, r1.combine(point_t(5, 7)));
+         Assert::AreEqual(rectangle_t(0, 0, 11, 11), r1.combine(point_t(11, 11)));
+
          rectangle_t r3(-14, -14, 10, 10);
          Assert::AreEqual(rectangle_t(), r1.intersect(r3));
          Assert::IsTrue(r1.intersect(r3).is_invalid());
 
          Assert::AreEqual(rectangle_t(-11.5, -11.5, 5, 5), r3.central_scale(0.5));
          Assert::AreEqual(rectangle_t(-10, -10, 2, 2), r3.central_scale(0.2));
+      }
+
+      TEST_METHOD(rect_apply_trf)
+      {
+         const rectangle_t r1(0, 0, 10, 10);
+
+         Assert::AreEqual(rectangle_t(0, 0, 20, 20), r1.apply(transform_t::scale(2.)));
+         Assert::AreEqual(rectangle_t(0, 0, 10, 10), r1.apply(transform_t::reflect(point_t(5., 0), point_t(5, .10))));
+         Assert::AreEqual(rectangle_t(10, 0, 10, 10), r1.apply(transform_t::reflect(point_t(10., 00), point_t(10, .10))));
       }
 
       TEST_METHOD(rect_center_inside)
@@ -125,6 +138,10 @@ namespace dak::geometry::tests
          Assert::AreEqual(transform_t::translate(2.5, 2.5).compose(transform_t::scale(0.5)), big.center_inside(small));
 
          Assert::AreEqual(transform_t::translate(-5, -5).compose(transform_t::scale(2)), small.center_inside(big));
+      }
+
+      TEST_METHOD(rect_combine)
+      {
       }
    };
 }
