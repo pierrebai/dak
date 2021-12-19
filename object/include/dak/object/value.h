@@ -10,6 +10,7 @@
 
 #include <typeinfo>
 #include <compare>
+#include <functional>
 
 namespace dak::object
 {
@@ -42,6 +43,11 @@ namespace dak::object
    // provides the [] operator to access the sub-values of the container.
    // Again, the value will be automatically converted, so if it was not
    // an array_t of a dict_t, its previous content will be lost.
+   //
+   // To support calling directly values containg functions (std::function),
+   // the value provides the template () operator to call the function with
+   // its parameters. The value will not be converted, so if it was not a
+   // function, a default-constructed return value is returned.
 
    struct value_t
    {
@@ -153,6 +159,13 @@ namespace dak::object
       value_t & operator [](const name_t &);
       const value_t & operator [](const name_t &) const;
 
+      // Function conversion + immediate call.
+      template <class RET, class ...ARGS>
+      RET call(ARGS&&... args) const;
+
+      template <class ...ARGS>
+      void operator()(ARGS&&... args) const;
+
       // Array, dict_t and text return the length, others return zero.
       index_t size() const;
 
@@ -184,6 +197,33 @@ namespace dak::object
    protected:
       any_t my_data;
    };
+
+
+   //////////////////////////////////////////////////////////////////////////
+   //
+   // Function conversion + immediate call.
+
+   template <class RET, class ...ARGS>
+   inline RET value_t::call(ARGS&&... args) const
+   {
+      using func_t = std::function<RET(ARGS... args)>;
+      const func_t* const func = std::any_cast<func_t>(&my_data);
+      if (func == nullptr)
+         return {};
+
+      return (*func)(std::forward<ARGS>(args)...);
+   }
+
+   template <class ...ARGS>
+   inline void value_t::operator()(ARGS&&... args) const
+   {
+      using func_t = std::function<void(ARGS... args)>;
+      const func_t* const func = std::any_cast<func_t>(&my_data);
+      if (func == nullptr)
+         return;
+
+      (*func)(std::forward<ARGS>(args)...);
+   }
 
 
    //////////////////////////////////////////////////////////////////////////
