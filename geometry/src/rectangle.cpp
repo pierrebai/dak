@@ -23,6 +23,12 @@ namespace dak::geometry
 
    rectangle_t rectangle_t::combine(const rectangle_t& other) const
    {
+      if (is_invalid())
+         return other;
+
+      if (other.is_invalid())
+         return *this;
+
       const double min_x = std::min(x, other.x);
       const double min_y = std::min(y, other.y);
       const double max_x = std::max(x + width, other.x + other.width);
@@ -33,6 +39,12 @@ namespace dak::geometry
 
    rectangle_t rectangle_t::combine(const point_t& pt) const
    {
+      if (is_invalid())
+         return rectangle_t(pt.x, pt.y, 0.0, 0.0);
+
+      if (pt.is_invalid())
+         return *this;
+
       const double min_x = std::min(x, pt.x);
       const double min_y = std::min(y, pt.y);
       const double max_x = std::max(x + width, pt.x);
@@ -43,6 +55,12 @@ namespace dak::geometry
 
    rectangle_t rectangle_t::intersect(const rectangle_t& other) const
    {
+      if (is_invalid())
+         return other;
+
+      if (other.is_invalid())
+         return *this;
+
       const double min_x = std::max(x, other.x);
       const double min_y = std::max(y, other.y);
       const double max_x = std::min(x + width, other.x + other.width);

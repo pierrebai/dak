@@ -77,7 +77,7 @@ namespace dak
       {
          const auto& pts = p.points;
 
-         if (pts.size() <= 0)
+         if (pts.size() < 2)
             return *this;
 
          internal_update_stroke();
@@ -98,7 +98,7 @@ namespace dak
       {
          const auto& pts = p.points;
 
-         if (pts.size() <= 0)
+         if (pts.size() < 2)
             return *this;
 
          internal_update_stroke();

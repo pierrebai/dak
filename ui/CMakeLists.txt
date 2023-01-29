@@ -4,6 +4,7 @@ add_library(dak_ui
    include/dak/ui/drawing.h
    include/dak/ui/drawing_base.h       src/drawing_base.cpp
    include/dak/ui/edges_map_layer.h    src/edges_map_layer.cpp
+   include/dak/ui/dxf_drawing.h        src/dxf_drawing.cpp
    include/dak/ui/eps_drawing.h        src/eps_drawing.cpp
    include/dak/ui/layer.h              src/layer.cpp
    include/dak/ui/layered.h            src/layered.cpp
