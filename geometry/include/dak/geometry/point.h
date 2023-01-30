@@ -85,8 +85,7 @@ namespace dak::geometry
       // Verify if a point is invalid.
       bool is_invalid() const
       {
-         constexpr double n = nan();
-         return reinterpret_cast<const uint64_t&>(n) == reinterpret_cast<const uint64_t&>(x);
+         return std::isnan(x);
       }
 
       // Return the square of the distance to the origin.

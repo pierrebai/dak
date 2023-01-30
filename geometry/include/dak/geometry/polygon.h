@@ -72,10 +72,7 @@ namespace dak::geometry
       bool intersects(const polygon_t& other) const;
 
       // Verify if the polygon is invalid. (Less than 3 sides.)
-      bool is_invalid() const
-      {
-         return points.size() < 3;
-      }
+      bool is_invalid() const;
 
    private:
       double raw_double_area() const;

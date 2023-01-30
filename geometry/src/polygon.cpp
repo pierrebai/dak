@@ -205,6 +205,18 @@ namespace dak::geometry
       return true;
    }
 
+   bool polygon_t::is_invalid() const
+   {
+      if (points.size() < 3)
+         return true;
+
+      for (const point_t& pt : points)
+         if (pt.is_invalid())
+            return true;
+
+      return false;
+   }
+
    bool polygon_t::intersects(const polygon_t& other) const
    {
       if (is_invalid() || other.is_invalid())

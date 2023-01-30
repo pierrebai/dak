@@ -164,11 +164,11 @@ namespace dak
          out << dxf::codes::section << dxf::codes::header;
             out << dxf::codes::acad_version;
             out << dxf::codes::ins_base << maker.make_double_code(0.0) << maker.make_double_code(0.0) << maker.make_double_code(0.0) << maker.reset();
-            out << dxf::codes::extension_min << maker.make_double_code(std::floor(bbox.x             - 12))
-                                             << maker.make_double_code(std::floor(bbox.y - 12))
+            out << dxf::codes::extension_min << maker.make_double_code(std::floor(bbox.x - 1))
+                                             << maker.make_double_code(std::floor(bbox.y - 1))
                                              << maker.reset();
-            out << dxf::codes::extension_max << maker.make_double_code(std::ceil(bbox.x + bbox.width + 12))
-                                             << maker.make_double_code(std::ceil(bbox.y + bbox.height + 12))
+            out << dxf::codes::extension_max << maker.make_double_code(std::ceil(bbox.x + bbox.width  + 1))
+                                             << maker.make_double_code(std::ceil(bbox.y + bbox.height + 1))
                                              << maker.reset();
          out << dxf::codes::end_section;
 
@@ -206,6 +206,9 @@ namespace dak
 
       drawing_t& dxf_drawing_t::draw_line(const point_t& from, const point_t& dest)
       {
+         if (from.is_invalid() || dest.is_invalid())
+            return *this;
+
          internal_update_stroke();
          internal_update_color();
          internal_update_transform();
@@ -214,7 +217,7 @@ namespace dak
 
          dxf::codes::maker_t maker;
 
-         buffer << dxf::codes::line << dxf::codes::use_layer(1) << dxf::codes::use_color(4)
+         buffer << dxf::codes::line << dxf::codes::use_layer(1) << dxf::codes::use_color(0)
                 << maker.make_double_code(from.x) << maker.make_double_code(from.y) << maker.make_double_code(0) << maker.reset(1)
                 << maker.make_double_code(dest.x) << maker.make_double_code(dest.y) << maker.make_double_code(0) << maker.reset(0);
 
@@ -223,6 +226,9 @@ namespace dak
 
       drawing_t& dxf_drawing_t::draw_corner(const point_t& from, const point_t& midd, const point_t& dest)
       {
+         if (from.is_invalid() || midd.is_invalid() || dest.is_invalid())
+            return *this;
+
          internal_update_stroke();
          internal_update_color();
          internal_update_transform();
@@ -232,11 +238,11 @@ namespace dak
 
          dxf::codes::maker_t maker;
 
-         buffer << dxf::codes::line << dxf::codes::use_layer(1) << dxf::codes::use_color(4)
+         buffer << dxf::codes::line << dxf::codes::use_layer(1) << dxf::codes::use_color(0)
                 << maker.make_double_code(from.x) << maker.make_double_code(from.y) << maker.make_double_code(0) << maker.reset(1)
                 << maker.make_double_code(midd.x) << maker.make_double_code(midd.y) << maker.make_double_code(0) << maker.reset(0);
 
-         buffer << dxf::codes::line << dxf::codes::use_layer(1) << dxf::codes::use_color(4)
+         buffer << dxf::codes::line << dxf::codes::use_layer(1) << dxf::codes::use_color(0)
                 << maker.make_double_code(midd.x) << maker.make_double_code(midd.y) << maker.make_double_code(0) << maker.reset(1)
                 << maker.make_double_code(dest.x) << maker.make_double_code(dest.y) << maker.make_double_code(0) << maker.reset(0);
 
@@ -245,23 +251,9 @@ namespace dak
 
       drawing_t& dxf_drawing_t::fill_polygon(const polygon_t& p)
       {
-         const auto& pts = p.points;
-
-         if (pts.size() < 2)
+         if (p.is_invalid())
             return *this;
 
-         internal_update_stroke();
-         internal_update_color();
-         internal_update_transform();
-         internal_update_bbox(pts);
-
-         // TODO: dxf_drawing_t::fill_polygon
-
-         return *this;
-      }
-
-      drawing_t& dxf_drawing_t::draw_polygon(const polygon_t& p)
-      {
          const auto& pts = p.points;
 
          if (pts.size() < 2)
@@ -276,7 +268,35 @@ namespace dak
 
          point_t prev_pt = pts.back();
          for (const point_t curr_pt : pts) {
-            buffer << dxf::codes::line << dxf::codes::use_layer(1) << dxf::codes::use_color(4)
+            buffer << dxf::codes::line << dxf::codes::use_layer(1) << dxf::codes::use_color(0)
+               << maker.make_double_code(prev_pt.x) << maker.make_double_code(prev_pt.y) << maker.make_double_code(0) << maker.reset(1)
+               << maker.make_double_code(curr_pt.x) << maker.make_double_code(curr_pt.y) << maker.make_double_code(0) << maker.reset(0);
+            prev_pt = curr_pt;
+         }
+
+         return *this;
+      }
+
+      drawing_t& dxf_drawing_t::draw_polygon(const polygon_t& p)
+      {
+         if (p.is_invalid())
+            return *this;
+
+         const auto& pts = p.points;
+
+         if (pts.size() < 2)
+            return *this;
+
+         internal_update_stroke();
+         internal_update_color();
+         internal_update_transform();
+         internal_update_bbox(pts);
+
+         dxf::codes::maker_t maker;
+
+         point_t prev_pt = pts.back();
+         for (const point_t curr_pt : pts) {
+            buffer << dxf::codes::line << dxf::codes::use_layer(1) << dxf::codes::use_color(0)
                    << maker.make_double_code(prev_pt.x) << maker.make_double_code(prev_pt.y) << maker.make_double_code(0) << maker.reset(1)
                    << maker.make_double_code(curr_pt.x) << maker.make_double_code(curr_pt.y) << maker.make_double_code(0) << maker.reset(0);
             prev_pt = curr_pt;
