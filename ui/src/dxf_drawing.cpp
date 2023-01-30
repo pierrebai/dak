@@ -200,8 +200,8 @@ namespace dak
       //
       // DXF drawing interface implementation.
 
-      dxf_drawing_t::dxf_drawing_t(std::wostream& out)
-         : out(out)
+      dxf_drawing_t::dxf_drawing_t(std::wostream& out, drawing_with_t drawing_w)
+         : out(out), drawing_with(drawing_w)
       {
       }
 
@@ -310,36 +310,35 @@ namespace dak
 
          dxf::codes::maker_t maker;
 
-#ifdef DAK_DXF_USE_POLYLINE
+         if (drawing_with == with_polygons)
+         {
+            if (pts.size() < 2)
+               return *this;
 
-         if (pts.size() < 2)
-            return *this;
-
-         start_polyline(pts.size(), true);
-         for (const point_t pt : pts) {
-            buffer << maker.make_double_code(pt.x) << maker.make_double_code(pt.y) << maker.reset(0);
+            start_polyline(pts.size(), true);
+            for (const point_t pt : pts) {
+               buffer << maker.make_double_code(pt.x) << maker.make_double_code(pt.y) << maker.reset(0);
+            }
          }
+         else
+         {
+            if (pts.size() < 3)
+               return *this;
 
-#else
-         if (pts.size() < 3)
-            return *this;
-
-
-         const point_t& corner = pts[0];
-         for (size_t i = 2; i < pts.size(); ++i) {
-            const point_t& p1 = corner;
-            const point_t& p2 = pts[i - 1];
-            const point_t& p3 = pts[i];
-            const point_t& p4 = corner;
-            buffer << dxf::raw(0) << dxf::raw(text_t(L"3DFACE"))
-               << dxf::codes::use_layer(0) << dxf::codes::use_color(256);
-            buffer << maker.make_double_code(p1.x) << maker.make_double_code(p1.y) << maker.make_double_code(0) << maker.reset(1);
-            buffer << maker.make_double_code(p2.x) << maker.make_double_code(p2.y) << maker.make_double_code(0) << maker.reset(2);
-            buffer << maker.make_double_code(p3.x) << maker.make_double_code(p3.y) << maker.make_double_code(0) << maker.reset(3);
-            buffer << maker.make_double_code(p4.x) << maker.make_double_code(p4.y) << maker.make_double_code(0) << maker.reset(0);
+            const point_t& corner = pts[0];
+            for (size_t i = 2; i < pts.size(); ++i) {
+               const point_t& p1 = corner;
+               const point_t& p2 = pts[i - 1];
+               const point_t& p3 = pts[i];
+               const point_t& p4 = corner;
+               buffer << dxf::raw(0) << dxf::raw(text_t(L"3DFACE"))
+                      << dxf::codes::use_layer(0) << dxf::codes::use_color(256);
+               buffer << maker.make_double_code(p1.x) << maker.make_double_code(p1.y) << maker.make_double_code(0) << maker.reset(1);
+               buffer << maker.make_double_code(p2.x) << maker.make_double_code(p2.y) << maker.make_double_code(0) << maker.reset(2);
+               buffer << maker.make_double_code(p3.x) << maker.make_double_code(p3.y) << maker.make_double_code(0) << maker.reset(3);
+               buffer << maker.make_double_code(p4.x) << maker.make_double_code(p4.y) << maker.make_double_code(0) << maker.reset(0);
+            }
          }
-
-#endif
 
          return *this;
       }

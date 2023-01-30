@@ -17,7 +17,12 @@ namespace dak::ui
    class dxf_drawing_t : public drawing_base_t
    {
    public:
-      dxf_drawing_t(std::wostream& out);
+      enum drawing_with_t
+      {
+         with_polygons, with_faces
+      };
+
+      dxf_drawing_t(std::wostream& out, drawing_with_t drawing_with);
 
       // Finish writing the file if not already done.
       ~dxf_drawing_t() override;
@@ -52,6 +57,8 @@ namespace dak::ui
 
       std::wostream& out;
       std::wostringstream buffer;
+
+      drawing_with_t drawing_with;
 
       color_t applied_co = color_t::black();
       stroke_t applied_strk = stroke_t(1);
