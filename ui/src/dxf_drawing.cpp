@@ -93,44 +93,105 @@ namespace dak
             //
             // Well-known pre-defined DXF codes.
 
-            const code_t section =           {   0, L"SECTION"     };
-            const code_t end_section =       {   0, L"ENDSEC"      };
-            const code_t header =            {   2, L"HEADER"      };
-            const code_t tables =            {   2, L"TABLES"      };
-            const code_t table =             {   0, L"TABLE"       };
-            const code_t end_table =         {   0, L"ENDTAB"      };
-            const code_t layer =             {   0, L"LAYER"       };
-            const code_t line_type =         {   0, L"LTYPE"       };
-            const code_t continuous_line =   {   2, L"CONTINUOUS"  };
-            const code_t continuous_layer =  {   6, L"CONTINUOUS"  };
-            const code_t style =             {   2, L"STYLE"       };
-            const code_t blocks =            {   2, L"BLOCKS"      };
-            const code_t entities =          {   2, L"ENTITIES"    };
-            const code_t line =              {   0, L"LINE"        };
-            const code_t eof =               {   0, L"EOF"         };
-            const code_t acad_version =      {   9, L"$ACADVER"    };
-            const code_t ac_1006 =           {   1, L"AC1006"      };
-            const code_t ins_base =          {   9, L"$INSBASE"    };
-            const code_t extension_min =     {   9, L"$EXTMIN"     };
-            const code_t extension_max =     {   9, L"$EXTMAX"     };
+            const code_t section =           {   0, L"SECTION"       };
+            const code_t end_section =       {   0, L"ENDSEC"        };
+            const code_t header =            {   2, L"HEADER"        };
+            const code_t tables =            {   2, L"TABLES"        };
+            const code_t table =             {   0, L"TABLE"         };
+            const code_t end_table =         {   0, L"ENDTAB"        };
+            const code_t layer =             {   0, L"LAYER"         };
+            const code_t line_type =         {   0, L"LTYPE"         };
+            const code_t alignment =         {  72, L"65"            };
+            const code_t style =             {   2, L"STYLE"         };
+            const code_t entities =          {   2, L"ENTITIES"      };
+            const code_t line =              {   0, L"LINE"          };
+            const code_t eof =               {   0, L"EOF"           };
+            const code_t acad_version =      {   9, L"$ACADVER"      };
+            const code_t ac_1006 =           {   1, L"AC1006"        };
+            const code_t ins_base =          {   9, L"$INSBASE"      };
+            const code_t extension_min =     {   9, L"$EXTMIN"       };
+            const code_t extension_max =     {   9, L"$EXTMAX"       };
+            const code_t polyline =          {   0, L"LWPOLYLINE"    };
+            const code_t ac_entity =         { 100, L"AcDbEntity"    };
+            const code_t ac_polyline =       { 100, L"AcDbPolyline"  };
 
             //////////////////////////////////////////////////////////////////////////
             //
-            // DXF special codes.
+            // DXF varying codes.
 
-            const code_t comment(const text_t& comment)
+            code_t comment(const text_t& comment)
             {
                return code_t{ 999, comment };
             }
 
-            const code_t use_layer(int32_t which_layer)
+            code_t entry_name(const text_t& name)
+            {
+               return code_t{ 2, name };
+            }
+
+            code_t entry_description(const text_t& desc)
+            {
+               return code_t{ 3, desc };
+            }
+
+            code_t handle(const size_t id)
+            {
+               return code_t{ 5, text_t(L"H") + std::to_wstring(id) };
+            }
+
+            code_t line_type_count(int32_t count)
+            {
+               return code_t{ 73, std::to_wstring(count) };
+            }
+
+            code_t line_type_pattern_length(double length)
+            {
+               return code_t{ 40, std::to_wstring(length) };
+            }
+
+            code_t use_line_type(const text_t& name)
+            {
+               return code_t{ 6, name };
+            }
+
+            code_t use_layer(int32_t which_layer)
             {
                return code_t{ 8, std::to_wstring(which_layer)};
             }
 
-            const code_t use_color(int32_t which_color)
+            code_t use_color(int32_t which_color)
             {
                return code_t{ 62, std::to_wstring(which_color) };
+            }
+
+            code_t line_weight(int32_t which_color)
+            {
+               return code_t{ 370, std::to_wstring(which_color) };
+            }
+
+            code_t constant_width(double width)
+            {
+               return code_t{ 43, std::to_wstring(width) };
+            }
+
+            code_t vertices_count(int32_t count)
+            {
+               return code_t{ 90, std::to_wstring(count) };
+            }
+
+            code_t vertices_count(size_t count)
+            {
+               return code_t{ 90, std::to_wstring(int32_t(count)) };
+            }
+
+            code_t flags(int32_t value)
+            {
+               return code_t{ 70, std::to_wstring(int32_t(value)) };
+            }
+
+            code_t polyline_closed(bool is_closed)
+            {
+               return code_t{ 70, std::to_wstring(is_closed ? 1 : 0) };
             }
          }
       }
@@ -158,11 +219,18 @@ namespace dak
 
       void dxf_drawing_t::finish()
       {
+         if (finished)
+            return;
+         finished = true;
+
          dxf::codes::maker_t maker;
+
+         const text_t solid_line_type_name = L"CONTINUOUS";
+         const text_t solid_line_type_desc = L"Solid line";
 
          out << dxf::codes::comment(L"Generated by Alhambra");
          out << dxf::codes::section << dxf::codes::header;
-            out << dxf::codes::acad_version;
+            out << dxf::codes::acad_version << dxf::codes::ac_1006;
             out << dxf::codes::ins_base << maker.make_double_code(0.0) << maker.make_double_code(0.0) << maker.make_double_code(0.0) << maker.reset();
             out << dxf::codes::extension_min << maker.make_double_code(std::floor(bbox.x - 1))
                                              << maker.make_double_code(std::floor(bbox.y - 1))
@@ -173,108 +241,59 @@ namespace dak
          out << dxf::codes::end_section;
 
          out << dxf::codes::section << dxf::codes::tables;
-            out << dxf::codes::table;
-               out << dxf::codes::line_type << dxf::raw(70) << dxf::raw(1);
-               out << dxf::codes::line_type << dxf::codes::continuous_line << dxf::raw(70) << dxf::raw(64)
-                   << dxf::raw(3) << dxf::raw(text_t(L"Solid line")) << dxf::raw(72) << dxf::raw(65) << dxf::raw(73)
-                   << dxf::raw(0) << dxf::raw(40) << dxf::raw(0.0);
+            out << dxf::codes::table << dxf::codes::entry_name(L"LTYPE");
+               out << dxf::codes::line_type << dxf::codes::flags(0);
+               out << dxf::codes::line_type << dxf::codes::entry_name(solid_line_type_name) << dxf::codes::flags(0)
+                   << dxf::codes::entry_description(solid_line_type_desc) << dxf::codes::alignment
+                   << dxf::codes::line_type_count(0) << dxf::codes::line_type_pattern_length(0.0);
+               out << dxf::codes::end_table;
+
+            out << dxf::codes::table << dxf::codes::entry_name(L"LAYER");
+               out << dxf::codes::layer << dxf::codes::entry_name(L"0") << dxf::codes::flags(0)
+                                        << dxf::codes::use_color(0) << dxf::codes::use_line_type(solid_line_type_name);
+               out << dxf::codes::layer << dxf::codes::entry_name(L"1") << dxf::codes::flags(0)
+                                        << dxf::codes::use_color(7) << dxf::codes::use_line_type(solid_line_type_name);
+               out << dxf::codes::layer << dxf::codes::entry_name(L"2") << dxf::codes::flags(0)
+                                        << dxf::codes::use_color(7) << dxf::codes::use_line_type(solid_line_type_name);
             out << dxf::codes::end_table;
 
-            out << dxf::codes::table;
-               out << dxf::codes::layer << dxf::raw(70) << dxf::raw(6);
-               out << dxf::codes::layer << dxf::raw(2) << dxf::raw(1) << dxf::raw(70) << dxf::raw(64)
-                                        << dxf::raw(62) << dxf::raw(7) << dxf::codes::continuous_layer;
-               out << dxf::codes::layer << dxf::raw(2) << dxf::raw(2) << dxf::raw(70) << dxf::raw(64)
-                                        << dxf::raw(62) << dxf::raw(7) << dxf::codes::continuous_layer;
-            out << dxf::codes::end_table;
-
-            out << dxf::codes::table;
-               out << dxf::codes::style << dxf::raw(70) << dxf::raw(0);
+            out << dxf::codes::table << dxf::codes::entry_name(L"STYLE");
+               out << dxf::codes::flags(0);
             out << dxf::codes::end_table;
          out << dxf::codes::end_section;
 
-         out << dxf::codes::section << dxf::codes::tables;
-            out << dxf::codes::blocks;
+         out << dxf::codes::section << dxf::codes::entry_name(L"BLOCKS");
          out << dxf::codes::end_section;
 
-         out << dxf::codes::section << dxf::codes::entities;
+         out << dxf::codes::section << dxf::codes::entry_name(L"ENTITIES");
             out << buffer.str();
          out << dxf::codes::end_section;
 
          out << dxf::codes::eof;
       }
 
+      void dxf_drawing_t::start_polyline(size_t vertices_count, bool is_closed)
+      {
+         buffer << dxf::codes::polyline << dxf::codes::handle(++next_handle_id)
+                << dxf::codes::ac_entity << dxf::codes::use_layer(0)
+                << dxf::codes::use_line_type(L"BYLAYER") << dxf::codes::use_color(256) << dxf::codes::line_weight(-1)
+                << dxf::codes::ac_polyline << dxf::codes::vertices_count(vertices_count)
+                << dxf::codes::polyline_closed(is_closed) << dxf::codes::constant_width(0);
+      }
+
       drawing_t& dxf_drawing_t::draw_line(const point_t& from, const point_t& dest)
       {
-         if (from.is_invalid() || dest.is_invalid())
-            return *this;
-
-         internal_update_stroke();
-         internal_update_color();
-         internal_update_transform();
-         internal_update_bbox(from);
-         internal_update_bbox(dest);
-
-         dxf::codes::maker_t maker;
-
-         buffer << dxf::codes::line << dxf::codes::use_layer(1) << dxf::codes::use_color(0)
-                << maker.make_double_code(from.x) << maker.make_double_code(from.y) << maker.make_double_code(0) << maker.reset(1)
-                << maker.make_double_code(dest.x) << maker.make_double_code(dest.y) << maker.make_double_code(0) << maker.reset(0);
-
-         return *this;
+         return draw_polygon(polygon_t({ from , dest }));
       }
 
       drawing_t& dxf_drawing_t::draw_corner(const point_t& from, const point_t& midd, const point_t& dest)
       {
-         if (from.is_invalid() || midd.is_invalid() || dest.is_invalid())
-            return *this;
-
-         internal_update_stroke();
-         internal_update_color();
-         internal_update_transform();
-         internal_update_bbox(from);
-         internal_update_bbox(midd);
-         internal_update_bbox(dest);
-
-         dxf::codes::maker_t maker;
-
-         buffer << dxf::codes::line << dxf::codes::use_layer(1) << dxf::codes::use_color(0)
-                << maker.make_double_code(from.x) << maker.make_double_code(from.y) << maker.make_double_code(0) << maker.reset(1)
-                << maker.make_double_code(midd.x) << maker.make_double_code(midd.y) << maker.make_double_code(0) << maker.reset(0);
-
-         buffer << dxf::codes::line << dxf::codes::use_layer(1) << dxf::codes::use_color(0)
-                << maker.make_double_code(midd.x) << maker.make_double_code(midd.y) << maker.make_double_code(0) << maker.reset(1)
-                << maker.make_double_code(dest.x) << maker.make_double_code(dest.y) << maker.make_double_code(0) << maker.reset(0);
-
-         return *this;
+         return draw_polygon(polygon_t({ from , midd, dest }));
       }
 
       drawing_t& dxf_drawing_t::fill_polygon(const polygon_t& p)
       {
-         if (p.is_invalid())
-            return *this;
-
-         const auto& pts = p.points;
-
-         if (pts.size() < 2)
-            return *this;
-
-         internal_update_stroke();
-         internal_update_color();
-         internal_update_transform();
-         internal_update_bbox(pts);
-
-         dxf::codes::maker_t maker;
-
-         point_t prev_pt = pts.back();
-         for (const point_t curr_pt : pts) {
-            buffer << dxf::codes::line << dxf::codes::use_layer(1) << dxf::codes::use_color(0)
-               << maker.make_double_code(prev_pt.x) << maker.make_double_code(prev_pt.y) << maker.make_double_code(0) << maker.reset(1)
-               << maker.make_double_code(curr_pt.x) << maker.make_double_code(curr_pt.y) << maker.make_double_code(0) << maker.reset(0);
-            prev_pt = curr_pt;
-         }
-
-         return *this;
+         return draw_polygon(p);
       }
 
       drawing_t& dxf_drawing_t::draw_polygon(const polygon_t& p)
@@ -284,9 +303,6 @@ namespace dak
 
          const auto& pts = p.points;
 
-         if (pts.size() < 2)
-            return *this;
-
          internal_update_stroke();
          internal_update_color();
          internal_update_transform();
@@ -294,13 +310,36 @@ namespace dak
 
          dxf::codes::maker_t maker;
 
-         point_t prev_pt = pts.back();
-         for (const point_t curr_pt : pts) {
-            buffer << dxf::codes::line << dxf::codes::use_layer(1) << dxf::codes::use_color(0)
-                   << maker.make_double_code(prev_pt.x) << maker.make_double_code(prev_pt.y) << maker.make_double_code(0) << maker.reset(1)
-                   << maker.make_double_code(curr_pt.x) << maker.make_double_code(curr_pt.y) << maker.make_double_code(0) << maker.reset(0);
-            prev_pt = curr_pt;
+#ifdef DAK_DXF_USE_POLYLINE
+
+         if (pts.size() < 2)
+            return *this;
+
+         start_polyline(pts.size(), true);
+         for (const point_t pt : pts) {
+            buffer << maker.make_double_code(pt.x) << maker.make_double_code(pt.y) << maker.reset(0);
          }
+
+#else
+         if (pts.size() < 3)
+            return *this;
+
+
+         const point_t& corner = pts[0];
+         for (size_t i = 2; i < pts.size(); ++i) {
+            const point_t& p1 = corner;
+            const point_t& p2 = pts[i - 1];
+            const point_t& p3 = pts[i];
+            const point_t& p4 = corner;
+            buffer << dxf::raw(0) << dxf::raw(text_t(L"3DFACE"))
+               << dxf::codes::use_layer(0) << dxf::codes::use_color(256);
+            buffer << maker.make_double_code(p1.x) << maker.make_double_code(p1.y) << maker.make_double_code(0) << maker.reset(1);
+            buffer << maker.make_double_code(p2.x) << maker.make_double_code(p2.y) << maker.make_double_code(0) << maker.reset(2);
+            buffer << maker.make_double_code(p3.x) << maker.make_double_code(p3.y) << maker.make_double_code(0) << maker.reset(3);
+            buffer << maker.make_double_code(p4.x) << maker.make_double_code(p4.y) << maker.make_double_code(0) << maker.reset(0);
+         }
+
+#endif
 
          return *this;
       }
