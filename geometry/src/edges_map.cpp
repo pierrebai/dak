@@ -3,6 +3,7 @@
 #include <dak/utility/text.h>
 
 #include <algorithm>
+#include <set>
 
 namespace dak::geometry
 {
@@ -206,6 +207,58 @@ namespace dak::geometry
    void edges_map_t::connect(const point_t& p1, const point_t& p2)
    {
       insert(edge_t(p1, p2));
+   }
+
+   edges_map_t edges_map_t::simplify() const
+   {
+      edges_map_t simplified;
+
+      std::set<edge_t> merged;
+
+      auto find_other_edge = [](const range_t& connections, const edge_t& edge) -> edge_t
+      {
+         for (const edge_t& other_edge : connections)
+         {
+            if (other_edge.twin() == edge)
+               continue;
+
+            return other_edge.twin();
+         }
+
+         return edge;
+      };
+
+      for (edge_t edge : _sorted_edges)
+      {
+         if (!edge.is_canonical())
+            continue;
+
+         if (merged.count(edge))
+            continue;
+
+         while (true)
+         {
+            const range_t connections = outbounds(edge.p2);
+            if (connections.size() != 2)
+               break;
+
+            const edge_t other_edge = find_other_edge(connections, edge);
+            if (merged.count(other_edge.canonical()))
+               break;
+
+            const double angle = edge.angle(other_edge);
+            if (!utility::near(angle, 0.0) && !utility::near(angle, geometry::PI))
+               break;
+
+            merged.insert(other_edge.canonical());
+            merged.insert(edge);
+            edge.p2 = other_edge.p2;
+         }
+
+         simplified.insert(edge);
+      }
+
+      return simplified;
    }
 
    edges_map_t& edges_map_t::apply_to_self(const transform_t& t)

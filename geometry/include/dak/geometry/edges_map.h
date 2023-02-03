@@ -99,6 +99,9 @@ namespace dak::geometry
       // Insert one edge between two points, adding necessary intersection points as needed.
       void connect(const point_t& p1, const point_t& p2);
 
+      // Simplify the map by merging edges that have a single connection and are aligned.
+      edges_map_t simplify() const;
+
       // Apply a transform to the map, creating a new map.
       edges_map_t apply(const transform_t& t) const;
 

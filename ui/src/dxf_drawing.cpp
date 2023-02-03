@@ -302,7 +302,6 @@ namespace dak
 
             void draw_all(const polygons_t& polygons)
             {
-               //const auto aligneds = merge_aligned_polygons(polygons);
                const auto& aligneds = polygons;
                const auto identicals = merge_identical_polygons(aligneds);
                for (const auto& poly_and_trfs : identicals)
@@ -311,112 +310,6 @@ namespace dak
             }
 
          private:
-
-            using edges_of_polygons_t = std::map<edge_t, std::vector<const polygon_t*>>;
-
-            static polygons_t merge_aligned_polygons(polygons_t polygons)
-            {
-               polygons_t merged;
-
-               // We will repeat merging aligned polygons in case more than
-               // two polygons are aligned.
-               while (true)
-               {
-                  // Build a map of edges to polygons for fast matching of edges.
-                  edges_of_polygons_t edges_of_polygons;
-                  for (const polygon_t& poly : polygons)
-                     for (const edge_t& edge : polygon_edges_t(poly))
-                        edges_of_polygons[edge].push_back(&poly);
-
-                  // Keep track of polygons that have been added or merged to
-                  // avoid adding a polygon twice.
-                  std::set<const polygon_t *> done;
-
-                  // Try to find pairs of polygon that are aligned and merge them.
-                  // If a polygon does not have an aligned match, keep it as-is.
-                  for (const polygon_t& poly : polygons)
-                  {
-                     if (done.count(&poly))
-                        continue;
-                     else
-                        done.insert(&poly);
-
-                     const polygon_t* other_poly = find_aligned_match(poly, edges_of_polygons, done);
-                     if (other_poly)
-                     {
-                        done.insert(other_poly);
-                        merged.push_back(poly.merge(*other_poly));
-                     }
-                     else
-                     {
-                        merged.push_back(poly);
-                     }
-                  }
-
-                  // If we have not merged any polygon, we're done.
-                  if (merged.size() == polygons.size())
-                     break;
-
-                  polygons.swap(merged);
-                  merged.clear();
-               }
-
-               return merged;
-            }
-
-            static const polygon_t* find_aligned_match(
-               const polygon_t& poly,
-               const edges_of_polygons_t& edges,
-               const std::set<const polygon_t*>& done)
-            {
-               for (const edge_t edge : polygon_edges_t(poly))
-               {
-                  const auto iter = edges.find(edge);
-                  if (iter == edges.end())
-                     continue;
-                  if (iter->second.size() <= 1)
-                     continue;
-
-                  for (const polygon_t* other_poly : iter->second)
-                  {
-                     if (!other_poly)
-                        continue;
-                     if (other_poly == &poly)
-                        continue;
-                     if (done.count(other_poly))
-                        continue;
-
-                     if (are_aligned(poly, *other_poly))
-                        return other_poly;
-                  }
-               }
-
-               return nullptr;
-            }
-
-            static bool are_aligned(const polygon_t& poly, const polygon_t& other_poly)
-            {
-               for (const edge_t edge :  polygon_edges_t(poly))
-               {
-                  for (const edge_t other_edge : polygon_edges_t(other_poly))
-                  {
-                     const size_t share_count = size_t(edge.p1 == other_edge.p1)
-                                              + size_t(edge.p1 == other_edge.p2)
-                                              + size_t(edge.p2 == other_edge.p1)
-                                              + size_t(edge.p2 == other_edge.p2);
-                     if (share_count != 1)
-                        continue;
-
-                     const double angle = edge.angle(other_edge);
-                     if (utility::near(angle, 0.0) || utility::near(angle, geometry::PI))
-                     {
-                        return true;
-                     }
-                  }
-               }
-
-               return false;
-            }
 
             using identical_polygons_t = std::map<polygon_t, std::vector<transform_t>>;
 
