@@ -13,7 +13,7 @@ namespace dak::object
    //////////////////////////////////////////////////////////////////////////
    //
    // The make operation creates an object with default initialization
-   // and returns the a reference, ref_t<T>.
+   // and returns a reference, ref_t<T>.
    //
    // Note: no templated version is provided since when you already have
    //       the type it is simpler to call its static make() function directly!

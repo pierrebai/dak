@@ -11,8 +11,8 @@ namespace dak::object
    //
    // Exact name. Disregard basename when comparing.
    //
-   // Useful when an algorithm needs to distinguish between dereived names,
-   // when metadat is important in an indexed container, for example.
+   // Useful when an algorithm needs to distinguish between derived names.
+   // For example, when metadata is important in an indexed container.
 
    struct exact_name_t : name_t
    {

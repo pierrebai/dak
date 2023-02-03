@@ -17,10 +17,14 @@ namespace dak::object
 
    //////////////////////////////////////////////////////////////////////////
    //
-   // Compare overall structure, not address of references.
+   // Compare overall structure, traversing references and comparing the
+   // objects contents recursively.
    //
-   // Pair of references already compare must be tracked to avoid infinite
-   // recursion when objects refer back to themselves.
+   // Pairs of references already compared must be tracked to avoid infinite
+   // recursion when objects end-up referring back to themselves directly or
+   // indirectly.
+   //
+   // That tracking is done by a visited-refs container, declared below.
 
    struct visited_refs_t
    {

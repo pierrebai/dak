@@ -27,11 +27,6 @@ namespace Microsoft::VisualStudio::CppUnitTestFramework
       RETURN_WIDE_STRING(a_cmp);
    }
 
-   template<> inline std::wstring ToString<dak::utility::uint16_t>(const dak::utility::uint16_t& e)
-   {
-      RETURN_WIDE_STRING(dak::utility::uint32_t(e));
-   }
-
 }
 
 #endif /* DAK_ANY_TESTS_HELPERS_H */

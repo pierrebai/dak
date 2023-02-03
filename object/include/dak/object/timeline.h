@@ -13,14 +13,15 @@ namespace dak::object
 
    //////////////////////////////////////////////////////////////////////////
    //
-   // Commited transations. Keep modified objects are create an undo when commited
-   // or undo the changes if canceled.
+   // Commited transations. Keeps the given modified objects when commited.
+   // Can undo and redo the commited transactions.
 
    struct timeline_t
    {
       using modified_objects_t = transaction_t::modified_objects_t;
       using commits_t = std::deque<modified_objects_t>;
 
+      // Constructor.
       timeline_t();
 
       // Commmit modified objects.

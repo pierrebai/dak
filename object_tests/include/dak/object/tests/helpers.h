@@ -77,11 +77,6 @@ namespace Microsoft::VisualStudio::CppUnitTestFramework
       RETURN_REF_STREAM_WIDE_STRING(ns);
    }
 
-   template<> inline std::wstring ToString<dak::utility::uint16_t>(const dak::utility::uint16_t& e)
-   {
-      RETURN_WIDE_STRING(dak::utility::uint32_t(e));
-   }
-
    template<> inline std::wstring ToString<dak::object::array_t>(const dak::object::array_t& a)
    {
       RETURN_REF_STREAM_WIDE_STRING(a);

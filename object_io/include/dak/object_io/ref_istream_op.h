@@ -20,7 +20,7 @@ namespace dak::object
    // The input ref stream operation reads values from an input ref stream.
    //
    // The input format first reads the name of a type, so that it can know
-   // what type of values it needs to read. Then,it reads the actual value.
+   // what type of values it needs to read. Then, it reads the actual value.
    // This allows decoding any type of any value without knowing in advance
    // the type of the value.
    //

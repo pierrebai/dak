@@ -88,6 +88,15 @@ namespace dak::geometry::tests
          Assert::AreEqual(18., p1.perimeter(false));
          Assert::AreEqual(point_t(0, 0), p1.center());
 
+         const rectangle_t r1 = p1.bounds();
+         Assert::AreEqual(point_t(-3., -3.), r1.top_left());
+         Assert::AreEqual(point_t( 3.,  3.), r1.bottom_right());
+      }
+
+      TEST_METHOD(polygon_is_inside)
+      {
+         polygon_t p1({ point_t(3., 3.), point_t(3., -3.), point_t(-3., -3.), point_t(-3., 3.), });
+
          Assert::IsTrue(p1.is_inside(point_t::origin()));
          Assert::IsTrue(p1.is_inside(point_t::unit_x()));
          Assert::IsTrue(p1.is_inside(point_t::unit_y()));
@@ -97,10 +106,6 @@ namespace dak::geometry::tests
          Assert::IsFalse(p1.is_inside(point_t(3., -4.)));
          Assert::IsFalse(p1.is_inside(point_t(4., 2.)));
          Assert::IsFalse(p1.is_inside(point_t(100., -400.)));
-
-         const rectangle_t r1 = p1.bounds();
-         Assert::AreEqual(point_t(-3., -3.), r1.top_left());
-         Assert::AreEqual(point_t( 3.,  3.), r1.bottom_right());
       }
 
       TEST_METHOD(polygon_intersection)
@@ -113,6 +118,23 @@ namespace dak::geometry::tests
          Assert::IsTrue(p2.intersects(p1));
          Assert::IsTrue(p3.intersects(p1));
          Assert::IsTrue(p1.intersects(p3));
+      }
+
+      TEST_METHOD(polygon_merge)
+      {
+         const polygon_t p1({ point_t( 3.,  3.), point_t( 3., -3.), point_t(-3., -3.), point_t(-3.,  3.), });
+         const polygon_t p2({ point_t( 3., -3.), point_t( 3.,  3.), point_t( 6.,  3.), point_t( 6., -3.), });
+         const polygon_t p3({ point_t(-3., -3.), point_t(-3.,  3.), point_t( 6.,  3.), point_t( 6., -3.), });
+
+         Assert::AreEqual(p3, p1.merge(p2));
+
+         const polygon_t p5({ point_t(6.,  3.), point_t(6., -3.), point_t(-3., -3.), point_t(-3.,  3.), });
+
+         Assert::AreEqual(p5, p2.merge(p1));
+
+         const polygon_t p4({ point_t( 3.,  3.), point_t( 6.,  3.), point_t( 6., -3.), point_t( 3., -3.), });
+
+         Assert::AreEqual(p3, p1.merge(p4));
       }
 
       TEST_METHOD(polygon_regular)

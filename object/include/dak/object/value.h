@@ -242,12 +242,12 @@ namespace dak::object
    #define DAK_ELEMENT_INT_OPERATORS(x, e) \
       DAK_ELEMENT_OPERATOR(x, wchar_t, e)  \
       DAK_ELEMENT_OPERATOR(x, char, e)     \
-      DAK_ELEMENT_OPERATOR(x, int16_t, e)    \
-      DAK_ELEMENT_OPERATOR(x, int32_t, e)    \
-      DAK_ELEMENT_OPERATOR(x, int64_t, e)    \
-      DAK_ELEMENT_OPERATOR(x, uint16_t, e)     \
-      DAK_ELEMENT_OPERATOR(x, uint32_t, e)    \
-      DAK_ELEMENT_OPERATOR(x, uint64_t, e)    \
+      DAK_ELEMENT_OPERATOR(x, int16_t, e)  \
+      DAK_ELEMENT_OPERATOR(x, int32_t, e)  \
+      DAK_ELEMENT_OPERATOR(x, int64_t, e)  \
+      DAK_ELEMENT_OPERATOR(x, uint16_t, e) \
+      DAK_ELEMENT_OPERATOR(x, uint32_t, e) \
+      DAK_ELEMENT_OPERATOR(x, uint64_t, e)
 
    // This defines the x= operator for floating-point-like types.
 
@@ -258,7 +258,7 @@ namespace dak::object
    // This defines the x= operator for container types.
 
   #define DAK_ELEMENT_CONTAINER_OPERATORS(x, e) \
-      DAK_ELEMENT_OPERATOR(x, array_t, e)         \
+      DAK_ELEMENT_OPERATOR(x, array_t, e)       \
       DAK_ELEMENT_OPERATOR(x, dict_t, e)
 
    // This defines the x= operator for the text type.

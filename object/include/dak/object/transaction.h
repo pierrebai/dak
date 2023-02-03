@@ -34,12 +34,12 @@ namespace dak::object
       {
       }
 
-      // Swap the current and saved object state.
+      // Swaps the current and saved object state.
       void undo_redo() const { _swapper(); }
 
    private:
-      // Create a swapper function that keep the saved state and can swap
-      // between the current state and the save state.
+      // Creates a swapper function that keeps the saved state and can swap
+      // between the current state and the saved state.
       template <class T>
       std::function<void()> make_swapper(edit_ref_t<T> an_object)
       {
@@ -59,8 +59,8 @@ namespace dak::object
 
    //////////////////////////////////////////////////////////////////////////
    //
-   // Transation. Keep modified objects are create an undo when commited
-   // or undo the changes if canceled.
+   // Transation. Keeps track of modified objects. Creates an undo entry in
+   // a timeline when commited. Reverts the changes if canceled.
 
    struct transaction_t
    {
@@ -81,7 +81,8 @@ namespace dak::object
       transaction_t& operator =(transaction_t&&) = default;
 
       // Add an object to the transaction.
-      // Automatically done when an object is modified.
+      // Automatically called when an edit_ref_t is created.
+      // As such, you should not need to call this by hand.
       template <class T>
       void add(const edit_ref_t<T>& an_object);
 

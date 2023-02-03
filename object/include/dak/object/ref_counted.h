@@ -80,7 +80,7 @@ namespace dak::object
       friend struct edit_ref_t<T>;                                \
       friend struct weak_ref_t<T>;                                \
       friend struct ref_base_t;                                   \
-      friend struct value_t;                                    \
+      friend struct value_t;                                      \
       friend struct transaction_t
 
 }

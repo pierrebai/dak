@@ -90,8 +90,8 @@ namespace dak::object
 
    //////////////////////////////////////////////////////////////////////////
    //
-   // Base class for the strong smart reference-counted templated pointer.
-   // Manages the strong ref count.
+   // Base class for the weak smart reference-counted templated pointer.
+   // Manages the weak ref count.
 
    struct weak_ref_base_t : ref_base_t
    {

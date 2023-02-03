@@ -26,7 +26,7 @@ namespace dak::object
    //
    // Most functions are const so that a temporary ref stream can be passed
    // as a const value to the stream operator. This allows creating the
-   // ref stream and sue it immediately in one expression.
+   // ref stream and use it immediately in one expression.
 
    struct ref_ostream_t : ref_output_t
    {
