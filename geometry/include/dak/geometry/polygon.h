@@ -74,6 +74,10 @@ namespace dak::geometry
       // Verify if the polygon is invalid. (Less than 3 sides.)
       bool is_invalid() const;
 
+      // Create a polygon that is the combination of this and another polygon.
+      // The polygon should have a common edge.
+      polygon_t merge(const polygon_t& other) const;
+
    private:
       double raw_double_area() const;
    };

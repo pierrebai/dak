@@ -8,6 +8,8 @@
 
 #include <algorithm>
 #include <numeric>
+#include <map>
+#include <set>
 
 namespace dak::geometry
 {
@@ -191,14 +193,14 @@ namespace dak::geometry
       const double dist2 = poly_center.distance_2(points[0]);
       const bool equidistant = std::equal(points.begin(), std::prev(points.end()), std::next(points.begin()), [poly_center, dist2](const point_t& a, const point_t& b) {
          return utility::near(poly_center.distance_2(b), dist2);
-      });
+         });
       if (!equidistant)
          return false;
 
       const double angle = poly_center.sweep(points.back(), points.front());
       const bool equiangled = std::equal(points.begin(), std::prev(points.end()), std::next(points.begin()), [poly_center, angle](const point_t& a, const point_t& b) {
          return utility::near(poly_center.sweep(a, b), angle);
-      });
+         });
       if (!equiangled)
          return false;
 
@@ -242,6 +244,51 @@ namespace dak::geometry
          prev = pt;
       }
       return false;
+   }
+
+   polygon_t polygon_t::merge(const polygon_t& other) const
+   {
+      polygon_t merged;
+      merged.points.reserve(points.size() + other.points.size());
+
+      std::map<point_t, size_t> point_map;
+      for (size_t i = 0; i < points.size(); ++i)
+         point_map[points[i]] = i;
+
+      // Add points from other until we meet the points of this.
+      // From there add the points of this that are not in other.
+      // The resume adding points from other.
+      //
+      // Only stitch this once. The polygons may have more than
+      // one segment in common.
+
+      bool stitched_this = false;
+
+      for (const point_t& other_pt : other.points)
+      {
+         const auto pos = point_map.find(other_pt);
+         if (pos == point_map.end())
+         {
+            merged.points.push_back(other_pt);
+         }
+         else if (!stitched_this)
+         {
+            stitched_this = true;
+
+            std::set<point_t> other_point_set(other.points.begin(), other.points.end());
+
+            size_t i = pos->second;
+            for (size_t count = 0; count < points.size(); ++count, i = (i + 1) % points.size())
+            {
+               const point_t& this_pt = points[i];
+               if (other_point_set.count(this_pt))
+                  continue;
+               merged.points.push_back(this_pt);
+            }
+         }
+      }
+
+      return merged;
    }
 }
 

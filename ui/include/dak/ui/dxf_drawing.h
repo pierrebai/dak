@@ -53,10 +53,7 @@ namespace dak::ui
       void internal_update_bbox(const std::vector<point_t>& pts);
       void internal_update_bbox(const point_t& p);
 
-      void start_polyline(size_t vertices_count, bool is_closed);
-
       std::wostream& out;
-      std::wostringstream buffer;
 
       drawing_with_t drawing_with;
 
@@ -65,8 +62,7 @@ namespace dak::ui
       transform_t applied_trf = transform_t::identity();
       rectangle_t bbox;
 
-      size_t next_handle_id = 0;
-      bool finished = false;
+      std::vector<polygon_t> polygons;
    };
 }
 

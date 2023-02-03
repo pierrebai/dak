@@ -61,17 +61,13 @@ namespace dak::geometry
       // Uniform scaling from the given point.
       static transform_t scale(const point_t& pt, double r)
       {
-         return translate(pt).compose(
-            scale(r).compose(
-               translate(-pt.x, -pt.y)));
+         return translate(-pt.x, -pt.y).then(scale(r)).then(translate(pt));
       }
 
       // Non-uniform scaling from the given point.
       static transform_t scale(const point_t& pt, double xs, double ys)
       {
-         return translate(pt).compose(
-            scale(xs, ys).compose(
-               translate(-pt.x, -pt.y)));
+         return translate(-pt.x, -pt.y).then(scale(xs, ys)).then(translate(pt));
       }
 
       // Translation of the given distances.
@@ -123,6 +119,11 @@ namespace dak::geometry
             rot_2 * other.scale_x + scale_y * other.rot_2,
             rot_2 * other.rot_1   + scale_y * other.scale_y,
             rot_2 * other.trans_x + scale_y * other.trans_y + trans_y);
+      }
+
+      constexpr transform_t then(const transform_t& other) const
+      {
+         return other.compose(*this);
       }
 
       // Invert the transform.
