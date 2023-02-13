@@ -31,8 +31,8 @@ namespace dak::object
       name_t(const edit_ref_t<namespace_t>& a_namespace, str_ptr_t a_label);
       name_t(const edit_ref_t<namespace_t>& a_namespace, const text_t& a_label);
 
-      // Constructor for a derived name of the given name, in the given namespace.
-      name_t(const edit_ref_t<namespace_t>& a_namespace, const name_t& a_basename);
+      // Constructor for a synonym of the given name, in the given namespace.
+      name_t(const edit_ref_t<namespace_t>& a_namespace, const name_t& a_synonym);
 
       // Constructor from name internal stuff.
       name_t(const ref_t<name_stuff_t>& stuff);

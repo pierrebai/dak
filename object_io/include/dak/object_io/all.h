@@ -8,6 +8,6 @@
 #include <dak/object_io/ref_istream_op.h>
 #include <dak/object_io/ref_ostream.h>
 #include <dak/object_io/ref_ostream_op.h>
-#include <dak/object/ref_ouput.h>
+#include <dak/object_io/ref_ouput.h>
 
 #endif /* DAK_OBJECT_IO_ALL_H */

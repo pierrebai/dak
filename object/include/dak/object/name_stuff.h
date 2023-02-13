@@ -22,7 +22,7 @@ namespace dak::object
    //
    // Name internal base stuff.
    //
-   // Keep things to compare two basenames.
+   // Keep things to compare two synonyms.
 
    struct name_stuff_base_t
    {
@@ -45,24 +45,14 @@ namespace dak::object
       // Metadata on the name to allow customizing behaviour based on their presence.
       using metadata_t = std::unordered_set<valid_ref_t<name_stuff_t>>;
 
-      // Optional basename of the name: same name, but different metadata.
-      using basename_t = ref_t<name_stuff_t>;
+      // Optional synonym of the name: same name, but different metadata.
+      using synonym_t = ref_t<name_stuff_t>;
 
       // Make a new name with the given label in the given namespace.
       static edit_ref_t<name_stuff_t> make(const edit_ref_t<namespace_t>& a_namespace, const text_t& a_label);
 
       // Make a new derived name of the given name, in the given namespace.
-      static edit_ref_t<name_stuff_t> make(const edit_ref_t<namespace_t>& a_namespace, const valid_ref_t<name_stuff_t>& a_basename);
-
-      // Constructor for a name with the given label in the given namespace.
-      name_stuff_t(const edit_ref_t<namespace_t>& a_namespace, const text_t& a_label);
-
-      // Constructor for a derived name of the given name, in the given namespace.
-      name_stuff_t(const edit_ref_t<namespace_t>& a_namespace, const valid_ref_t<name_stuff_t>& a_basename);
-
-      // Copy constructor.
-      // Needed for transactions involving names.
-      name_stuff_t(const name_stuff_t& other) = default;
+      static edit_ref_t<name_stuff_t> make_synonym(const edit_ref_t<namespace_t>& a_namespace, const valid_ref_t<name_stuff_t>& a_synonym);
 
       // Swap with another name stuff.
       void swap(name_stuff_t& other);
@@ -75,11 +65,27 @@ namespace dak::object
       bool operator ==(const name_stuff_t& other) const;
       uint64_t hash() const;
 
-      // Retrieve the basename of this name stuff. Maybe itself.
-      const name_stuff_base_t& get_basename() const;
+      // Retrieve the synonym of this name stuff. Maybe itself.
+      const name_stuff_base_t& get_synonym() const;
 
    private:
-      basename_t my_basename;
+      // Constructor for a name with the given label in the given namespace.
+      name_stuff_t(const edit_ref_t<namespace_t>& a_namespace, const text_t& a_label);
+
+      // Constructor for a synonym of the given name, in the given namespace.
+      name_stuff_t(const edit_ref_t<namespace_t>& a_namespace, const valid_ref_t<name_stuff_t>& a_synonym);
+
+      // Constructor for a composed name, in the given namespace.
+      name_stuff_t(
+         const edit_ref_t<namespace_t>& a_namespace,
+         const valid_ref_t<name_stuff_t>& a_base, const valid_ref_t<name_stuff_t>& a_child,
+         bool is_synonym);
+
+      // Copy constructor.
+      // Needed for transactions involving names.
+      name_stuff_t(const name_stuff_t& other) = default;
+
+      synonym_t my_synonym;
       metadata_t my_metadata;
 
       friend struct ref_t<name_stuff_t>;
@@ -90,6 +96,7 @@ namespace dak::object
       friend struct name_t;
       friend struct value_t;
       friend struct transaction_t;
+      friend struct transaction_item_t;
    };
 }
 

@@ -30,10 +30,10 @@ namespace dak::object
    {
    }
 
-   name_t::name_t(const edit_ref_t<namespace_t>& a_namespace, const name_t& a_basename)
-      : my_stuff(a_basename.is_valid()
-         ? valid_ref_t<name_stuff_t>(name_stuff_t::make(a_namespace, a_basename.my_stuff))
-         : a_basename.my_stuff)
+   name_t::name_t(const edit_ref_t<namespace_t>& a_namespace, const name_t& a_synonym)
+      : my_stuff(a_synonym.is_valid()
+         ? valid_ref_t<name_stuff_t>(name_stuff_t::make_synonym(a_namespace, a_synonym.my_stuff))
+         : a_synonym.my_stuff)
    {
    }
 

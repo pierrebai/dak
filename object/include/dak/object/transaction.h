@@ -30,12 +30,12 @@ namespace dak::object
       // a function that can swap the saved state in and out is kept alongside.
       template <class T>
       transaction_item_t(const edit_ref_t<T>& an_object)
-         : _swapper(make_swapper(an_object))
+         : my_swapper(make_swapper(an_object))
       {
       }
 
       // Swaps the current and saved object state.
-      void undo_redo() const { _swapper(); }
+      void undo_redo() const { my_swapper(); }
 
    private:
       // Creates a swapper function that keeps the saved state and can swap
@@ -53,7 +53,7 @@ namespace dak::object
          return std::move(swapper);
       }
 
-      std::function<void()> _swapper;
+      std::function<void()> my_swapper;
    };
 
 
@@ -65,19 +65,21 @@ namespace dak::object
    struct transaction_t
    {
       // The objects modified during the transation.
-      // Only ony copy of the object is kept.
-      // If an object is modified mlutiple times, only the first copy is kept.
+      // Only one copy of the object is kept.
+      // If an object is modified multiple times, only the initial version is kept.
       using modified_objects_t = std::unordered_map<const ref_counted_t*, transaction_item_t>;
 
       // Constructors.
       transaction_t() = default;
 
-      // Do not allow copy, allow transfer.
+      // Do not allow copy.
       transaction_t(const transaction_t&) = delete;
+      // Allow transfer.
       transaction_t(transaction_t&&) = default;
 
-      // Do not allow copy, allow transfer.
+      // Do not allow copy.
       transaction_t& operator =(const transaction_t&) = delete;
+      // Allow transfer.
       transaction_t& operator =(transaction_t&&) = default;
 
       // Add an object to the transaction.
@@ -86,12 +88,12 @@ namespace dak::object
       template <class T>
       void add(const edit_ref_t<T>& an_object);
 
-      // Commits all modified objects to the given timeline.
-      // Empties the tracked modified objects.
+      // Commit all modified objects to the given timeline.
+      // Empty the tracked modified objects.
       void commit(struct timeline_t&);
 
-      // Transfers all modified objects to the given parent transaction.
-      // Empties the tracked modified objects of this transaction.
+      // Transfer all modified objects to the given parent transaction.
+      // Empty the tracked modified objects of this transaction.
       // 
       // sub-commit assumes that all modifications done in the sub-transaction
       // have occured in one block after the ones in the parent transaction.
@@ -107,7 +109,7 @@ namespace dak::object
    private:
       void forget();
 
-      // Verifies if the transaction already has the given object.
+      // Verify if the transaction already has the given object.
       bool has(const ref_counted_t* an_object);
 
       // Internal implementation of adding an object to the transaction.

@@ -9,7 +9,7 @@ namespace dak::object
 {
    //////////////////////////////////////////////////////////////////////////
    //
-   // Exact name. Disregard basename when comparing.
+   // Exact name. Disregard synonyms when comparing.
    //
    // Useful when an algorithm needs to distinguish between derived names.
    // For example, when metadata is important in an indexed container.

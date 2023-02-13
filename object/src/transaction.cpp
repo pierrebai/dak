@@ -49,7 +49,7 @@ namespace dak::object
    {
       // Note: be sure to call insert() here, as that function guarantees
       //       that if an object was already inserted, it won't be inserted
-      //       again, so we keep only the earlier one.
+      //       again, so we keep the earlier one.
       //
       //       This assumes that all modifications done in the sub-transaction
       //       have occured in one block after the ones in the parent transaction.

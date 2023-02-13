@@ -9,7 +9,7 @@
 #include <dak/utility/containers.h>
 #include <dak/utility/multi_thread_progress.h>
 #include <dak/utility/number.h>
-#include <dak/utility/selection_t.h>
+#include <dak/utility/selection.h>
 #include <dak/utility/undo_stack.h>
 #include <dak/utility/text.h>
 #include <dak/utility/progress.h>

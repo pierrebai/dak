@@ -2,6 +2,9 @@
 add_library(dak_object
    include/dak/object/all.h
    include/dak/object/array.h                   src/array.cpp
+   include/dak/object/command.h                 src/command.cpp
+   include/dak/object/command_tree.h            src/command_tree.cpp
+   include/dak/object/constant.h                src/constant.cpp
    include/dak/object/dict.h                    src/dict.cpp
    include/dak/object/make_op.h
    include/dak/object/name.h                    src/name.cpp

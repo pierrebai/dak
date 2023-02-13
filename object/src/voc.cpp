@@ -17,6 +17,7 @@ namespace dak::object::voc
    // the outer namespaces with common words.
 
    #define DAK_OBJECT_VOC_MAKE_NAME(n) const name_t n(get_namespace(), L ## #n)
+   #define DAK_OBJECT_VOC_MAKE_SHORTHAND(n, s) const name_t n = s
 
    #include <dak/object/voc_internal.h>
 

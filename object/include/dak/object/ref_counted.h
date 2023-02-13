@@ -59,7 +59,7 @@ namespace dak::object
    // Use the macro in the public section of a class that derived
    // from ref_counted_t.
    //
-   // It declares a make() function and teh necessary friends.
+   // It declares a make() function and the necessary friends.
 
    #define DAK_OBJECT_REF_COUNTED(T)                              \
       static edit_ref_t<T> make()                                 \
