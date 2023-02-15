@@ -2,6 +2,11 @@
 
 namespace dak::any_op
 {
+   namespace details
+   {
+      const std::function<bool()> yes([]() -> bool { return true; });
+   }
+
    void register_ops()
    {
       // Needed so that the global operations are initialized in the tests.

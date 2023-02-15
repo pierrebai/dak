@@ -17,5 +17,6 @@
 #include <dak/any_op/size_op.h>
 #include <dak/any_op/stream_op.h>
 #include <dak/any_op/to_text_op.h>
+#include <dak/any_op/op_makers.h>
 
 #endif /* DAK_ANY_OP_ALL_H */

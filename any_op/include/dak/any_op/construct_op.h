@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef DAK_ANY_OP_MAKE_OP_H
-#define DAK_ANY_OP_MAKE_OP_H
+#ifndef DAK_ANY_OP_CONSTRUCT_OP_H
+#define DAK_ANY_OP_CONSTRUCT_OP_H
 
 #include <dak/any_op/op.h>
 #include <dak/any_op/as_op.h>
@@ -29,4 +29,4 @@ namespace dak::any_op
    }
 }
 
-#endif /* DAK_ANY_OP_MAKE_OP_H */
+#endif /* DAK_ANY_OP_CONSTRUCT_OP_H */

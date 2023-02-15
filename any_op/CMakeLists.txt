@@ -14,6 +14,7 @@ add_library(dak_any_op
    include/dak/any_op/is_real_op.h            src/is_real_op.cpp
    include/dak/any_op/is_unsigned_op.h        src/is_unsigned_op.cpp
    include/dak/any_op/op.h
+   include/dak/any_op/op_makers.h
    include/dak/any_op/op_selector.h           src/register_ops.cpp
    include/dak/any_op/size_op.h               src/size_op.cpp
    include/dak/any_op/stream_op.h             src/ostream_op.cpp
