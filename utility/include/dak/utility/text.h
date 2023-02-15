@@ -18,7 +18,11 @@ namespace dak::utility
    {
       static const char* t(const char* some_text);
       static const wchar_t* t(const wchar_t* some_text);
+      static const std::string& t(const std::string& some_text);
+      static const std::wstring& t(const std::wstring& some_text);
    };
+
+   // TODO: printf for wstring using any_t as values. Use var-args templates.
 }
 
 #endif

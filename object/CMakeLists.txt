@@ -2,8 +2,6 @@
 add_library(dak_object
    include/dak/object/all.h
    include/dak/object/array.h                   src/array.cpp
-   include/dak/object/command.h                 src/command.cpp
-   include/dak/object/command_tree.h            src/command_tree.cpp
    include/dak/object/constant.h                src/constant.cpp
    include/dak/object/dict.h                    src/dict.cpp
    include/dak/object/make_op.h
@@ -22,6 +20,7 @@ add_library(dak_object
    include/dak/object/similar.h                 src/similar.cpp
    include/dak/object/timeline.h
    include/dak/object/transaction.h             src/transaction.cpp
+   include/dak/object/types.h
    include/dak/object/value.h                   src/value.cpp
    include/dak/object/voc.h                     src/voc.cpp
    include/dak/object/voc_internal.h

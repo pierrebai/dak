@@ -29,6 +29,16 @@ namespace dak::utility
    {
       return some_text;
    }
+
+   const std::string& L::t(const std::string& some_text)
+   {
+      return some_text;
+   }
+   
+   const std::wstring& L::t(const std::wstring& some_text)
+   {
+      return some_text;
+   }
 }
 
 // vim: sw=3 : sts=3 : et : sta : 

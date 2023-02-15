@@ -1,15 +1,21 @@
 #pragma once
 
-#ifndef DAK_OBJECT_COMMAND_H
-#define DAK_OBJECT_COMMAND_H
+#ifndef DAK_COMMAND_COMMAND_H
+#define DAK_COMMAND_COMMAND_H
 
 #include <dak/object/object.h>
+#include <dak/object/types.h>
 #include <dak/object/voc.h>
 
 namespace dak::object
 {
    struct transaction_t;
    struct value_t;
+}
+
+namespace dak::command
+{
+   USING_DAK_OBJECT_TYPES;
 
    //////////////////////////////////////////////////////////////////////////
    //
@@ -71,6 +77,13 @@ namespace dak::object
    private:
       static command_t create_prototype();
    };
+
+   //////////////////////////////////////////////////////////////////////////
+   //
+   // Register any_op operations on command_t, command_tree_t, command_t::action_t.
+
+   void register_command_ops();
+
 }
 
-#endif /* DAK_OBJECT_COMMAND_H */
+#endif /* DAK_COMMAND_COMMAND_H */

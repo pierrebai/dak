@@ -1,12 +1,12 @@
 #pragma once
 
-#ifndef DAK_OBJECT_COMMAND_TREE_H
-#define DAK_OBJECT_COMMAND_TREE_H
+#ifndef DAK_COMMAND_COMMAND_TREE_H
+#define DAK_COMMAND_COMMAND_TREE_H
 
-#include <dak/object/command.h>
+#include <dak/command/command.h>
 #include <dak/object/voc.h>
 
-namespace dak::object
+namespace dak::command
 {
    //////////////////////////////////////////////////////////////////////////
    //
@@ -25,6 +25,8 @@ namespace dak::object
 
    struct command_tree_t : command_t
    {
+      DAK_OBJECT_REF_COUNTED(command_tree_t);
+
       // The commands that will be executed, each given a name.
       static const name_t& commands;
       using commands_t = dict_t;
@@ -38,6 +40,10 @@ namespace dak::object
       // The source command is called `from`, the destination command
       // is called 'dest'. The output name is kept under 'output' and
       // the input name is kept under 'input'.
+      //
+      // If the 'from' command name is empty, then it refers to the inputs
+      // of the overall command-tree. If the 'dest' command name is empty,
+      // then it refers to the outputs of the overall command-tree.
       static const name_t& from;
       static const name_t& output;
       static const name_t& dest;
@@ -64,4 +70,4 @@ namespace dak::object
    };
 }
 
-#endif /* DAK_OBJECT_COMMAND_TREE_H */
+#endif /* DAK_COMMAND_COMMAND_TREE_H */

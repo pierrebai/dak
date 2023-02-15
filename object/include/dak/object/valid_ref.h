@@ -82,6 +82,22 @@ namespace dak::object
       valid_ref_t(const T* t) : ref_t<T>(t)  { if (!t) throw std::exception("invalid valid ref"); }
       valid_ref_t<T>& operator =(const T* t) { if (!t) throw std::exception("invalid valid ref"); ref_t<T>::operator =(t); return *this; }
 
+      template <class O>
+      valid_ref_t(const O* t) : ref_t<T>(t) { if (!this->my_object) throw std::exception("invalid valid ref"); }
+
+      template <class O>
+      valid_ref_t<T>& operator =(const O* t)
+      {
+         const T* prev_object = this->my_object;
+         ref_t<T>::operator =(t);
+         if (!this->my_object)
+         {
+            this->my_object = prev_object;
+            throw std::exception("invalid valid ref");
+         }
+         return *this;
+      }
+
       friend T;
       friend struct value_t;
    };

@@ -64,6 +64,12 @@ namespace dak::object
       ref_t(const T* t) : strong_ref_base_t(t) {}
       ref_t<T>& operator =(const T* t) { strong_ref_base_t::operator =(t); return *this; }
 
+      template <class O>
+      ref_t(const O* t) : strong_ref_base_t(dynamic_cast<const T*>(t)) {}
+
+      template <class O>
+      ref_t<T>& operator =(const O* t) { strong_ref_base_t::operator =(dynamic_cast<const T *>(t)); return *this; }
+
       friend T;
       friend struct value_t;
    };

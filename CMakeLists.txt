@@ -27,6 +27,9 @@ add_subdirectory(object_io_tests)
 add_subdirectory(any_op)
 add_subdirectory(any_op_tests)
 
+add_subdirectory(command)
+add_subdirectory(command_tests)
+
 add_subdirectory(ui)
 
 if(want_qt)

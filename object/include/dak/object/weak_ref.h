@@ -96,6 +96,12 @@ namespace dak::object
       weak_ref_t(const T* t) : weak_ref_base_t(t) {}
       weak_ref_t<T>& operator =(const T* t) { weak_ref_base_t::operator =(t); return *this; }
 
+      template <class O>
+      weak_ref_t(const O* t) : weak_ref_base_t(t) {}
+
+      template <class O>
+      weak_ref_t<T>& operator =(const O* t) { weak_ref_base_t::operator =(t); return *this; }
+
       friend T;
       friend struct value_t;
    };

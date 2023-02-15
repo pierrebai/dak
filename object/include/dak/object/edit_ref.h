@@ -81,6 +81,11 @@ namespace dak::object
       edit_ref_t(T* t) : valid_ref_t<T>(t) {}
       edit_ref_t<T>& operator =(const T* t) { valid_ref_t<T>::operator =(t); return *this; }
 
+      template <class O>
+      edit_ref_t(O* t) : valid_ref_t<T>(t) {}
+      template <class O>
+      edit_ref_t<T>& operator =(const O* t) { valid_ref_t<T>::operator =(t); return *this; }
+
       friend T;
       friend struct value_t;
    };

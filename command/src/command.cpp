@@ -1,15 +1,18 @@
-#include <dak/object/command.h>
+#include <dak/command/command.h>
+
 #include <dak/object/dict.h>
 
-namespace dak::object
+#include <stdexcept>
+
+namespace dak::command
 {
    //////////////////////////////////////////////////////////////////////////
    //
    // Well-known names making up a command.
 
-   const name_t& command_t::inputs = voc::inputs;
-   const name_t& command_t::action = voc::action;
-   const name_t& command_t::outputs = voc::outputs;
+   const name_t& command_t::inputs = dak::object::voc::inputs;
+   const name_t& command_t::action = dak::object::voc::action;
+   const name_t& command_t::outputs = dak::object::voc::outputs;
 
    //////////////////////////////////////////////////////////////////////////
    //
@@ -23,6 +26,10 @@ namespace dak::object
    dict_t command_t::execute(const valid_ref_t<command_t>& cmd, const inputs_t& inputs, transaction_t& trans)
    {
       action_t action = cmd->get_action();
+      if (!action)
+         throw std::runtime_error("command contains no action");
+
+
       return action(cmd, inputs, trans);
    }
 
