@@ -6,6 +6,14 @@
 
 namespace dak::command
 {
+   namespace
+   {
+      command_t::outputs_t do_nothing(const valid_ref_t<command_t>&, const command_t::inputs_t&, transaction_t&)
+      {
+         return {};
+      }
+   }
+
    //////////////////////////////////////////////////////////////////////////
    //
    // Well-known names making up a command.
@@ -18,7 +26,7 @@ namespace dak::command
    //
    // Execution
 
-   dict_t command_t::execute(const inputs_t& inputs, transaction_t& trans)
+   dict_t command_t::execute(const inputs_t& inputs, transaction_t& trans) const
    {
       return execute(valid_ref_t<command_t>(this), inputs, trans);
    }
@@ -55,21 +63,20 @@ namespace dak::command
 
    //////////////////////////////////////////////////////////////////////////
    //
-   // Prototype
+   // Prototype of a command: contains an empty execute function,
+   // empty inputs and empty outputs.
 
-   command_t command_t::create_prototype()
+   command_t::command_t()
+      : command_t(do_nothing, inputs_t(), outputs_t())
    {
-      command_t proto;
-      proto.my_values[action ] = action_t();
-      proto.my_values[inputs ] = inputs_t();
-      proto.my_values[outputs] = outputs_t();
-      return proto;
    }
 
-   const command_t& command_t::get_prototype()
+   command_t::command_t(const action_t& an_action, const inputs_t& some_inputs, const outputs_t& some_outputs)
+      : constant_t()
    {
-      static const command_t prototype = create_prototype();
-      return prototype;
+      my_values[action]  = an_action;
+      my_values[inputs]  = some_inputs;
+      my_values[outputs] = some_outputs;
    }
 
 }

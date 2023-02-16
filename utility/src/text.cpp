@@ -4,7 +4,26 @@
 
 namespace dak::utility
 {
-   std::wstring convert(const char* text)
+   ////////////////////////////////////////////////////////////////////////////
+   //
+   // Text widening and narrowing
+
+   text_t convert(const char* text)
+   {
+      return widen_text(text);
+   }
+
+   text_t convert(const std::string& text)
+   {
+      return widen_text(text.c_str());
+   }
+
+   text_t widen_text(const std::string& text)
+   {
+      return widen_text(text.c_str());
+   }
+
+   text_t widen_text(const char* text)
    {
       const size_t needed = strlen(text) + 1;
       std::wstring converted(needed, L'#');
@@ -15,10 +34,25 @@ namespace dak::utility
       return converted;
    }
 
-   std::wstring convert(const std::string& text)
+   std::string narrow_text(const text_t& text)
    {
-      return convert(text.c_str());
+      return narrow_text(text.c_str());
    }
+
+   std::string narrow_text(str_ptr_t text)
+   {
+      const size_t needed = wcslen(text) + 1;
+      std::string converted(needed, '#');
+      size_t used = 0;
+      wcstombs_s(&used, &converted[0], converted.size(), text, needed);
+      // Note: we don't want the terminating nul in the wstring, so we subtract one.
+      converted.resize(used > 0 ? used - 1 : used);
+      return converted;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   //
+   // TODO: text localisation
 
    const char* L::t(const char* some_text)
    {
@@ -35,9 +69,61 @@ namespace dak::utility
       return some_text;
    }
    
-   const std::wstring& L::t(const std::wstring& some_text)
+   const text_t& L::t(const text_t& some_text)
    {
       return some_text;
+   }
+
+   ////////////////////////////////////////////////////////////////////////////
+   //
+   // Text format and join
+
+   text_t format(str_ptr_t text_format, ...)
+   {
+      va_list args;
+      va_start(args, text_format);
+      text_t formatted = format(text_format, args);
+      va_end(args);
+      return formatted;
+   }
+
+   text_t format(const text_t& text_format, va_list args)
+   {
+      return format(text_format.c_str(), args);
+   }
+
+   text_t format(str_ptr_t text_format, va_list args)
+   {
+      wchar_t dummy[1];
+      const int required_count = vswprintf(dummy, 0, text_format, args);
+
+      text_t formatted;
+      formatted.resize(required_count + 1);
+
+      while (true)
+      {
+         const int count = vswprintf(formatted.data(), formatted.size(), text_format, args);
+         if (count >= 0 && count < formatted.size())
+         {
+            formatted.resize(required_count - 1);
+            break;
+         }
+         formatted.resize(formatted.size() * 2);
+      }
+
+      return formatted;
+   }
+
+   text_t join(const std::vector<text_t>& parts, const text_t sep)
+   {
+      text_t joined;
+      for (const text_t& part : parts)
+      {
+         if (joined.size())
+            joined += sep;
+         joined += part;
+      }
+      return joined;
    }
 }
 

@@ -28,6 +28,8 @@ namespace dak::object
 
       DAK_OBJECT_REF_COUNTED(constant_t);
 
+      constant_t() = default;
+
       // Number of values in the object.
       index_t size() const;
 
@@ -47,6 +49,9 @@ namespace dak::object
       auto operator <=> (const constant_t&) const = default;
 
    protected:
+      constant_t(const constant_t&) = default;
+      constant_t& operator =(const constant_t&) = default;
+
       // Reset the object.
       void clear() override;
 

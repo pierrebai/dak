@@ -66,16 +66,13 @@ namespace dak::command
       const outputs_t get_outputs() const;
 
       // Execute the command in the given transaction.
-      dict_t execute(const inputs_t&, transaction_t&);
+      dict_t execute(const inputs_t&, transaction_t&) const;
       static dict_t execute(const valid_ref_t<command_t>&, const inputs_t&, transaction_t&);
 
       // Prototype of a command: contains an empty execute function,
-      // empty inputs and empty outputs. You can copy this command
-      // constant to make a specific command prototype.
-      static const command_t& get_prototype();
-
-   private:
-      static command_t create_prototype();
+      // empty inputs and empty outputs.
+      command_t();
+      command_t(const action_t&, const inputs_t&, const outputs_t&);
    };
 
    //////////////////////////////////////////////////////////////////////////

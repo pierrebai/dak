@@ -44,6 +44,7 @@ namespace dak::object
 
       // Return the label of the name.
       const text_t& to_text() const;
+      str_ptr_t to_str_ptr() const;
 
       // Retrieves the name namespace, if any.
       const weak_ref_t<namespace_t>& get_namespace() const;

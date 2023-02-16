@@ -56,16 +56,16 @@ namespace dak::command
       using connections_t = array_t;
       const connections_t get_connections() const;
 
-      // Prototype of a commands tree: contains the default execute function,
-      // empty inputs, empty outputs and empty connections. You can copy this
-      // commands tree constant to make a specific command tree prototype.
-      static const command_tree_t& get_prototype();
-
       // Prototype of a single inter-command connection.
       static connection_t get_connection_prototype();
 
+      // Prototype of a commands tree: contains the default execute function,
+      // empty inputs, empty outputs and empty connections.
+      command_tree_t();
+
+      command_tree_t(const commands_t&, const inputs_t&, const outputs_t&, const connections_t&);
+
    private:
-      static command_tree_t create_prototype();
       static dict_t create_connection_prototype();
    };
 }

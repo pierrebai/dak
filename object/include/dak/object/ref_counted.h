@@ -72,9 +72,6 @@ namespace dak::object
          return edit_ref_t<T>(new T(other));                      \
       }                                                           \
                                                                   \
-      T() = default;                                              \
-      T(const T&) = default;                                      \
-                                                                  \
       friend struct ref_t<T>;                                     \
       friend struct valid_ref_t<T>;                               \
       friend struct edit_ref_t<T>;                                \

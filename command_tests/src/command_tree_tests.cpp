@@ -24,7 +24,7 @@ namespace dak::command::tests
 
       TEST_METHOD(empty_command_tree)
       {
-         edit_ref_t<command_tree_t> tree = command_tree_t::make(command_tree_t::get_prototype());
+         edit_ref_t<command_tree_t> tree = command_tree_t::make();
 
          transaction_t trans;
          dict_t inputs;

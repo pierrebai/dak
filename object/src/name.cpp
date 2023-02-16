@@ -83,6 +83,11 @@ namespace dak::object
       return my_stuff->my_label;
    }
 
+   str_ptr_t name_t::to_str_ptr() const
+   {
+      return to_text().c_str();
+   }
+
    //////////////////////////////////////////////////////////////////////////
    //
    // Name namespace.
