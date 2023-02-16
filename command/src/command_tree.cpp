@@ -36,6 +36,9 @@ namespace dak::command
          // A command name and an input parameter name as a pair.
          using command_param_t = std::pair<name_t, name_t>;
 
+         // Map from command names to the actual values to be used as inputs.
+         using commands_input_values_t = std::map<name_t, dict_t>;
+
          // Map from command parameter name to the list of pairs of command names
          // and parameter names to which that parameter is connected. If the
          // command name is empty, then it is connected to the global command-tree
@@ -75,6 +78,7 @@ namespace dak::command
             fill_io_params(tree, command_tree_t::outputs, output_params);
 
             fill_connections(tree);
+            detect_command_loops(tree);
          }
 
          command_t::outputs_t execute(const command_t::inputs_t& inputs, transaction_t& trans)
@@ -82,16 +86,18 @@ namespace dak::command
             command_t::outputs_t outputs;
 
             // Accumulate the actual values of the inputs of commands.
-            using commands_input_values_t = std::map<name_t, dict_t>;
             commands_input_values_t commands_input_values;
 
             // Initialize each command input with its default values.
             for (const auto& [sub_cmd_name, sub_cmd] : all_commands)
                commands_input_values[sub_cmd_name] = valid_ref_t<command_t>(sub_cmd)->get_inputs();
 
-            // Ovedrwrite each command input with the global inputs parameter
+            // Overwrite each command input with the global inputs parameter
             // it may be connected to.
-            for (const auto& [sub_cmd_name, inputs_conns] : inputs_connections)
+            //
+            // Note: we take a copy of the inputs connections because the
+            //       update_sub_command_input fuunction will modify it.
+            for (const auto& [sub_cmd_name, inputs_conns] : command_connections_t(inputs_connections))
             {
                for (const auto& [input_param_name, output_conns] : inputs_conns)
                {
@@ -99,7 +105,7 @@ namespace dak::command
                      continue;
 
                   const value_t value = inputs[input_param_name];
-                  commands_input_values[sub_cmd_name][input_param_name] = value;
+                  update_sub_command_input(commands_input_values, sub_cmd_name, input_param_name, value);
                }
             }
 
@@ -130,12 +136,7 @@ namespace dak::command
                      if (child_cmd_name.is_valid())
                      {
                         commands_input_values[child_cmd_name][input_param_name] = value;
-                        inputs_connections[child_cmd_name].erase(input_param_name);
-                        if (inputs_connections[child_cmd_name].size() == 0)
-                        {
-                           sub_commands.erase(child_cmd_name);
-                           root_commands.insert(child_cmd_name);
-                        }
+                        update_sub_command_input(commands_input_values, child_cmd_name, input_param_name, value);
                      }
                      else
                      {
@@ -154,6 +155,16 @@ namespace dak::command
          }
 
       private:
+         void update_sub_command_input(commands_input_values_t& input_values, const name_t& sub_cmd_name, const name_t& input_param_name, const value_t& value)
+         {
+            input_values[sub_cmd_name][input_param_name] = value;
+            inputs_connections[sub_cmd_name].erase(input_param_name);
+            if (inputs_connections[sub_cmd_name].size() == 0)
+            {
+               sub_commands.erase(sub_cmd_name);
+               root_commands.insert(sub_cmd_name);
+            }
+         }
 
          // Gather all commands used by the command tree.
          // Also fill the root commands with all commands. They will be filtered afterward.
@@ -210,8 +221,6 @@ namespace dak::command
                outputs_connections[from][output].emplace_back(dest, input);
                inputs_connections[dest][input].emplace_back(from, output);
 
-               // TODO: validate that the inputs and outputs parametert actually exist in the connected command.
-
                if (inputs_connections[dest][input].size() == 2)
                   errors.emplace_back(
                      format(L::t(L"parameter named %ls of command named %ls receives data from multiple connections"),
@@ -248,15 +257,19 @@ namespace dak::command
             }
             else
             {
-               const bool is_input = (io_name == command_tree_t::inputs);
                // Note: inputs parameters means the connection side that will receive the value.
                //       For global parameters, that is the output. Same inversion for outputs.
-               const bool has_param = contains(is_input ? output_params : input_params, param_name);
+               const name_t& true_io_name = (io_name == command_tree_t::inputs)
+                                          ? command_tree_t::outputs
+                                          : command_tree_t::inputs;
+
+               const bool is_input = (true_io_name == command_tree_t::inputs);
+               const bool has_param = contains(is_input ? input_params : output_params, param_name);
                if (!has_param)
                {
                   errors.emplace_back(format(L::t(
-                     L"missing %ls global parameter named %ls"),
-                     io_name.to_str_ptr(), param_name.to_str_ptr()
+                     L"missing global %ls parameter named %ls"),
+                     true_io_name.to_str_ptr(), param_name.to_str_ptr()
                   ));
                }
             }
@@ -273,20 +286,25 @@ namespace dak::command
                errors.emplace_back(L::t(L"all commands form loops"));
             }
 
-            // Otherwise, descent into each root and verify we never meet a parent
-            // as a child.
-            for (const name_t& root_name : root_commands)
+            // Otherwise, descent into each command and verify we never
+            // meet a parent as a child.
+            for (const auto& [cmd_name, cmd] : all_commands)
             {
                // Track the parents as we traverse the command tree in order to
                // detect loops in the directed graph of commands that depend on
                // other commands.
                parents_t parents;
-               detect_command_loop(root_name, parents);
+               detect_command_loop(cmd_name, parents);
             }
          }
 
          void detect_command_loop(const name_t& cmd_name, parents_t& parents)
          {
+            // Don't recurse over global output since we would then recurse
+            // through the global inputs.
+            if (!cmd_name.is_valid())
+               return;
+
             if (contains(parents, cmd_name))
             {
                errors.emplace_back(format(L::t(

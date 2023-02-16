@@ -23,9 +23,12 @@ namespace dak::command
          {
             DAK_ANY_OP_COMPARABLE_MAKERS(dak::command::command_t);
             DAK_OBJECT_OP_MAKERS(dak::command::command_t);
+            DAK_OBJECT_REF_OP_MAKERS(dak::command::command_t, dak::object::object_t);
 
             DAK_ANY_OP_COMPARABLE_MAKERS(dak::command::command_tree_t);
             DAK_OBJECT_OP_MAKERS(dak::command::command_tree_t);
+            DAK_OBJECT_REF_OP_MAKERS(dak::command::command_tree_t, dak::command::command_t);
+            DAK_OBJECT_REF_OP_MAKERS(dak::command::command_tree_t, dak::object::object_t);
 
             DAK_ANY_OP_COMPARABLE_MAKERS(dak::command::command_t::action_t);
 
