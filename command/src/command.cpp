@@ -8,7 +8,7 @@ namespace dak::command
 {
    namespace
    {
-      command_t::outputs_t do_nothing(const valid_ref_t<command_t>&, const command_t::inputs_t&, transaction_t&)
+      command_t::outputs_t do_nothing(const command_t&, const command_t::inputs_t&, transaction_t&)
       {
          return {};
       }
@@ -28,17 +28,11 @@ namespace dak::command
 
    dict_t command_t::execute(const inputs_t& inputs, transaction_t& trans) const
    {
-      return execute(valid_ref_t<command_t>(this), inputs, trans);
-   }
-
-   dict_t command_t::execute(const valid_ref_t<command_t>& cmd, const inputs_t& inputs, transaction_t& trans)
-   {
-      action_t action = cmd->get_action();
+      action_t action = get_action();
       if (!action)
          throw std::runtime_error("command contains no action");
 
-
-      return action(cmd, inputs, trans);
+      return action(*this, inputs, trans);
    }
 
    //////////////////////////////////////////////////////////////////////////
@@ -77,6 +71,11 @@ namespace dak::command
       my_values[action]  = an_action;
       my_values[inputs]  = some_inputs;
       my_values[outputs] = some_outputs;
+   }
+
+   valid_ref_t<command_t> command_t::make(const action_t& an_action, const inputs_t& some_inputs, const outputs_t& some_outputs)
+   {
+      return valid_ref_t<command_t>(new command_t(an_action, some_inputs, some_outputs));
    }
 
 }

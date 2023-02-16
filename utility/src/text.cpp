@@ -8,16 +8,6 @@ namespace dak::utility
    //
    // Text widening and narrowing
 
-   text_t convert(const char* text)
-   {
-      return widen_text(text);
-   }
-
-   text_t convert(const std::string& text)
-   {
-      return widen_text(text.c_str());
-   }
-
    text_t widen_text(const std::string& text)
    {
       return widen_text(text.c_str());
@@ -94,18 +84,17 @@ namespace dak::utility
 
    text_t format(str_ptr_t text_format, va_list args)
    {
-      wchar_t dummy[1];
-      const int required_count = vswprintf(dummy, 0, text_format, args);
+      const int required_count = _vsnwprintf((wchar_t*)nullptr, 0, text_format, args);
 
       text_t formatted;
       formatted.resize(required_count + 1);
 
       while (true)
       {
-         const int count = vswprintf(formatted.data(), formatted.size(), text_format, args);
+         const int count = _vsnwprintf(formatted.data(), formatted.size(), text_format, args);
          if (count >= 0 && count < formatted.size())
          {
-            formatted.resize(required_count - 1);
+            formatted.resize(required_count);
             break;
          }
          formatted.resize(formatted.size() * 2);

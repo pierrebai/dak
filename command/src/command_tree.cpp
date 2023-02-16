@@ -25,7 +25,7 @@ namespace dak::command
          using all_commands_t = std::map<name_t, ref_t<command_t>>;
 
          // Ordered list of input or output parameters and their default values.
-         using params_t = std::map<name_t, any_t>;
+         using params_t = std::map<name_t, value_t>;
 
          // Map from names of the commands that do not depend on other commands to the commands.
          using root_commands_t = std::set<name_t>;
@@ -93,12 +93,12 @@ namespace dak::command
             // it may be connected to.
             for (const auto& [sub_cmd_name, inputs_conns] : inputs_connections)
             {
-               for (const auto& [input_param_name, output_conns] : inputs_connections)
+               for (const auto& [input_param_name, output_conns] : inputs_conns)
                {
                   if (!inputs.contains(input_param_name))
                      continue;
 
-                  const any_t value = inputs[input_param_name];
+                  const value_t value = inputs[input_param_name];
                   commands_input_values[sub_cmd_name][input_param_name] = value;
                }
             }
@@ -126,7 +126,7 @@ namespace dak::command
                {
                   for (const auto& [child_cmd_name, input_param_name] : output_conns)
                   {
-                     const any_t value = sub_cmd_outputs[output_param_name];
+                     const value_t value = sub_cmd_outputs[output_param_name];
                      if (child_cmd_name.is_valid())
                      {
                         commands_input_values[child_cmd_name][input_param_name] = value;
@@ -164,7 +164,7 @@ namespace dak::command
                ref_t<command_t> cmd = command.as<ref_t<command_t>>();
                if (cmd.is_null())
                {
-                  errors.push_back(format(L::t(L"missing command named %s"), name.to_str_ptr()));
+                  errors.push_back(format(L::t(L"missing command named %ls"), name.to_str_ptr()));
                   continue;
                }
 
@@ -214,7 +214,7 @@ namespace dak::command
 
                if (inputs_connections[dest][input].size() == 2)
                   errors.emplace_back(
-                     format(L::t(L"parameter named %s of command named %s receives data from multiple connections"),
+                     format(L::t(L"parameter named %ls of command named %ls receives data from multiple connections"),
                         input.to_str_ptr(), dest.to_str_ptr()));
 
                // If the connection is between two commands, as opposed
@@ -233,7 +233,7 @@ namespace dak::command
                const auto cmd_iter = all_commands.find(cmd_name);
                if (cmd_iter == all_commands.end())
                {
-                  errors.emplace_back(format(L::t(L"missing command named %s"), cmd_name.to_str_ptr()));
+                  errors.emplace_back(format(L::t(L"missing command named %ls"), cmd_name.to_str_ptr()));
                   return;
                }
 
@@ -242,18 +242,20 @@ namespace dak::command
                if (!has_param)
                {
                   errors.emplace_back(format(L::t(
-                     L"missing %s parameter named %s in command named %s"),
+                     L"missing %ls parameter named %ls in command named %ls"),
                      io_name.to_str_ptr(), param_name.to_str_ptr(), cmd_name.to_str_ptr()));
                }
             }
             else
             {
                const bool is_input = (io_name == command_tree_t::inputs);
-               const bool has_param = contains(is_input ? input_params : output_params, param_name);
+               // Note: inputs parameters means the connection side that will receive the value.
+               //       For global parameters, that is the output. Same inversion for outputs.
+               const bool has_param = contains(is_input ? output_params : input_params, param_name);
                if (!has_param)
                {
                   errors.emplace_back(format(L::t(
-                     L"missing %s global parameter named %s"),
+                     L"missing %ls global parameter named %ls"),
                      io_name.to_str_ptr(), param_name.to_str_ptr()
                   ));
                }
@@ -288,7 +290,7 @@ namespace dak::command
             if (contains(parents, cmd_name))
             {
                errors.emplace_back(format(L::t(
-                  L"loop formed by command named %s"), cmd_name.to_str_ptr()));
+                  L"loop formed by command named %ls"), cmd_name.to_str_ptr()));
 
                // Do not continue: there is a loop, we would recurse infinitely.
                return;
@@ -309,17 +311,17 @@ namespace dak::command
 
       };
 
-      command_t::outputs_t execute_command_tree(const valid_ref_t<command_t>& cmd, const command_t::inputs_t& inputs, transaction_t& trans)
+      command_t::outputs_t execute_command_tree(const command_t& cmd, const command_t::inputs_t& inputs, transaction_t& trans)
       {
-         valid_ref_t<command_tree_t> tree = cmd;
+         const command_tree_t& tree = dynamic_cast<const command_tree_t &>(cmd);
 
          command_tree_analysis_t analysis;
 
-         analysis.analyze(*tree);
+         analysis.analyze(tree);
          if (!analysis.is_valid())
-            throw std::runtime_error(narrow_text(join(analysis.errors)).c_str());
+            throw std::runtime_error(narrow_text(join(analysis.errors, L" -- ")).c_str());
 
-         command_t::outputs_t outputs = tree->get_outputs();
+         command_t::outputs_t outputs = tree.get_outputs();
          outputs.append(analysis.execute(inputs, trans));
          return outputs;
       }
@@ -370,6 +372,18 @@ namespace dak::command
       return conn;
    }
 
+   command_tree_t::connection_t command_tree_t::make_connection(
+      const name_t& a_from, const name_t& an_output,
+      const name_t& a_dest, const name_t& an_input)
+   {
+      command_tree_t::connection_t conn;
+      conn[from]   = a_from;
+      conn[output] = an_output;
+      conn[dest]   = a_dest;
+      conn[input]  = an_input;
+      return conn;
+   }
+
    //////////////////////////////////////////////////////////////////////////
    //
    // Prototype of a commands tree: contains the default execute function,
@@ -389,4 +403,13 @@ namespace dak::command
       my_values[commands]    = some_commands;
       my_values[connections] = some_connections;
    }
+
+   valid_ref_t<command_tree_t> command_tree_t::make(
+      const commands_t& some_commands,
+      const inputs_t& some_inputs, const outputs_t& some_outputs,
+      const connections_t& some_connections)
+   {
+      return valid_ref_t<command_tree_t>(new command_tree_t(some_commands, some_inputs, some_outputs, some_connections));
+   }
+
 }

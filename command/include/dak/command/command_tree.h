@@ -58,12 +58,15 @@ namespace dak::command
 
       // Prototype of a single inter-command connection.
       static connection_t get_connection_prototype();
+      static connection_t make_connection(const name_t& from, const name_t& output, const name_t& dest, const name_t& input);
 
       // Prototype of a commands tree: contains the default execute function,
       // empty inputs, empty outputs and empty connections.
       command_tree_t();
 
       command_tree_t(const commands_t&, const inputs_t&, const outputs_t&, const connections_t&);
+
+      static valid_ref_t<command_tree_t> make(const commands_t&, const inputs_t&, const outputs_t&, const connections_t&);
 
    private:
       static dict_t create_connection_prototype();

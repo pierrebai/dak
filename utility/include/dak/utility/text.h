@@ -20,9 +20,6 @@ namespace dak::utility
    std::string narrow_text(const text_t& text);
    std::string narrow_text(str_ptr_t text);
 
-   text_t convert(const std::string& text);
-   text_t convert(const char* text);
-
    ////////////////////////////////////////////////////////////////////////////
    //
    // Text localisation

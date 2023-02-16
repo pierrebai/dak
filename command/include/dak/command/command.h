@@ -55,7 +55,7 @@ namespace dak::command
       //
       // The action function signature of the executed command.
       static const name_t& action;
-      using action_t = std::function<dict_t(const valid_ref_t<command_t>&, const inputs_t&, transaction_t&)>;
+      using action_t = std::function<dict_t(const command_t&, const inputs_t&, transaction_t&)>;
       action_t get_action() const;
 
       // Retrieve the outputs dictionary of the command.
@@ -67,12 +67,13 @@ namespace dak::command
 
       // Execute the command in the given transaction.
       dict_t execute(const inputs_t&, transaction_t&) const;
-      static dict_t execute(const valid_ref_t<command_t>&, const inputs_t&, transaction_t&);
 
       // Prototype of a command: contains an empty execute function,
       // empty inputs and empty outputs.
       command_t();
       command_t(const action_t&, const inputs_t&, const outputs_t&);
+
+      static valid_ref_t<command_t> make(const action_t&, const inputs_t&, const outputs_t&);
    };
 
    //////////////////////////////////////////////////////////////////////////
