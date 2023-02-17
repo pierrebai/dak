@@ -21,6 +21,9 @@ namespace dak::command
       {
          command_ops_init_t()
          {
+            supers_of_op_t::make<command_t     >::op<supers_t>(make_supers_of([]() -> supers_t { return { &typeid(constant_t) }; }));
+            supers_of_op_t::make<command_tree_t>::op<supers_t>(make_supers_of([]() -> supers_t { return { &typeid(command_t)  }; }));
+
             DAK_ANY_OP_COMPARABLE_MAKERS(dak::command::command_t);
             DAK_OBJECT_OP_MAKERS(dak::command::command_t);
             DAK_OBJECT_REF_OP_MAKERS(dak::command::command_t, dak::object::object_t);

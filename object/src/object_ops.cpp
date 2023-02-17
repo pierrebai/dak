@@ -9,6 +9,7 @@
 
 #include <dak/any_op/compare_op.h>
 #include <dak/any_op/size_op.h>
+#include <dak/any_op/supers_of_op.h>
 #include <dak/any_op/construct_op.h>
 #include <dak/any_op/convert_op.h>
 #include <dak/any_op/is_compatible_op.h>
@@ -25,12 +26,22 @@ namespace dak::object
       {
          object_ops_init_t()
          {
-            any_op::construct_op_t::make<name_t         >::op<name_t         >((std::function<name_t()         >)[]() -> name_t          { return name_t(); });
-            any_op::construct_op_t::make<array_t        >::op<array_t        >((std::function<array_t()        >)[]() -> array_t         { return array_t(); });
-            any_op::construct_op_t::make<dict_t         >::op<dict_t         >((std::function<dict_t()         >)[]() -> dict_t          { return dict_t(); });
-            any_op::construct_op_t::make<value_t        >::op<value_t        >((std::function<value_t()        >)[]() -> value_t         { return value_t(); });
-            any_op::construct_op_t::make<ref_t<object_t>>::op<ref_t<object_t>>((std::function<ref_t<object_t>()>)[]() -> ref_t<object_t> { return ref_t<object_t>(); });
-            any_op::construct_op_t::make<weak_ref_t<object_t>>::op<weak_ref_t<object_t>>((std::function<weak_ref_t<object_t>()>)[]() -> weak_ref_t<object_t> { return weak_ref_t<object_t>(); });
+            supers_of_op_t::make<weak_ref_base_t      >::op<supers_t>(make_supers_of([]() -> supers_t { return { &typeid(ref_base_t)            }; }));
+            supers_of_op_t::make<weak_ref_t<object_t> >::op<supers_t>(make_supers_of([]() -> supers_t { return { &typeid(weak_ref_base_t)       }; }));
+
+            supers_of_op_t::make<strong_ref_base_t    >::op<supers_t>(make_supers_of([]() -> supers_t { return { &typeid(ref_base_t)            }; }));
+            supers_of_op_t::make<ref_t<object_t>      >::op<supers_t>(make_supers_of([]() -> supers_t { return { &typeid(strong_ref_base_t)     }; }));
+            supers_of_op_t::make<valid_ref_t<object_t>>::op<supers_t>(make_supers_of([]() -> supers_t { return { &typeid(ref_t<object_t>)       }; }));
+            supers_of_op_t::make<edit_ref_t<object_t> >::op<supers_t>(make_supers_of([]() -> supers_t { return { &typeid(valid_ref_t<object_t>) }; }));
+
+            supers_of_op_t::make<object_t             >::op<supers_t>(make_supers_of([]() -> supers_t { return { &typeid(constant_t)            }; }));
+
+            construct_op_t::make<name_t         >::op<name_t         >((std::function<name_t()         >)[]() -> name_t          { return name_t(); });
+            construct_op_t::make<array_t        >::op<array_t        >((std::function<array_t()        >)[]() -> array_t         { return array_t(); });
+            construct_op_t::make<dict_t         >::op<dict_t         >((std::function<dict_t()         >)[]() -> dict_t          { return dict_t(); });
+            construct_op_t::make<value_t        >::op<value_t        >((std::function<value_t()        >)[]() -> value_t         { return value_t(); });
+            construct_op_t::make<ref_t<object_t>>::op<ref_t<object_t>>((std::function<ref_t<object_t>()>)[]() -> ref_t<object_t> { return ref_t<object_t>(); });
+            construct_op_t::make<weak_ref_t<object_t>>::op<weak_ref_t<object_t>>((std::function<weak_ref_t<object_t>()>)[]() -> weak_ref_t<object_t> { return weak_ref_t<object_t>(); });
 
             object::make_op_t::make<object_t    >::op<ref_t<object_t>    >((std::function<ref_t<object_t>()    >)[]() -> ref_t<object_t>     { return object_t::make(); });
             object::make_op_t::make<namespace_t >::op<ref_t<namespace_t> >((std::function<ref_t<namespace_t>() >)[]() -> ref_t<namespace_t>  { return namespace_t::make(); });

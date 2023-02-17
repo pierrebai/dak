@@ -19,6 +19,7 @@ add_library(dak_any_op
    include/dak/any_op/size_op.h               src/size_op.cpp
    include/dak/any_op/stream_op.h             src/ostream_op.cpp
                                               src/istream_op.cpp
+   include/dak/any_op/supers_of_op.h          src/supers_of_op.cpp
    include/dak/any_op/to_text_op.h            src/to_text_op.cpp
 )
 

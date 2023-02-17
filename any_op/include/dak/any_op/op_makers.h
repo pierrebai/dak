@@ -11,6 +11,7 @@
 #include <dak/any_op/construct_op.h>
 #include <dak/any_op/size_op.h>
 #include <dak/any_op/stream_op.h>
+#include <dak/any_op/supers_of_op.h>
 #include <dak/any_op/to_text_op.h>
 
 namespace dak::any_op

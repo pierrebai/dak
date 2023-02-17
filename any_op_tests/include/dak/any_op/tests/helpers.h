@@ -15,6 +15,14 @@ namespace Microsoft::VisualStudio::CppUnitTestFramework
       RETURN_WIDE_STRING(an_info.name());
    }
 
+   template<> inline std::wstring ToString<std::vector<const std::type_info *>>(const std::vector<const std::type_info*>& some_info)
+   {
+      std::string result;
+      for (const auto info : some_info)
+         result += info->name();
+      RETURN_WIDE_STRING(result.c_str());
+   }
+
    template<> inline std::wstring ToString<dak::utility::any_t>(const dak::utility::any_t& a_var)
    {
       using namespace dak::any_op;

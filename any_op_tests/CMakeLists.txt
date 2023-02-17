@@ -13,6 +13,7 @@ add_library(dak_any_op_tests SHARED
    src/is_unsigned_op_tests.cpp
    src/size_op_tests.cpp
    src/stream_op_tests.cpp
+   src/supers_of_op_tests.cpp
    src/to_text_op_tests.cpp
 
    include/dak/any_op/tests/helpers.h
