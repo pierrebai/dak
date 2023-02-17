@@ -26,12 +26,12 @@ namespace dak::command
 
             DAK_ANY_OP_COMPARABLE_MAKERS(dak::command::command_t);
             DAK_OBJECT_OP_MAKERS(dak::command::command_t);
-            DAK_OBJECT_REF_OP_MAKERS(dak::command::command_t, dak::object::object_t);
+            DAK_OBJECT_REF_OP_MAKERS(dak::command::command_t, dak::object::constant_t);
 
             DAK_ANY_OP_COMPARABLE_MAKERS(dak::command::command_tree_t);
             DAK_OBJECT_OP_MAKERS(dak::command::command_tree_t);
             DAK_OBJECT_REF_OP_MAKERS(dak::command::command_tree_t, dak::command::command_t);
-            DAK_OBJECT_REF_OP_MAKERS(dak::command::command_tree_t, dak::object::object_t);
+            DAK_OBJECT_REF_OP_MAKERS(dak::command::command_tree_t, dak::object::constant_t);
 
             DAK_ANY_OP_COMPARABLE_MAKERS(dak::command::command_t::action_t);
 
@@ -43,8 +43,10 @@ namespace dak::command
             //
             // Mixed types
 
+            is_compatible_op_t::make<command_t, command_tree_t>::op<bool>(details::yes);
+
             convert_op_t::make<command_t>::op<command_t, command_tree_t>(
-               [](const command_tree_t& arg_b) -> command_t { return arg_b; });
+               [](const command_tree_t& arg) -> command_t { return arg; });
          }
       };
 
