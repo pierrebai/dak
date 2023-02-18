@@ -72,7 +72,7 @@ namespace dak::object::tests
          Assert::AreEqual<double>(5.0, const_d1[sand]);
          Assert::AreEqual<text_t>(L"6", const_d1[hello]);
          Assert::AreEqual<name_t>(rock, const_d1[world]);
-         Assert::AreEqual<const datatype_t&>(typeid(void), const_d1[absent].get_type());
+         Assert::AreEqual<const type_info_t&>(typeid(void), const_d1[absent].get_type_info());
       }
 
       TEST_METHOD(dict_append)

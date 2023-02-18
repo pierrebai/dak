@@ -21,7 +21,7 @@ namespace dak::any_op
       static void register_ops();
    };
 
-   bool is_integer(const std::type_info& arg_a);
+   bool is_integer(const type_info_t& some_type);
 
    template<class T>
    inline bool is_integer()

@@ -6,8 +6,7 @@
 #include <dak/object_io/ref_istream.h>
 
 #include <dak/any_op/as_op.h>
-#include <dak/any_op/get_type_name_op.h>
-#include <dak/any_op/get_type_info_op.h>
+#include <dak/utility/type_info.h>
 
 #include <iomanip>
 
@@ -28,7 +27,7 @@ namespace dak::object
    // 
    // It discovers the type of the value it will need to read by first reading
    // the name of the type being input and finding the corresponding C++ type
-   // via get_type_info_op_t. The name is followed by a numeric id that will
+   // via get_type_info. The name is followed by a numeric id that will
    // represent the type if encountered again. The association between the
    // type and its id is registered in the ref-istream.
    // 
@@ -40,9 +39,9 @@ namespace dak::object
    // the any-op library and its istream-op.
    //
    // This format relies on the existence of implementations of the following
-   // operations for a given type:
+   // functions or operations for a given type:
    //
-   //    - get_type_info_op_t : converts type name to C++ std::type_info
+   //    - get_type_info : converts type name to type_info_t
    //    - ref_istream_op_t or istream_op_t : reads a value
 
    struct ref_istream_op_t : any_op::op_t<ref_istream_op_t, const ref_istream_t&>

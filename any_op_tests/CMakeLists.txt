@@ -5,8 +5,6 @@ add_library(dak_any_op_tests SHARED
    src/construct_op_tests.cpp
    src/convert_op_tests.cpp
    src/dominant_op_tests.cpp
-   src/get_type_name_op_tests.cpp
-   src/get_type_info_op_tests.cpp
    src/is_compatible_op_tests.cpp
    src/is_integer_op_tests.cpp
    src/is_real_op_tests.cpp

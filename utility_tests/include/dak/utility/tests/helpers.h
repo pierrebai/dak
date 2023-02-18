@@ -7,6 +7,7 @@
 
 #include <any>
 #include <typeinfo>
+#include <vector>
 
 namespace Microsoft::VisualStudio::CppUnitTestFramework
 {
@@ -22,19 +23,6 @@ namespace Microsoft::VisualStudio::CppUnitTestFramework
          result += info->name();
       RETURN_WIDE_STRING(result.c_str());
    }
-
-   template<> inline std::wstring ToString<dak::utility::any_t>(const dak::utility::any_t& a_var)
-   {
-      using namespace dak::any_op;
-      RETURN_WIDE_STRING(a_var);
-   }
-
-   template<> inline std::wstring ToString<dak::any_op::comparison_t>(const dak::any_op::comparison_t& a_cmp)
-   {
-      using namespace dak::any_op;
-      RETURN_WIDE_STRING(a_cmp);
-   }
-
 }
 
 #endif /* DAK_ANY_TESTS_HELPERS_H */

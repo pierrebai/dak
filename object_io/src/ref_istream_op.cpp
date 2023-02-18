@@ -254,7 +254,7 @@ namespace dak::object
       if (!ref_istr.parse_sigil(L'@'))
          return ref_istr;
 
-      const datatype_t* type = nullptr;
+      const type_info_t* type = nullptr;
 
       int64_t id = 0;
       istr >> std::ws >> id;
@@ -263,7 +263,7 @@ namespace dak::object
       {
          text_t tn;
          istr >> std::ws >> tn >> std::ws;
-         type = &any_op::get_type_info(tn);
+         type = &utility::get_type_info(tn);
          if (*type == typeid(void))
          {
             // Note: if it has an unknown, unsupported type, then the type is

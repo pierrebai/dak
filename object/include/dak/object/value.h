@@ -19,12 +19,34 @@ namespace dak::object
    struct dict_t;
    struct object_t;
 
-   using datatype_t = std::type_info;
-
    //////////////////////////////////////////////////////////////////////////
    //
-   // Element in arrays and dictionaries. Can contain any data,
-   // as the value are held in a std::any (any_t).
+   // Element in objects, arrays and dictionaries.
+   // 
+   // Designed to hold certain favored types to simplify generic dynamic
+   // object manipulations. Can also contain any data, as the value are
+   // held in a any_t (std::any).
+   //
+   // The favored types are:
+   //    - truth values             : bool
+   //    - integers                 : int64_t
+   //    - index positions          ; index_t
+   //    - strong object references : ref_t<object_t>
+   //    - weak object references   : weak_ref_t<object_t>
+   //    - names                    : name_t
+   //    - floating-point values    : double
+   //    - arrays                   : array_t
+   //    - dictionaries             : dict_t
+   //    - text                     : text_t
+   // 
+   // All of these types have a corresponding explicit as_T function
+   // to extract the value, for example as_text.
+   // 
+   // Some similar types are also kept in the value as converted to
+   // a favored value. These are:
+   //    - str_ptr_t             : text_t
+   //    - valid_ref_t<object_t> : ref_t<object_t>
+   //    - edit_ref_t<object_t>  : ref_t<object_t>
    //
    // All types are always copied when assigned to, so beware of assigning
    // dictionaries and arrays!
@@ -64,15 +86,22 @@ namespace dak::object
       template <class T>
       value_t(const T& value) : my_data(value) {}
 
-      // Constructors taking values that we want to modify.
+      // Constructors for values that need to be converted
+      // before being stored.
 
       value_t(str_ptr_t value) : value_t(text_t(value ? value : L"")) {}
 
       template <class T>
-      value_t(const valid_ref_t<T>& value) : my_data(ref_t<T>(value)) {}
+      value_t(const ref_t<T>& value) : my_data() { *this = value; }
 
       template <class T>
-      value_t(const edit_ref_t<T>& value) : my_data(ref_t<T>(value)) {}
+      value_t(const valid_ref_t<T>& value) : my_data() { *this = value; }
+
+      template <class T>
+      value_t(const edit_ref_t<T>& value) : my_data() { *this = value; }
+
+      template <class T>
+      value_t(const weak_ref_t<T>& value) : my_data() { *this = value; }
 
       ~value_t() = default;
 
@@ -89,10 +118,16 @@ namespace dak::object
       value_t& operator =(str_ptr_t value) { my_data = text_t(value ? value : L""); return *this; }
 
       template <class T>
-      value_t& operator =(const valid_ref_t<T> value) { my_data = ref_t<T>(value); return *this; }
+      value_t& operator =(const ref_t<T> value) { my_data = ref_t<object_t>(value); return *this; }
 
       template <class T>
-      value_t& operator =(const edit_ref_t<T> value) { my_data = ref_t<T>(value); return *this; }
+      value_t& operator =(const valid_ref_t<T> value) { my_data = ref_t<object_t>(value); return *this; }
+
+      template <class T>
+      value_t& operator =(const edit_ref_t<T> value) { my_data = ref_t<object_t>(value); return *this; }
+
+      template <class T>
+      value_t& operator =(const weak_ref_t<T> value) { my_data = weak_ref_t<object_t>(value); return *this; }
 
       // Verify if there is any data.
       bool is_valid() const { return my_data.has_value(); }
@@ -104,7 +139,7 @@ namespace dak::object
 
       bool as_boolean() const { return as<bool>(); }
       int64_t as_integer() const { return as<int64_t>(); }
-      int64_t as_index() const { return as<index_t>(); }
+      index_t as_index() const { return as<index_t>(); }
       const ref_t<object_t>& as_ref() const;
       const weak_ref_t<object_t>& as_weak_ref() const;
       name_t as_name() const { return as<name_t>(); }
@@ -172,23 +207,23 @@ namespace dak::object
       index_t size() const;
 
       // Current type of data contained in the value.
-      const datatype_t& get_type() const;
+      const type_info_t& get_type_info() const;
 
       // All integer-like types are equivalent, so you can read a boolean
       // from an integer. Same for double-like types, float and double.
-      bool is_compatible(const datatype_t& a_type) const;
+      bool is_compatible(const type_info_t& a_type) const;
 
       // Clear the old data and set the type. Clear even if same type.
-      void reset(const datatype_t& = typeid(void));
+      void reset(const type_info_t& = typeid(void));
 
       // Reset if currently not the requested type.
       // Tries to preserve as much of the old value as possible.
-      void ensure(const datatype_t&);
+      void ensure(const type_info_t&);
 
       // Verify if it has the requested type or unknown, in which case set the type.
       // Returns true if the type was already correct or successfully set.
       // Returns false if the type was different.
-      bool verify(const datatype_t&);
+      bool verify(const type_info_t&);
 
       // Comparison.
       std::partial_ordering operator <=> (const value_t&) const;

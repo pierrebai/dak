@@ -6,8 +6,7 @@
 #include <dak/object_io/ref_ostream.h>
 
 #include <dak/any_op/as_op.h>
-#include <dak/any_op/get_type_name_op.h>
-#include <dak/any_op/get_type_info_op.h>
+#include <dak/utility/type_info.h>
 
 #include <iomanip>
 
@@ -38,9 +37,9 @@ namespace dak::object
    // the any-op library and its ostream-op.
    //
    // This format relies on the existence of implementations of the following
-   // operations for a given type:
+   // functions or operations for a given type:
    //
-   //    - get_type_name_op_t : converts a C++ std::type_info to a type name
+   //    - get_type_name : converts a type_info_t to a type name
    //    - ref_ostream_op_t or ostream_op_t : writes a value
 
    struct ref_ostream_op_t : any_op::op_t<ref_ostream_op_t, const ref_ostream_t&>

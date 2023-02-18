@@ -42,9 +42,9 @@ namespace dak::any_op
          return TO{};
    }
 
-   inline any_t convert(const any_t& arg_a, const std::type_info& arg_b)
+   inline any_t convert(const any_t& arg_a, const type_info_t& some_type)
    {
-      return convert_op_t::call_any_with_types<void>::op<any_t>(arg_a, arg_b);
+      return convert_op_t::call_any_with_types<void>::op<any_t>(arg_a, some_type);
    }
 
 }

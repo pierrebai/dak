@@ -53,12 +53,12 @@ namespace dak::object
       return empty;
    }
 
-   void ref_input_t::add_type_with_id(const datatype_t& type, int64_t id) const
+   void ref_input_t::add_type_with_id(const type_info_t& type, int64_t id) const
    {
       my_type_with_ids[std::abs(id)] = &type;
    }
 
-   const datatype_t& ref_input_t::get_type_with_id(int64_t id) const
+   const type_info_t& ref_input_t::get_type_with_id(int64_t id) const
    {
       const auto pos = my_type_with_ids.find(std::abs(id));
       if (pos != my_type_with_ids.end())

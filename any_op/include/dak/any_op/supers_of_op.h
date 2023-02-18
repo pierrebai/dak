@@ -24,7 +24,7 @@ namespace dak::any_op
    //////////////////////////////////////////////////////////////////////////
    //
    // The list of super-types.
-   using supers_t = std::vector<const std::type_info*>;
+   using supers_t = std::vector<const type_info_t*>;
 
 
    //////////////////////////////////////////////////////////////////////////
@@ -39,7 +39,7 @@ namespace dak::any_op
    //
    // Retrieve the list of super-types of a type.
 
-   supers_t supers_of(const std::type_info& arg);
+   supers_t supers_of(const type_info_t& some_type);
 
    inline auto super_of(const any_t& arg)
    {

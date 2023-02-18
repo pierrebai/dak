@@ -158,7 +158,7 @@ namespace dak::object::tests
          Assert::AreEqual<double>(5.0, ro1->get(sand));
          Assert::AreEqual<text_t>(L"6", ro1->get(hello));
          Assert::AreEqual<name_t>(rock, ro1->get(world));
-         //Assert::AreEqual<const datatype_t&>(typeid(void), ro1->get(absent).get_type());
+         //Assert::AreEqual<const type_info_t&>(typeid(void), ro1->get(absent).get_type_info());
 
          {
             transaction_t t2;

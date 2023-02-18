@@ -223,9 +223,9 @@ namespace dak::any_op
       // All that is needed is to enter this file to create the globals.
    }
 
-   bool is_compatible(const std::type_info& arg_a, const std::type_info& arg_b)
+   bool is_compatible(const type_info_t& to_type, const type_info_t& from_type)
    {
-      any_t result = is_compatible_op_t::call_any_with_types<void, void>::op(arg_a, arg_b);
+      any_t result = is_compatible_op_t::call_any_with_types<void, void>::op(to_type, from_type);
       if (result.has_value())
          return std::any_cast<bool>(result);
       else

@@ -3,7 +3,13 @@
 #ifndef DAK_OBJECT_OBJECT_H
 #define DAK_OBJECT_OBJECT_H
 
-#include <dak/object/constant.h>
+#include <dak/utility/types.h>
+#include <dak/object/value.h>
+#include <dak/object/name.h>
+#include <dak/object/ref_counted.h>
+#include <dak/object/edit_ref.h>
+
+#include <map>
 
 namespace dak::object
 {
@@ -15,12 +21,18 @@ namespace dak::object
    //
    // Automatically adds values when referenced via the [] operator.
 
-   struct object_t : constant_t
+   struct object_t : ref_counted_t
    {
       // Types used by the object: data container and iterators.
+      typedef std::map<name_t, value_t> values_t;
+      typedef values_t::const_iterator const_iterator;
       typedef values_t::iterator iterator;
 
       DAK_OBJECT_REF_COUNTED(object_t);
+
+      // Constructors.
+      object_t() = default;
+      object_t(const object_t&) = default;
 
       // Assignment. Copy the whole object.
       object_t& operator =(const object_t&) = default;
@@ -28,18 +40,24 @@ namespace dak::object
       // Append the given object.
       object_t& operator +=(const object_t&);
 
+      // Number of values in the object.
+      index_t size() const;
+
+      // Element containment check.
+      bool contains(const name_t&) const;
+
       // Modifications to the object.
       void append(const object_t&);
       bool erase(const name_t&);
       void swap(object_t&);
 
       // Reset the object.
-      using constant_t::clear;
+      void clear() override;
 
       // Element retrieval.
       // Non-const version inserts when the name is not found.
       value_t& operator [](const name_t&);
-      const value_t& operator [](const name_t& n) const { return constant_t::operator [](n); }
+      const value_t& operator [](const name_t&) const;
 
       value_t& get(const name_t& n) { return (*this)[n]; }
       const value_t& get(const name_t& n) const { return (*this)[n]; }
@@ -47,14 +65,17 @@ namespace dak::object
       // Iterations over the values.
       iterator begin();
       iterator end();
-      const_iterator begin() const { return constant_t::begin(); }
-      const_iterator end() const { return constant_t::end(); }
+      const_iterator begin() const;
+      const_iterator end() const;
 
       // Comparisons.
       auto operator <=> (const object_t&) const = default;
 
       // Modification in a transaction.
       edit_ref_t<object_t> modify(transaction_t&) const;
+
+   protected:
+      values_t my_values;
    };
 
 
@@ -67,6 +88,9 @@ namespace dak::object
    //////////////////////////////////////////////////////////////////////////
    //
    // Implementation of element lookup.
+
+   template<class T>
+   inline const value_t& valid_ref_t<T>::operator [](const name_t& n) const { return (**this)[n]; }
 
    template<class T>
    inline value_t& edit_ref_t<T>::operator [](const name_t& n) const { return (**this)[n]; }

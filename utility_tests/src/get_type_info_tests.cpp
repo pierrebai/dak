@@ -1,20 +1,17 @@
 #include <CppUnitTest.h>
 
-#include <dak/any_op/all.h>
-#include <dak/any_op/tests/helpers.h>
+#include <dak/utility/type_info.h>
+#include <dak/utility/tests/helpers.h>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
-using namespace dak::any_op;
 
-namespace dak::any_op::tests
+namespace dak::utility::tests
 {		
-   TEST_CLASS(get_type_info_op_tests)
+   TEST_CLASS(get_type_info_tests)
 	{
 	public:
 		TEST_METHOD(get_type_info_test)
 		{
-         register_ops();
-
          Assert::IsTrue(typeid(bool) ==     get_type_info(L"bool"));
          Assert::IsTrue(typeid(char) ==     get_type_info(L"char"));
          Assert::IsTrue(typeid(wchar_t) ==  get_type_info(L"wchar_t"));

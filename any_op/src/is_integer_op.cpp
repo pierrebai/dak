@@ -42,9 +42,9 @@ namespace dak::any_op
       // All that is needed is to enter this file to create the globals.
    }
 
-   bool is_integer(const std::type_info& arg_a)
+   bool is_integer(const type_info_t& some_type)
    {
-      any_t result = is_integer_op_t::call_any_with_types<void>::op(arg_a);
+      any_t result = is_integer_op_t::call_any_with_types<void>::op(some_type);
       return as<bool>(result);
    }
 }

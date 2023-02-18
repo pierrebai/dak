@@ -31,7 +31,7 @@ namespace dak::command
    // The outputs of the command are kept within the command
    // in a dict under the 'outputs' name.
    //
-   // A concrete command should be provided as a constant_t prototype
+   // A concrete command should be provided as a command_t prototype
    // containing the execute function already filled. The inputs and
    // outputs dictionary should also be filled with default values.
    // This documents what the command expects as inputs and what
@@ -40,7 +40,7 @@ namespace dak::command
    // To call a concrete command, a copy the prototype inputs into a dict
    // and call execute on the command.
 
-   struct command_t : constant_t
+   struct command_t : object_t
    {
       DAK_OBJECT_REF_COUNTED(command_t);
 

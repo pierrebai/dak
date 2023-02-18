@@ -5,8 +5,6 @@
 
 #include <dak/any_op/compare_op.h>
 #include <dak/any_op/convert_op.h>
-#include <dak/any_op/get_type_info_op.h>
-#include <dak/any_op/get_type_name_op.h>
 #include <dak/any_op/is_compatible_op.h>
 #include <dak/any_op/construct_op.h>
 #include <dak/any_op/size_op.h>
@@ -25,12 +23,9 @@ namespace dak::any_op
 
 //////////////////////////////////////////////////////////////////////////
 //
-// Declare ops to convert a type to text and back to type.
+// Register the type info of a type to convert to text and back to type.
 
-#define DAK_ANY_OP_TYPE_MAKERS(T)                                                               \
-   dak::any_op::get_type_name_op_t::make<T>::op<text_t>((std::function<text_t()>)               \
-      []() -> text_t { return L ## # T; });                                                       \
-   dak::any_op::add_type_info( L ## # T, typeid(T))
+#define DAK_ANY_OP_TYPE_MAKERS(T) dak::utility::add_type_info( L ## # T, typeid(T))
 
 
 //////////////////////////////////////////////////////////////////////////

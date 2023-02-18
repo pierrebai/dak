@@ -149,7 +149,7 @@ namespace dak::object
 
          if (id > 0)
          {
-            const text_t tn = any_op::get_type_name(arg_a);
+            const text_t tn = utility::get_type_name(arg_a);
             if (tn.empty())
             {
                // Note: if it has an unknown, unsupported type, then we either

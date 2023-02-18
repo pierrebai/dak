@@ -5,6 +5,20 @@ namespace dak::object
 {
    //////////////////////////////////////////////////////////////////////////
    //
+   // Data access.
+
+   bool object_t::contains(const name_t& n) const
+   {
+      return 0 != my_values.count(n);
+   }
+
+   index_t object_t::size() const
+   {
+      return my_values.size();
+   }
+
+   //////////////////////////////////////////////////////////////////////////
+   //
    // Modifications.
 
    object_t& object_t::operator +=(const object_t & an_obj)
@@ -29,6 +43,11 @@ namespace dak::object
       return true;
    }
 
+   void object_t::clear()
+   {
+      my_values.clear();
+   }
+
    void object_t::swap(object_t& an_other)
    {
       my_values.swap(an_other.my_values);
@@ -39,9 +58,28 @@ namespace dak::object
    //
    // Data access.
 
+   const value_t& object_t::operator [](const name_t& n) const
+   {
+      const_iterator pos = my_values.find(n);
+      if (my_values.end() == pos)
+         return value_t::empty;
+      else
+         return pos->second;
+   }
+
    value_t & object_t::operator [](const name_t& n)
    {
       return my_values[n];
+   }
+
+   object_t::const_iterator object_t::begin() const
+   {
+      return my_values.begin();
+   }
+
+   object_t::const_iterator object_t::end() const
+   {
+      return my_values.end();
    }
 
    object_t::iterator object_t::begin()

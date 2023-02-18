@@ -13,8 +13,8 @@
 #include <dak/any_op/construct_op.h>
 #include <dak/any_op/convert_op.h>
 #include <dak/any_op/is_compatible_op.h>
-#include <dak/any_op/get_type_name_op.h>
-#include <dak/any_op/get_type_info_op.h>
+
+#include <dak/utility/type_info.h>
 
 namespace dak::object
 {
@@ -26,15 +26,13 @@ namespace dak::object
       {
          object_ops_init_t()
          {
-            supers_of_op_t::make<weak_ref_base_t      >::op<supers_t>(make_supers_of([]() -> supers_t { return { &typeid(ref_base_t)            }; }));
-            supers_of_op_t::make<weak_ref_t<object_t> >::op<supers_t>(make_supers_of([]() -> supers_t { return { &typeid(weak_ref_base_t)       }; }));
+            supers_of_op_t::make<weak_ref_base_t      >::op<supers_t>(make_supers_of([]() -> supers_t { return { &utility::type_info_of<ref_base_t>()            }; }));
+            supers_of_op_t::make<weak_ref_t<object_t> >::op<supers_t>(make_supers_of([]() -> supers_t { return { &utility::type_info_of<weak_ref_base_t>()       }; }));
 
-            supers_of_op_t::make<strong_ref_base_t    >::op<supers_t>(make_supers_of([]() -> supers_t { return { &typeid(ref_base_t)            }; }));
-            supers_of_op_t::make<ref_t<object_t>      >::op<supers_t>(make_supers_of([]() -> supers_t { return { &typeid(strong_ref_base_t)     }; }));
-            supers_of_op_t::make<valid_ref_t<object_t>>::op<supers_t>(make_supers_of([]() -> supers_t { return { &typeid(ref_t<object_t>)       }; }));
-            supers_of_op_t::make<edit_ref_t<object_t> >::op<supers_t>(make_supers_of([]() -> supers_t { return { &typeid(valid_ref_t<object_t>) }; }));
-
-            supers_of_op_t::make<object_t             >::op<supers_t>(make_supers_of([]() -> supers_t { return { &typeid(constant_t)            }; }));
+            supers_of_op_t::make<strong_ref_base_t    >::op<supers_t>(make_supers_of([]() -> supers_t { return { &utility::type_info_of<ref_base_t>()            }; }));
+            supers_of_op_t::make<ref_t<object_t>      >::op<supers_t>(make_supers_of([]() -> supers_t { return { &utility::type_info_of<strong_ref_base_t>()     }; }));
+            supers_of_op_t::make<valid_ref_t<object_t>>::op<supers_t>(make_supers_of([]() -> supers_t { return { &utility::type_info_of<ref_t<object_t>>()       }; }));
+            supers_of_op_t::make<edit_ref_t<object_t> >::op<supers_t>(make_supers_of([]() -> supers_t { return { &utility::type_info_of<valid_ref_t<object_t>>() }; }));
 
             construct_op_t::make<name_t         >::op<name_t         >((std::function<name_t()         >)[]() -> name_t          { return name_t(); });
             construct_op_t::make<array_t        >::op<array_t        >((std::function<array_t()        >)[]() -> array_t         { return array_t(); });
@@ -108,23 +106,14 @@ namespace dak::object
             size_op_t::make<>::op<index_t, edit_ref_t<object_t>>([](const edit_ref_t<object_t>& arg_b) -> index_t { return arg_b.is_valid() ? arg_b->size() : index_t(0); });
             size_op_t::make<>::op<index_t, valid_ref_t<object_t>>([](const valid_ref_t<object_t>& arg_b) -> index_t { return arg_b.is_valid() ? arg_b->size() : index_t(0); });
 
-            get_type_name_op_t::make<name_t               >::op<text_t>((std::function<text_t()>)[]() -> text_t { return L"dak::object::name_t"; });
-            get_type_name_op_t::make<array_t              >::op<text_t>((std::function<text_t()>)[]() -> text_t { return L"dak::object::array_t"; });
-            get_type_name_op_t::make<dict_t               >::op<text_t>((std::function<text_t()>)[]() -> text_t { return L"dak::object::dict_t"; });
-            get_type_name_op_t::make<value_t              >::op<text_t>((std::function<text_t()>)[]() -> text_t { return L"dak::object::value_t"; });
-            get_type_name_op_t::make<ref_t<object_t>      >::op<text_t>((std::function<text_t()>)[]() -> text_t { return L"dak::object::ref_t<object_t>"; });
-            get_type_name_op_t::make<valid_ref_t<object_t>>::op<text_t>((std::function<text_t()>)[]() -> text_t { return L"dak::object::valid_ref_t<object_t>"; });
-            get_type_name_op_t::make<edit_ref_t<object_t> >::op<text_t>((std::function<text_t()>)[]() -> text_t { return L"dak::object::edit_ref_t<object_t>"; });
-            get_type_name_op_t::make<weak_ref_t<object_t> >::op<text_t>((std::function<text_t()>)[]() -> text_t { return L"dak::object::weak_ref_t<object_t>"; });
-
-            add_type_info(L"dak::object::name_t", typeid(name_t));
-            add_type_info(L"dak::object::array_t", typeid(array_t));
-            add_type_info(L"dak::object::dict_t", typeid(dict_t));
-            add_type_info(L"dak::object::value_t", typeid(value_t));
-            add_type_info(L"dak::object::ref_t<object_t>", typeid(ref_t<object_t>));
-            add_type_info(L"dak::object::valid_ref_t<object_t>", typeid(valid_ref_t<object_t>));
-            add_type_info(L"dak::object::edit_ref_t<object_t>", typeid(edit_ref_t<object_t>));
-            add_type_info(L"dak::object::weak_ref_t<object_t>", typeid(weak_ref_t<object_t>));
+            utility::add_type_info(L"dak::object::name_t",                 utility::type_info_of<name_t>());
+            utility::add_type_info(L"dak::object::array_t",                utility::type_info_of<array_t>());
+            utility::add_type_info(L"dak::object::dict_t",                 utility::type_info_of<dict_t>());
+            utility::add_type_info(L"dak::object::value_t",                utility::type_info_of<value_t>());
+            utility::add_type_info(L"dak::object::ref_t<object_t>",        utility::type_info_of<ref_t<object_t>>());
+            utility::add_type_info(L"dak::object::valid_ref_t<object_t>",  utility::type_info_of<valid_ref_t<object_t>>());
+            utility::add_type_info(L"dak::object::edit_ref_t<object_t>",   utility::type_info_of<edit_ref_t<object_t>>());
+            utility::add_type_info(L"dak::object::weak_ref_t<object_t>",   utility::type_info_of<weak_ref_t<object_t>>());
          }
       };
 

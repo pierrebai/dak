@@ -66,11 +66,11 @@ namespace dak::command
    }
 
    command_t::command_t(const action_t& an_action, const inputs_t& some_inputs, const outputs_t& some_outputs)
-      : constant_t()
+      : object_t()
    {
-      my_values[action]  = an_action;
-      my_values[inputs]  = some_inputs;
-      my_values[outputs] = some_outputs;
+      (*this)[action]  = an_action;
+      (*this)[inputs]  = some_inputs;
+      (*this)[outputs] = some_outputs;
    }
 
    valid_ref_t<command_t> command_t::make(const action_t& an_action, const inputs_t& some_inputs, const outputs_t& some_outputs)

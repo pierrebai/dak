@@ -418,8 +418,8 @@ namespace dak::command
       const connections_t& some_connections)
       : command_t(execute_command_tree, some_inputs, some_outputs)
    {
-      my_values[commands]    = some_commands;
-      my_values[connections] = some_connections;
+      (*this)[commands]    = some_commands;
+      (*this)[connections] = some_connections;
    }
 
    valid_ref_t<command_tree_t> command_tree_t::make(

@@ -11,8 +11,6 @@ namespace dak::object
    USING_DAK_UTILITY_TYPES;
 
    struct array_t;
-   struct constant_t;
-   using datatype_t = std::type_info;
    struct dict_t;
    struct exact_name_t;
    struct make_op_t;
@@ -34,8 +32,7 @@ namespace dak::object
 #define USING_DAK_OBJECT_TYPES            \
    USING_DAK_UTILITY_TYPES;               \
    using dak::object::array_t;            \
-   using dak::object::constant_t;         \
-   using dak::object::datatype_t;         \
+   using dak::object::type_info_t;        \
    using dak::object::dict_t;             \
    using dak::object::edit_ref_t;         \
    using dak::object::exact_name_t;       \

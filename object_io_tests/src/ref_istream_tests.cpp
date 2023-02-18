@@ -209,21 +209,21 @@ namespace dak::object::tests
          valid_ref_t valid_rec(received);
 
          Assert::AreEqual<index_t>(1, valid_rec->size());
-         Assert::AreEqual(typeid(ref_t<object_t>), valid_rec[child].get_type());
+         Assert::AreEqual(typeid(ref_t<object_t>), valid_rec[child].get_type_info());
 
          valid_ref_t<object_t> child_obj = valid_rec[child];
 
          Assert::AreEqual<index_t>(1, child_obj->size());
-         Assert::AreEqual(typeid(array_t), child_obj[custom_after].get_type());
+         Assert::AreEqual(typeid(array_t), child_obj[custom_after].get_type_info());
 
          const array_t arr = child_obj[custom_after];
 
          Assert::AreEqual<index_t>(2, arr.size());
 
-         Assert::AreEqual(typeid(bool), arr[0].get_type());
+         Assert::AreEqual(typeid(bool), arr[0].get_type_info());
          Assert::IsTrue(arr[0].as_boolean());
 
-         Assert::AreEqual(typeid(weak_ref_t<object_t>), arr[1].get_type());
+         Assert::AreEqual(typeid(weak_ref_t<object_t>), arr[1].get_type_info());
          Assert::IsTrue(arr[1].as_weak_ref() == received);
       }
 
@@ -256,12 +256,12 @@ namespace dak::object::tests
          valid_ref_t valid_rec(received);
 
          Assert::AreEqual<index_t>(1, valid_rec->size());
-         Assert::AreEqual(typeid(ref_t<object_t>), valid_rec[child].get_type());
+         Assert::AreEqual(typeid(ref_t<object_t>), valid_rec[child].get_type_info());
 
          valid_ref_t<object_t> child_obj = valid_rec[child];
 
          Assert::AreEqual<index_t>(1, child_obj->size());
-         Assert::AreEqual(typeid(array_t), child_obj[rock].get_type());
+         Assert::AreEqual(typeid(array_t), child_obj[rock].get_type_info());
 
          Assert::IsTrue(rock.has_metadata(always));
 
@@ -269,10 +269,10 @@ namespace dak::object::tests
 
          Assert::AreEqual<index_t>(2, arr.size());
 
-         Assert::AreEqual(typeid(bool), arr[0].get_type());
+         Assert::AreEqual(typeid(bool), arr[0].get_type_info());
          Assert::IsTrue(arr[0].as_boolean());
 
-         Assert::AreEqual(typeid(weak_ref_t<object_t>), arr[1].get_type());
+         Assert::AreEqual(typeid(weak_ref_t<object_t>), arr[1].get_type_info());
          Assert::IsTrue(arr[1].as_weak_ref() == received);
       }
 

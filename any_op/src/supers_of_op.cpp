@@ -24,9 +24,9 @@ namespace dak::any_op
       // All that is needed is to enter this file to create the globals.
    }
 
-   supers_t supers_of(const std::type_info& arg)
+   supers_t supers_of(const type_info_t& some_type)
    {
-      any_t result = supers_of_op_t::call_any_with_types<void>::op(arg);
+      any_t result = supers_of_op_t::call_any_with_types<void>::op(some_type);
       if (result.has_value())
          return std::any_cast<supers_t>(result);
       else

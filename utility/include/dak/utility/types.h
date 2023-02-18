@@ -25,7 +25,7 @@ namespace dak::utility
    typedef const wchar_t*  str_ptr_t;
    typedef int64_t         index_t;
    typedef std::any        any_t;
-
+   typedef std::type_info  type_info_t;
 }
 
 
@@ -41,6 +41,7 @@ namespace dak::utility
    using dak::utility::text_t;      \
    using dak::utility::str_ptr_t;   \
    using dak::utility::index_t;     \
+   using dak::utility::type_info_t; \
    using dak::utility::any_t
 
 

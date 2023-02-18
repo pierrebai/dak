@@ -43,10 +43,10 @@ namespace dak::object::tests
 
          Assert::AreEqual<index_t>(0, a.size());
 
-         Assert::AreEqual(typeid(void), a[-1000].get_type());
+         Assert::AreEqual(typeid(void), a[-1000].get_type_info());
 
          const array_t b;
-         Assert::AreEqual(typeid(void), b[-1000].get_type());
+         Assert::AreEqual(typeid(void), b[-1000].get_type_info());
       }
 
       TEST_METHOD(array_append)
@@ -138,12 +138,12 @@ namespace dak::object::tests
 
          Assert::AreEqual<index_t>(7, a1.size());
          Assert::AreEqual<text_t>(text_t(L"first"), a1[0]);
-         Assert::AreEqual<const datatype_t&>(typeid(void), a1[1].get_type());
-         Assert::AreEqual<const datatype_t&>(typeid(void), a1[2].get_type());
-         Assert::AreEqual<const datatype_t&>(typeid(void), a1[3].get_type());
-         Assert::AreEqual<const datatype_t&>(typeid(void), a1[4].get_type());
-         Assert::AreEqual<const datatype_t&>(typeid(void), a1[5].get_type());
-         Assert::AreEqual<const datatype_t&>(typeid(void), a1[6].get_type());
+         Assert::AreEqual<const type_info_t&>(typeid(void), a1[1].get_type_info());
+         Assert::AreEqual<const type_info_t&>(typeid(void), a1[2].get_type_info());
+         Assert::AreEqual<const type_info_t&>(typeid(void), a1[3].get_type_info());
+         Assert::AreEqual<const type_info_t&>(typeid(void), a1[4].get_type_info());
+         Assert::AreEqual<const type_info_t&>(typeid(void), a1[5].get_type_info());
+         Assert::AreEqual<const type_info_t&>(typeid(void), a1[6].get_type_info());
 
          // Note: insert inserts before the index given, so -1 inserts before the last value.
          a1.insert(-1) = 8;
@@ -157,7 +157,7 @@ namespace dak::object::tests
 
          Assert::IsTrue(a1.erase(-8));
          Assert::AreEqual<index_t>(7, a1.size());
-         Assert::AreEqual<const datatype_t&>(typeid(void), a1[0].get_type());
+         Assert::AreEqual<const type_info_t&>(typeid(void), a1[0].get_type_info());
 
          Assert::IsTrue(a1.erase(-1));
          Assert::AreEqual<index_t>(6, a1.size());

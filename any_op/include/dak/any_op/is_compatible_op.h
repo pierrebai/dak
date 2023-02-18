@@ -23,12 +23,12 @@ namespace dak::any_op
       static void register_ops();
    };
 
-   bool is_compatible(const std::type_info& arg_a, const std::type_info& arg_b);
+   bool is_compatible(const type_info_t& to_type, const type_info_t& from_type);
 
    template<class TO>
-   inline bool is_compatible(const any_t& arg_b)
+   inline bool is_compatible(const any_t& from_value)
    {
-      return is_compatible(typeid(TO), arg_b.type());
+      return is_compatible(typeid(TO), from_value.type());
    }
 
    template<class TO, class FROM>

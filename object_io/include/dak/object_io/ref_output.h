@@ -45,7 +45,7 @@ namespace dak::object
       int64_t get_name_id(const exact_name_t& name) const;
 
       // Retrieve the id of a type.
-      int64_t get_type_id(const datatype_t& a_type) const;
+      int64_t get_type_id(const type_info_t& a_type) const;
 
       // Reset the tracked objects, types and names.
       void clear();
@@ -69,7 +69,7 @@ namespace dak::object
 
       using object_ids_t = std::unordered_map<ref_t<object_t>, int64_t>;
       using name_ids_t = std::unordered_map<exact_name_t, int64_t>;
-      using type_ids_t = std::unordered_map<const datatype_t*, int64_t>;
+      using type_ids_t = std::unordered_map<const type_info_t*, int64_t>;
 
       mutable object_ids_t my_object_ids;
       mutable name_ids_t   my_name_ids;
