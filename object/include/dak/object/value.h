@@ -62,17 +62,17 @@ namespace dak::object
       // Constructors taking values.
 
       template <class T>
-      explicit value_t(const T& value) : my_data(value) {}
+      value_t(const T& value) : my_data(value) {}
 
       // Constructors taking values that we want to modify.
 
-      explicit value_t(str_ptr_t value) : value_t(text_t(value ? value : L"")) {}
+      value_t(str_ptr_t value) : value_t(text_t(value ? value : L"")) {}
 
       template <class T>
-      explicit value_t(const valid_ref_t<T>& value) : my_data(ref_t<T>(value)) {}
+      value_t(const valid_ref_t<T>& value) : my_data(ref_t<T>(value)) {}
 
       template <class T>
-      explicit value_t(const edit_ref_t<T>& value) : my_data(ref_t<T>(value)) {}
+      value_t(const edit_ref_t<T>& value) : my_data(ref_t<T>(value)) {}
 
       ~value_t() = default;
 
@@ -104,6 +104,7 @@ namespace dak::object
 
       bool as_boolean() const { return as<bool>(); }
       int64_t as_integer() const { return as<int64_t>(); }
+      int64_t as_index() const { return as<index_t>(); }
       const ref_t<object_t>& as_ref() const;
       const weak_ref_t<object_t>& as_weak_ref() const;
       name_t as_name() const { return as<name_t>(); }
@@ -137,6 +138,7 @@ namespace dak::object
       array_t& as_array();
       dict_t& as_dict();
       text_t& as_text();
+      any_t& as_any() { return my_data; }
 
       operator text_t& () { return as_text(); }
       operator array_t& () { return as_array(); }

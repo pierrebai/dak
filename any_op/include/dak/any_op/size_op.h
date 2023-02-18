@@ -25,10 +25,10 @@ namespace dak::any_op
       static void register_ops();
    };
 
-   uint64_t size(const any_t& arg_a);
+   index_t size(const any_t& arg_a);
 
    template<class A>
-   inline uint64_t size(const A& arg_a)
+   inline index_t size(const A& arg_a)
    {
       return size(any_t(arg_a));
    }

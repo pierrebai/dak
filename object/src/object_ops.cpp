@@ -43,8 +43,8 @@ namespace dak::object
             construct_op_t::make<ref_t<object_t>>::op<ref_t<object_t>>((std::function<ref_t<object_t>()>)[]() -> ref_t<object_t> { return ref_t<object_t>(); });
             construct_op_t::make<weak_ref_t<object_t>>::op<weak_ref_t<object_t>>((std::function<weak_ref_t<object_t>()>)[]() -> weak_ref_t<object_t> { return weak_ref_t<object_t>(); });
 
-            object::make_op_t::make<object_t    >::op<ref_t<object_t>    >((std::function<ref_t<object_t>()    >)[]() -> ref_t<object_t>     { return object_t::make(); });
-            object::make_op_t::make<namespace_t >::op<ref_t<namespace_t> >((std::function<ref_t<namespace_t>() >)[]() -> ref_t<namespace_t>  { return namespace_t::make(); });
+            make_op_t::make<object_t    >::op<ref_t<object_t>    >((std::function<ref_t<object_t>()    >)[]() -> ref_t<object_t>     { return object_t::make(); });
+            make_op_t::make<namespace_t >::op<ref_t<namespace_t> >((std::function<ref_t<namespace_t>() >)[]() -> ref_t<namespace_t>  { return namespace_t::make(); });
 
             compare_op_t::make<>::op<comparison_t, name_t,          name_t         >([](const name_t&          arg_a, const name_t&          arg_b) -> comparison_t { if (arg_a < arg_b) return comparison_t::less; if (arg_a > arg_b) return comparison_t::more; return comparison_t::equal; });
             compare_op_t::make<>::op<comparison_t, array_t,         array_t        >([](const array_t&         arg_a, const array_t&         arg_b) -> comparison_t { if (arg_a < arg_b) return comparison_t::less; if (arg_a > arg_b) return comparison_t::more; return comparison_t::equal; });
@@ -99,11 +99,14 @@ namespace dak::object
             is_compatible_op_t::make<weak_ref_t<object_t>, edit_ref_t<object_t>>::op<bool>(is_compatible);
             is_compatible_op_t::make<weak_ref_t<object_t>, valid_ref_t<object_t>>::op<bool>(is_compatible);
 
-            size_op_t::make<>::op<uint64_t, array_t        >([](const array_t        & arg_b) -> uint64_t { return uint64_t(arg_b.size()); });
-            size_op_t::make<>::op<uint64_t, dict_t         >([](const dict_t         & arg_b) -> uint64_t { return uint64_t(arg_b.size()); });
-            size_op_t::make<>::op<uint64_t, value_t        >([](const value_t        & arg_b) -> uint64_t { return uint64_t(arg_b.size()); });
-            size_op_t::make<>::op<uint64_t, ref_t<object_t>>([](const ref_t<object_t>& arg_b) -> uint64_t { return arg_b.is_valid() ? uint64_t(valid_ref_t<object_t>(arg_b)->size()) : uint64_t(0); });
-            size_op_t::make<>::op<uint64_t, weak_ref_t<object_t>>([](const weak_ref_t<object_t>& arg_b) -> uint64_t { return arg_b.is_valid() ? uint64_t(valid_ref_t<object_t>(arg_b)->size()) : uint64_t(0); });
+            size_op_t::make<>::op<index_t, array_t        >([](const array_t        & arg_b) -> index_t { return arg_b.size(); });
+            size_op_t::make<>::op<index_t, dict_t         >([](const dict_t         & arg_b) -> index_t { return arg_b.size(); });
+            size_op_t::make<>::op<index_t, value_t        >([](const value_t        & arg_b) -> index_t { return arg_b.size(); });
+            size_op_t::make<>::op<index_t, object_t>([](const object_t& arg_b) -> index_t { return index_t(arg_b.size()); });
+            size_op_t::make<>::op<index_t, ref_t<object_t>>([](const ref_t<object_t>& arg_b) -> index_t { return arg_b.is_valid() ? valid_ref_t<object_t>(arg_b)->size() : index_t(0); });
+            size_op_t::make<>::op<index_t, weak_ref_t<object_t>>([](const weak_ref_t<object_t>& arg_b) -> index_t { return arg_b.is_valid() ? valid_ref_t<object_t>(arg_b)->size() : index_t(0); });
+            size_op_t::make<>::op<index_t, edit_ref_t<object_t>>([](const edit_ref_t<object_t>& arg_b) -> index_t { return arg_b.is_valid() ? arg_b->size() : index_t(0); });
+            size_op_t::make<>::op<index_t, valid_ref_t<object_t>>([](const valid_ref_t<object_t>& arg_b) -> index_t { return arg_b.is_valid() ? arg_b->size() : index_t(0); });
 
             get_type_name_op_t::make<name_t               >::op<text_t>((std::function<text_t()>)[]() -> text_t { return L"dak::object::name_t"; });
             get_type_name_op_t::make<array_t              >::op<text_t>((std::function<text_t()>)[]() -> text_t { return L"dak::object::array_t"; });

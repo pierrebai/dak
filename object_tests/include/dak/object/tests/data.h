@@ -34,7 +34,7 @@ namespace dak::object::tests
 
       std::function<bool()> is_compatible([]() -> bool { return true; });
 
-      size_op_t::make<>::op<uint64_t, data_t>([](const data_t& arg_a) -> uint64_t { return 77u; });
+      size_op_t::make<>::op<index_t, data_t>([](const data_t& arg_a) -> index_t { return 77; });
       is_compatible_op_t::make<data_t, data_t>::op<bool>(is_compatible);
       construct_op_t::make<data_t>::op<data_t>((std::function<data_t()>)[]() -> data_t { return data_t(); });
       convert_op_t::make<bool>::op<bool, data_t>([](const data_t& arg_b) -> bool { return true; });

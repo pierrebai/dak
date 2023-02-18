@@ -35,9 +35,9 @@ namespace dak::command
 
             DAK_ANY_OP_COMPARABLE_MAKERS(dak::command::command_t::action_t);
 
-            size_op_t::make<>::op<uint64_t, command_tree_t>(
+            size_op_t::make<>::op<index_t, command_tree_t>(
                [](const command_tree_t& arg) -> uint64_t
-               { return uint64_t(arg.get_commands().size()); });
+               { return arg.get_commands().size(); });
 
             //////////////////////////////////////////////////////////////////////////
             //

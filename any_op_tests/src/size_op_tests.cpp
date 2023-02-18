@@ -29,19 +29,19 @@ namespace dak::any_op::tests
          any_t e_r1(7.0f);
          any_t e_r2(8.0);
 
-         Assert::AreEqual<uint64_t>(6, size(e_t1));
-         Assert::AreEqual<uint64_t>(6, size(e_t2));
-         Assert::AreEqual<uint64_t>(0, size(e_c1));
-         Assert::AreEqual<uint64_t>(0, size(e_c2));
-         Assert::AreEqual<uint64_t>(0, size(e_b ));
-         Assert::AreEqual<uint64_t>(0, size(e_i2));
-         Assert::AreEqual<uint64_t>(0, size(e_i1));
-         Assert::AreEqual<uint64_t>(0, size(e_i3));
-         Assert::AreEqual<uint64_t>(0, size(e_u1));
-         Assert::AreEqual<uint64_t>(0, size(e_u2));
-         Assert::AreEqual<uint64_t>(0, size(e_u3));
-         Assert::AreEqual<uint64_t>(0, size(e_r1));
-         Assert::AreEqual<uint64_t>(0, size(e_r2));
+         Assert::AreEqual<index_t>(6, size(e_t1));
+         Assert::AreEqual<index_t>(6, size(e_t2));
+         Assert::AreEqual<index_t>(0, size(e_c1));
+         Assert::AreEqual<index_t>(0, size(e_c2));
+         Assert::AreEqual<index_t>(0, size(e_b ));
+         Assert::AreEqual<index_t>(0, size(e_i2));
+         Assert::AreEqual<index_t>(0, size(e_i1));
+         Assert::AreEqual<index_t>(0, size(e_i3));
+         Assert::AreEqual<index_t>(0, size(e_u1));
+         Assert::AreEqual<index_t>(0, size(e_u2));
+         Assert::AreEqual<index_t>(0, size(e_u3));
+         Assert::AreEqual<index_t>(0, size(e_r1));
+         Assert::AreEqual<index_t>(0, size(e_r2));
       }
    };
 }

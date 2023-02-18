@@ -12,8 +12,8 @@ namespace dak::any_op
       {
          size_op_init_t()
          {
-            size_op_t::make<>::op<uint64_t, text_t   >([](const text_t& arg_a  ) -> uint64_t { return arg_a.size(); });
-            size_op_t::make<>::op<uint64_t, str_ptr_t>([](str_ptr_t arg_a      ) -> uint64_t { return arg_a ? wcslen(arg_a) : 0; });
+            size_op_t::make<>::op<index_t, text_t   >([](const text_t& arg_a  ) -> index_t { return index_t(arg_a.size()); });
+            size_op_t::make<>::op<index_t, str_ptr_t>([](str_ptr_t arg_a      ) -> index_t { return index_t(arg_a ? wcslen(arg_a) : 0); });
          }
       };
 
@@ -26,10 +26,10 @@ namespace dak::any_op
       // All that is needed is to enter this file to create the globals.
    }
 
-   uint64_t size(const any_t& arg_a)
+   index_t size(const any_t& arg_a)
    {
       any_t result = size_op_t::call_any<>::op(arg_a);
-      return as<uint64_t>(result);
+      return as<index_t>(result);
    }
 
 }
