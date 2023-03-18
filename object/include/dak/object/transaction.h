@@ -90,7 +90,7 @@ namespace dak::object
 
       // Commit all modified objects to the given timeline.
       // Empty the tracked modified objects.
-      void commit(struct timeline_t&);
+      void commit(timeline_t&);
 
       // Transfer all modified objects to the given parent transaction.
       // Empty the tracked modified objects of this transaction.
@@ -100,7 +100,7 @@ namespace dak::object
       // In other words the transaction are sequential, not interweaved.
       // (Although the parent transaction can resume doing more modifications
       // afterward.)
-      void sub_commit(struct transaction_t&);
+      void sub_commit(transaction_t&);
 
       // Cancel all modified objects and restore their original tracked state.
       // Empties the tracked modified objects.

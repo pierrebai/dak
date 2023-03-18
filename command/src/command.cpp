@@ -32,7 +32,12 @@ namespace dak::command
       if (!action)
          throw std::runtime_error("command contains no action");
 
-      return action(*this, inputs, trans);
+      // Execute the command in a sub-transaction, so that all changes
+      // by the command will be reverted if the command fails.
+      transaction_t cmd_transaction;
+      const dict_t output = action(*this, inputs, cmd_transaction);
+      cmd_transaction.sub_commit(trans);
+      return output;
    }
 
    //////////////////////////////////////////////////////////////////////////
