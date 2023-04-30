@@ -13,6 +13,9 @@ namespace dak::any_op
    //
    // The as operation casts an any_t to a reference type, if possible.
    //
+   // The identity conversion, from T to T, does not need to be registered
+   // when calling through the as() function below.
+   //
    // If the value could not be cast, a default-constructed value
    // of the destination type is returned.
 
@@ -41,6 +44,23 @@ namespace dak::any_op
       static TO empty{};
       return empty;
    }
+
+   template<class TO, class FROM>
+   inline TO as(const FROM& arg_a)
+   {
+      if constexpr (std::is_same_v<TO, FROM>)
+         return arg_a;
+
+      if constexpr (std::is_base_of_v<TO, FROM>)
+         return arg_a;
+
+      if (is_compatible<TO>(arg_a))
+         return convert<TO>(arg_a);
+
+      static TO empty{};
+      return empty;
+   }
+
 }
 
 #endif /* DAK_ANY_OP_AS_OP_H */

@@ -5,6 +5,8 @@
 
 #include <dak/any_op/op.h>
 
+#include <type_traits>
+
 namespace dak::any_op
 {
 
@@ -12,6 +14,11 @@ namespace dak::any_op
    //
    // The is-compatible operation returns true if a the types are compatible.
    // That is, the second can be converted to the first.
+   //
+   // The identity compatibility check, from T to T, does not need to be
+   // registered when calling through the is_compatible() function below,
+   // but does need to be registered if called directly through is_compatible_op_t,
+   // but you should not do that.
    //
    // To remember the order, it is the same order as an assignement: TO = FROM
 
@@ -34,6 +41,12 @@ namespace dak::any_op
    template<class TO, class FROM>
    inline bool is_compatible()
    {
+      if constexpr (std::is_same_v<TO, FROM>)
+         return true;
+
+      if constexpr (std::is_base_of_v<TO, FROM>)
+         return true;
+
       return is_compatible(typeid(TO), typeid(FROM));
    }
 }

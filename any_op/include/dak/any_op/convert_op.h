@@ -5,11 +5,18 @@
 
 #include <dak/any_op/op.h>
 
+#include <type_traits>
+
 namespace dak::any_op
 {
    //////////////////////////////////////////////////////////////////////////
    //
    // The convert operation converts a value to another type.
+   //
+   // The identity conversion, from T to T, does not need to be registered
+   // when calling through the convert() function below, but does need to
+   // be registered if called directly through convert_op_t, but you should
+   // not do that.
    //
    // If the value could not be converted, a default-constructed value
    // of the destination type is returned.
@@ -25,21 +32,30 @@ namespace dak::any_op
    template<class TO>
    inline TO convert(const any_t& arg_a)
    {
+      if (const TO* value = std::any_cast<TO>(&arg_a))
+         return *value;
+
       any_t result = convert_op_t::call_any<TO>::op(arg_a);
-      if (result.has_value())
-         return std::any_cast<TO>(result);
-      else
+      if (!result.has_value())
          return TO{};
+
+      return std::any_cast<TO>(result);
    }
 
    template<class TO, class FROM>
    inline TO convert(const FROM& arg_a)
    {
+      if constexpr (std::is_same_v<TO, FROM>)
+         return arg_a;
+
+      if constexpr (std::is_base_of_v<TO, FROM>)
+         return arg_a;
+
       any_t result = convert_op_t::call<TO>::op(arg_a);
-      if (result.has_value())
-         return std::any_cast<TO>(result);
-      else
+      if (!result.has_value())
          return TO{};
+
+      return std::any_cast<TO>(result);
    }
 
    inline any_t convert(const any_t& arg_a, const type_info_t& some_type)

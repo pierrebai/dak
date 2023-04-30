@@ -7,7 +7,15 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace dak::any_op;
 
 namespace dak::any_op::tests
-{		
+{
+   namespace
+   {
+      struct unregistered_type_t
+      {
+         operator int32_t() const { return 77; }
+      };
+   }
+
    TEST_CLASS(convert_op_tests)
 	{
 	public:
@@ -88,6 +96,8 @@ namespace dak::any_op::tests
          Assert::AreEqual<bool>(false, convert<bool, text_t>(text_t()));
          Assert::AreEqual<bool>(false, convert<bool, str_ptr_t>(nullptr));
          Assert::AreEqual<bool>(false, convert<bool, str_ptr_t>(L""));
+
+         Assert::AreEqual<int32_t>(77, convert<unregistered_type_t, unregistered_type_t>(unregistered_type_t()));
 
          //Assert::AreEqual<array_t>(convert<array_t, dict_t>());
       }

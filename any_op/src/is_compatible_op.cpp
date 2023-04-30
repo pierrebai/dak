@@ -225,10 +225,13 @@ namespace dak::any_op
 
    bool is_compatible(const type_info_t& to_type, const type_info_t& from_type)
    {
+      if (to_type == from_type)
+         return true;
+
       any_t result = is_compatible_op_t::call_any_with_types<void, void>::op(to_type, from_type);
-      if (result.has_value())
-         return std::any_cast<bool>(result);
-      else
+      if (!result.has_value())
          return false;
+
+      return std::any_cast<bool>(result);
    }
 }

@@ -7,7 +7,14 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace dak::any_op;
 
 namespace dak::any_op::tests
-{		
+{
+   namespace
+   {
+      struct unregistered_type_t
+      {
+      };
+   }
+
    TEST_CLASS(is_compatible_op_tests)
 	{
 	public:
@@ -70,6 +77,8 @@ namespace dak::any_op::tests
          Assert::IsTrue(is_compatible<bool, uint64_t>());
          Assert::IsTrue(is_compatible<bool, float>());
          Assert::IsTrue(is_compatible<bool, double>());
+
+         Assert::IsTrue(is_compatible<unregistered_type_t, unregistered_type_t>());
       }
    };
 }
