@@ -137,6 +137,9 @@ namespace dak::object
       template <class T>
       T as() const { return my_data.has_value() ? any_op::convert<T>(my_data) : T{}; }
 
+      template <class T>
+      operator T() const { return as<T>(); }
+
       bool as_boolean() const { return as<bool>(); }
       int64_t as_integer() const { return as<int64_t>(); }
       index_t as_index() const { return as<index_t>(); }

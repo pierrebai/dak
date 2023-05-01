@@ -18,7 +18,7 @@ add_library(dak_object
    include/dak/object/ref_base.h                src/ref_base.cpp
    include/dak/object/ref_counted.h             src/ref_counted.cpp
    include/dak/object/similar.h                 src/similar.cpp
-   include/dak/object/timeline.h
+   include/dak/object/timeline.h                src/timeline.cpp
    include/dak/object/transaction.h             src/transaction.cpp
    include/dak/object/types.h
    include/dak/object/value.h                   src/value.cpp

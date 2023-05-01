@@ -34,6 +34,10 @@ namespace dak::object
       void undo();
       void redo();
 
+      // Undo/redo helper: switch between the saved/modified states of the objects.
+      // Can thus do both undo and redo.
+      static void undo_redo_objects(modified_objects_t& objects);
+
    private:
       commits_t my_commits;
       commits_t::iterator my_top_commit;

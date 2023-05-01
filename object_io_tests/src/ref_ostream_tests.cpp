@@ -119,7 +119,7 @@ namespace dak::object::tests
             a3[0] = true;
             a3[1] = o1;
 
-            tr1.commit(undo_redo);
+            tr1.commit_into(undo_redo);
          }
          ref_ostream_t(ss) << o1;
          Assert::AreEqual(text_t(
@@ -145,7 +145,7 @@ namespace dak::object::tests
 
             rock_with_metadata.add_metadata(voc::always, tr);
 
-            tr.commit(undo_redo);
+            tr.commit_into(undo_redo);
          }
 
          wstringstream ss;
@@ -164,7 +164,7 @@ namespace dak::object::tests
             a3[0] = true;
             a3[1] = weak_ref_t<object_t>(o1);
 
-            tr1.commit(undo_redo);
+            tr1.commit_into(undo_redo);
          }
 
          ref_ostream_t(ss) << o1;

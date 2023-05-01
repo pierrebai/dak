@@ -152,7 +152,7 @@ namespace dak::object::tests
             dict_t& d32 = a3[2];
             d32[voc::date] = 55;
 
-            tr1.commit(undo_redo);
+            tr1.commit_into(undo_redo);
          }
          ref_ostream_t(ss) << expected;
 
@@ -160,7 +160,7 @@ namespace dak::object::tests
          {
             transaction_t tr;
             ref_istream_t(ss, voc::get_namespace(), tr) >> received;
-            tr.commit(undo_redo);
+            tr.commit_into(undo_redo);
          }
 
          Assert::IsTrue(received.is_valid());

@@ -34,7 +34,7 @@ namespace dak::object::tests
 
             fill_object(*ro1->modify(t1));
 
-            t1.commit(undo_redo);
+            t1.commit_into(undo_redo);
          }
 
          verify_object(ro1);
@@ -46,7 +46,7 @@ namespace dak::object::tests
 
             o1[rock] = 7;
 
-            t1.commit(undo_redo);
+            t1.commit_into(undo_redo);
          }
 
          undo_redo.undo();
@@ -56,7 +56,7 @@ namespace dak::object::tests
 
             fill_object(*ro1->modify(t1));
 
-            t1.commit(undo_redo);
+            t1.commit_into(undo_redo);
          }
 
          undo_redo.undo();
@@ -128,7 +128,7 @@ namespace dak::object::tests
                o1[rock] = 5;
             }
 
-            tr.commit(undo_redo);
+            tr.commit_into(undo_redo);
          }
 
          Assert::AreEqual<int32_t>(5, (*ro1)[rock]);
@@ -153,12 +153,12 @@ namespace dak::object::tests
                object_t& o1 = *ro1->modify(sub_tr);
                o1[rock] = 17;
 
-               sub_tr.sub_commit(tr);
+               sub_tr.commit_into(tr);
             }
 
             Assert::AreEqual<int32_t>(17, (*ro1)[rock]);
 
-            tr.commit(undo_redo);
+            tr.commit_into(undo_redo);
          }
 
          Assert::AreEqual<int32_t>(17, (*ro1)[rock]);

@@ -36,7 +36,7 @@ namespace dak::command
       // by the command will be reverted if the command fails.
       transaction_t cmd_transaction;
       const dict_t output = action(*this, inputs, cmd_transaction);
-      cmd_transaction.sub_commit(trans);
+      cmd_transaction.commit_into(trans);
       return output;
    }
 

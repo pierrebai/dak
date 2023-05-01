@@ -142,7 +142,7 @@ namespace dak::object::tests
             o1[voc::hello] = L"6";
             o1[voc::world] = voc::rock;
 
-            t1.commit(undo_redo);
+            t1.commit_into(undo_redo);
          }
 
          Assert::AreEqual<index_t>(5, ro1->size());
@@ -171,7 +171,7 @@ namespace dak::object::tests
             o1[voc::hello] = L"66";
             o1[voc::world] = voc::age;
 
-            t2.commit(undo_redo);
+            t2.commit_into(undo_redo);
          }
 
          Assert::AreEqual<index_t>(5, ro1->size());

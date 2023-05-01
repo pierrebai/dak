@@ -111,7 +111,7 @@ namespace dak::object::tests
             r.add_metadata(voc::acceleration, trans);
             Assert::IsTrue(r.has_metadata(voc::acceleration));
 
-            trans.commit(timeline);
+            trans.commit_into(timeline);
          }
 
          Assert::IsTrue(r.has_metadata(voc::acceleration));

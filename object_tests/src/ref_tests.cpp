@@ -73,7 +73,7 @@ namespace dak::object::tests
                auto& o2 = *ro2->modify(tr);
                o2[voc::other] = ro1;
 
-               tr.commit(timeline);
+               tr.commit_into(timeline);
             }
          }
 
@@ -93,7 +93,7 @@ namespace dak::object::tests
 
             o1[voc::other] = wro2;
 
-            tr.commit(timeline);
+            tr.commit_into(timeline);
          }
 
          Assert::AreEqual<int32_t>(2, clear_count);

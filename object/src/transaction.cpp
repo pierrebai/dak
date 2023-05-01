@@ -1,20 +1,9 @@
 #include <dak/object/transaction.h>
-#include <dak/object/object.h>
 #include <dak/object/timeline.h>
+#include <dak/object/object.h>
 
 namespace dak::object
 {
-   namespace
-   {
-      void undo_redo_objects(transaction_t::modified_objects_t& objects)
-      {
-         for (auto& [dest, item] : objects)
-         {
-            item.undo_redo();
-         }
-      }
-   }
-
    //////////////////////////////////////////////////////////////////////////
    //
    // transaction
@@ -39,13 +28,13 @@ namespace dak::object
    //
    // Commit and cancel.
 
-   void transaction_t::commit(timeline_t& commited)
+   void transaction_t::commit_into(timeline_t& timeline)
    {
-      commited.commit(std::move(my_modified_objects));
+      timeline.commit(std::move(my_modified_objects));
       forget();
    }
 
-   void transaction_t::sub_commit(struct transaction_t& parent)
+   void transaction_t::commit_into(struct transaction_t& parent)
    {
       // Note: be sure to call insert() here, as that function guarantees
       //       that if an object was already inserted, it won't be inserted
@@ -63,46 +52,7 @@ namespace dak::object
 
    void transaction_t::cancel()
    {
-      undo_redo_objects(my_modified_objects);
+      timeline_t::undo_redo_objects(my_modified_objects);
       forget();
-   }
-
-   //////////////////////////////////////////////////////////////////////////
-   //
-   // timeline.
-
-   timeline_t::timeline_t()
-   : my_top_commit(my_commits.end())
-   {
-
-   }
-
-   // Commmit modified objects.
-   void timeline_t::commit(modified_objects_t&& objects)
-   {
-      if (has_redo())
-         my_commits.erase(my_top_commit, my_commits.end());
-
-      my_commits.emplace_back(objects);
-
-      my_top_commit = my_commits.end();
-   }
-
-   void timeline_t::undo()
-   {
-      if (!has_undo())
-         return;
-
-      --my_top_commit;
-      undo_redo_objects(*my_top_commit);
-   }
-
-   void timeline_t::redo()
-   {
-      if (!has_redo())
-         return;
-
-      undo_redo_objects(*my_top_commit);
-      ++my_top_commit;
    }
 }
