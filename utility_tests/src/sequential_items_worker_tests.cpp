@@ -1,4 +1,4 @@
-#include <dak/utility/threaded_items_worker.h>
+#include <dak/utility/sequential_items_worker.h>
 
 #include <CppUnitTest.h>
 
@@ -15,14 +15,14 @@ namespace dak::utility::tests
       static auto make(size_t a_value) { return std::make_shared<adder_t>(a_value); }
    };
 
-	TEST_CLASS(threaded_items_worker_tests)
+	TEST_CLASS(sequential_items_worker_tests)
 	{
 	public:
 		
-      TEST_METHOD(test_threaded_work)
+      TEST_METHOD(test_sequential_work)
       {
-         using item_ptr_t = threaded_items_worker_t::item_ptr_t;
-         threaded_items_worker_t worker;
+         using item_ptr_t = sequential_items_worker_t::item_ptr_t;
+         sequential_items_worker_t worker;
 
          std::vector<std::future<item_ptr_t>> future_results;
 

@@ -9,6 +9,8 @@ add_library(dak_utility_tests SHARED
    src/stream_progress_tests.cpp
    src/text_tests.cpp
    src/thread_pool_tests.cpp
+   src/sequential_worker_tests.cpp
+   src/sequential_items_worker_tests.cpp
    src/threaded_worker_tests.cpp
    src/threaded_items_worker_tests.cpp
    src/undo_stack_tests.cpp

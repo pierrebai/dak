@@ -25,7 +25,7 @@ namespace dak::utility
    // recurse too deep and cause a stack overflow.
 
    template <class WORK_ITEM, class RESULT>
-   struct threaded_worker_t : work_provider_t
+   struct threaded_worker_t : private work_provider_t
    {
       using result_t = typename RESULT;
       using work_item_t = typename WORK_ITEM;
@@ -39,10 +39,11 @@ namespace dak::utility
          work_item_t item;
       };
 
-      // Create a threaded work using the given thread pool.
+      // Create a threaded worker.
       threaded_worker_t(size_t a_max_recursion = 3, size_t a_reserved_ui_threads = 0)
          : my_max_recursion(a_max_recursion), my_thread_pool(*this, std::max(size_t(1), std::thread::hardware_concurrency() - a_reserved_ui_threads)) {}
 
+      // Destroy this threaded worker. Stop all threads.
       ~threaded_worker_t() { stop(); }
 
       // Stop all waiters.
@@ -52,15 +53,8 @@ namespace dak::utility
          my_cond.notify_all();
       }
 
-      // Check if this threaded work is stopped.
+      // Check if this threaded worker is stopped.
       bool is_stopped() const override { return my_stop; }
-
-      // Wait for something to execute or execute something already in queue.
-      void wait_or_execute() override
-      {
-         std::unique_lock lock(my_mutex);
-         return internal_wait_or_execute(lock, 0);
-      }
 
       // Queue the given function and work item to be executed in a thread.
       std::future<result_t> add_work(work_item_t a_work_item, size_t a_recursion_depth, function_t a_function)
@@ -115,23 +109,34 @@ namespace dak::utility
 
    private:
       // Wait for something to execute or execute something already in queue.
+      void wait_or_execute() override
+      {
+         std::unique_lock lock(my_mutex);
+         return internal_wait_or_execute(lock, 0);
+      }
+
+      // Wait for something to execute or execute something already in queue.
       void internal_wait_or_execute(std::unique_lock<std::mutex>& a_lock, size_t a_recursion_depth)
       {
          if (my_stop)
             return;
 
+         // If there is nothing in the queue, wait for something to
+         // happen and return immediately in case we are suppored to stop.
          if (my_work_items.size() <= 0)
          {
             my_cond.wait(a_lock);
             return;
          }
 
+         // Execute the oldest work item.
          work_t work = std::move(my_work_items.back());
          my_work_items.pop_back();
          a_lock.unlock();
 
          work.task(work.item, a_recursion_depth + 1);
 
+         // Notify potential waiters that a work item has been executed.
          my_cond.notify_all();
       }
 

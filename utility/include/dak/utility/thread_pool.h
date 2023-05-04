@@ -12,6 +12,8 @@
 
 namespace dak::utility
 {
+   struct thread_pool_t;
+
    ////////////////////////////////////////////////////////////////////////////
    //
    // The provider of work for the pool.
@@ -24,9 +26,12 @@ namespace dak::utility
       // Check if stop was requested.
       virtual bool is_stopped() const = 0;
 
+   private:
       // The wait-or-execute implementation, called in a loop
       // by the threads in the thread pool.
       virtual void wait_or_execute() = 0;
+
+      friend struct thread_pool_t;
    };
 
    ////////////////////////////////////////////////////////////////////////////

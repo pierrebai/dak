@@ -4,7 +4,6 @@
 #define DAK_UTILITY_WORK_ITEM_H
 
 #include <memory>
-#include <functional>
 
 namespace dak::utility
 {
@@ -16,6 +15,8 @@ namespace dak::utility
    {
       virtual ~work_item_t() = default;
       virtual void execute() = 0;
+
+      using ptr_t = std::shared_ptr<work_item_t>;
    };
 }
 

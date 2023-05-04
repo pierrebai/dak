@@ -8,6 +8,8 @@ add_library(dak_utility
    include/dak/utility/stream_progress.h           src/stream_progress.cpp
    include/dak/utility/multi_thread_progress.h     src/multi_thread_progress.cpp
    include/dak/utility/stopwatch.h                 src/stopwatch.cpp
+   include/dak/utility/sequential_worker.h
+   include/dak/utility/sequential_items_worker.h   src/sequential_items_worker.cpp
    include/dak/utility/thread_pool.h               src/thread_pool.cpp
    include/dak/utility/threaded_items_worker.h     src/threaded_items_worker.cpp
    include/dak/utility/threaded_worker.h

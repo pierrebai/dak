@@ -16,28 +16,28 @@ namespace dak::utility
 
    struct threaded_items_worker_t
    {
-      using work_item_ptr_t = std::shared_ptr<work_item_t>;
+      using item_ptr_t = work_item_t::ptr_t;
 
-      // Create a threaded work using the given thread pool.
+      // Create a threaded worker using the given thread pool.
       threaded_items_worker_t(size_t a_max_recursion = 3, size_t a_reserved_ui_threads = 0);
 
-      // Destroy the threaded work, stops all workers.
+      // Destroy this threaded worker, stops all workers.
       ~threaded_items_worker_t();
 
       // Stop all waiters.
       void stop();
 
-      // Check if this threaded work is stopped.
+      // Check if this threaded worker is stopped.
       bool is_stopped() const;
 
       // Queue the given function and work item to be executed in a thread.
-      std::future<work_item_ptr_t> add_work(const work_item_ptr_t& a_work_item, size_t a_recursion_depth = 0);
+      std::future<item_ptr_t> add_work(const item_ptr_t& a_work_item, size_t a_recursion_depth = 0);
 
       // Wait for a particular result, execute work while waiting.
-      work_item_ptr_t wait_for(std::future<work_item_ptr_t>& a_token, size_t a_recursion_depth = 0);
+      item_ptr_t wait_for(std::future<item_ptr_t>& a_token, size_t a_recursion_depth = 0);
 
    private:
-      threaded_worker_t<work_item_ptr_t, work_item_ptr_t> my_worker;
+      threaded_worker_t<item_ptr_t, item_ptr_t> my_worker;
    };
 }
 
