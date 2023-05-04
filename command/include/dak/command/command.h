@@ -3,6 +3,7 @@
 #ifndef DAK_COMMAND_COMMAND_H
 #define DAK_COMMAND_COMMAND_H
 
+#include <dak/object/dict.h>
 #include <dak/object/object.h>
 #include <dak/object/types.h>
 #include <dak/object/voc.h>

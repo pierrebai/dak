@@ -2,6 +2,7 @@
 add_library(dak_command
    include/dak/command/command.h                 src/command.cpp
    include/dak/command/command_tree.h            src/command_tree.cpp
+   include/dak/command/command_work_item.h       src/command_work_item.cpp
                                                  src/command_ops.cpp
    include/dak/command/types.h
 )

@@ -8,10 +8,10 @@ namespace dak::utility::tests
 {
    struct adder_t : work_item_t
    {
-      size_t my_value = 0;
+      size_t value = 0;
 
-      adder_t(size_t a_value) : my_value(a_value) {}
-      void execute() override { my_value += 7; }
+      adder_t(size_t a_value) : value(a_value) {}
+      void execute() override { value += 7; }
       static auto make(size_t a_value) { return std::make_shared<adder_t>(a_value); }
    };
 
@@ -32,7 +32,7 @@ namespace dak::utility::tests
          size_t total = 0;
          for (auto& item : future_results)
             if (auto adder = std::dynamic_pointer_cast<adder_t>(worker.wait_for(item)))
-               total += adder->my_value;
+               total += adder->value;
 
          const size_t expected_total = 7 * future_results.size()
                                      + (future_results.size() * (future_results.size() - 1)) / 2;
