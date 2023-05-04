@@ -1,4 +1,4 @@
-#include <dak/utility/threaded_work.h>
+#include <dak/utility/threaded_worker.h>
 
 #include <CppUnitTest.h>
 
@@ -6,13 +6,13 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace dak::utility::tests
 {
-	TEST_CLASS(threaded_work_tests)
+	TEST_CLASS(threaded_worker_tests)
 	{
 	public:
 		
       TEST_METHOD(test_threaded_work)
       {
-         threaded_work_t<size_t, size_t> worker;
+         threaded_worker_t<size_t, size_t> worker;
 
          std::vector<std::future<size_t>> future_results;
 

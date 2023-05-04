@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef DAK_UTILITY_THREADED_WORK_H
-#define DAK_UTILITY_THREADED_WORK_H
+#ifndef DAK_UTILITY_THREADED_WORKER_H
+#define DAK_UTILITY_THREADED_WORKER_H
 
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 
@@ -25,7 +25,7 @@ namespace dak::utility
    // recurse too deep and cause a stack overflow.
 
    template <class WORK_ITEM, class RESULT>
-   struct threaded_work_t : work_provider_t
+   struct threaded_worker_t : work_provider_t
    {
       using result_t = typename RESULT;
       using work_item_t = typename WORK_ITEM;
@@ -40,10 +40,10 @@ namespace dak::utility
       };
 
       // Create a threaded work using the given thread pool.
-      threaded_work_t(size_t a_max_recursion = 3, size_t a_reserved_ui_threads = 0)
+      threaded_worker_t(size_t a_max_recursion = 3, size_t a_reserved_ui_threads = 0)
          : my_max_recursion(a_max_recursion), my_thread_pool(*this, std::max(size_t(1), std::thread::hardware_concurrency() - a_reserved_ui_threads)) {}
 
-      ~threaded_work_t() { stop(); }
+      ~threaded_worker_t() { stop(); }
 
       // Stop all waiters.
       void stop() override
@@ -147,4 +147,4 @@ namespace dak::utility
    };
 }
 
-#endif /* DAK_UTILITY_THREADED_WORK_H */
+#endif /* DAK_UTILITY_THREADED_WORKER_H */
