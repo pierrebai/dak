@@ -35,8 +35,11 @@ namespace dak::object
       ref_output_t() = default;
 
       // Control if the output should be aborted when an unknown object is written.
-      bool abort_on_unknown() const { return my_abort_on_unknown; }
+      void abort_on_unknown() const { if (my_abort_on_unknown) abort(); }
       void set_abort_on_unknown(bool abort) { my_abort_on_unknown = abort; }
+
+      // Abort the output, called on errors, in particular by abort_on_unknown().
+      virtual void abort() const = 0;
 
       // Retrieve the id of an object reference .
       int64_t get_object_id(const ref_t<object_t>& object) const;
@@ -74,7 +77,7 @@ namespace dak::object
       mutable object_ids_t my_object_ids;
       mutable name_ids_t   my_name_ids;
       mutable type_ids_t   my_type_ids;
-      bool                 my_abort_on_unknown = false;
+      bool                 my_abort_on_unknown = true;
    };
 
 }

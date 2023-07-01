@@ -5,6 +5,8 @@
 #include <dak/object/voc.h>
 #include <dak/object/tests/helpers.h>
 #include <dak/object/tests/data.h>
+#include <dak/object_io/ref_ostream_op.h>
+#include <dak/object_io/ref_istream_op.h>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -20,6 +22,8 @@ namespace dak::object::tests
          register_data_ops();
          any_op::register_ops();
          register_object_ops();
+         ref_ostream_op_t::register_ops();
+         ref_istream_op_t::register_ops();
       }
 
 		TEST_METHOD(value_base)

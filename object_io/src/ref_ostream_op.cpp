@@ -154,10 +154,8 @@ namespace dak::object
             {
                // Note: if it has an unknown, unsupported type, then we either
                //       write the void type name and no data or abort the streaming.
-               if (ref_ostr.abort_on_unknown())
-                  ostr.setstate(std::ios::failbit);
-               else
-                  ostr << L"void ";
+               ref_ostr.abort_on_unknown();
+               ostr << L"void ";
                return false;
             }
 

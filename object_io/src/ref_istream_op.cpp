@@ -268,8 +268,7 @@ namespace dak::object
          {
             // Note: if it has an unknown, unsupported type, then the type is
             //       void and we either read empty no data or abort the streaming.
-            if (ref_istr.abort_on_unknown())
-               istr.setstate(std::ios::failbit);
+            ref_istr.abort_on_unknown();
             return ref_istr;
          }
          ref_istr.add_type_with_id(*type, id);

@@ -33,6 +33,9 @@ namespace dak::object
       // Wrap an output stream to handle object refs.
       ref_ostream_t(std::wostream& s) : my_stream(s) {}
 
+      // Abort the input, called on errors, in particular by abort_on_unknown().
+      void abort() const override;
+
       // Underlying stream.
       std::wostream& get_stream() const { return my_stream; }
 

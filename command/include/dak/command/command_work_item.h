@@ -13,7 +13,7 @@ namespace dak::command
 {
    //////////////////////////////////////////////////////////////////////////
    //
-   // Work item to execute a command..
+   // Work item to execute a command executed in a transaction.
 
    struct command_work_item_t : utility::work_item_t
    {

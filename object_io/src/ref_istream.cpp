@@ -15,7 +15,7 @@ namespace dak::object
    {
    }
 
-   // Abort the input, called on errors, when abort_on_unknown() is true.
+   // Abort the input, called on errors, in particular by abort_on_unknown().
    void ref_istream_t::abort() const
    {
       get_stream().setstate(std::ios::failbit);

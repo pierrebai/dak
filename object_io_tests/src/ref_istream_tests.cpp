@@ -35,24 +35,26 @@ namespace dak::object::tests
          unknown_t received;
          ref_istream_t(ss, voc::get_namespace(), tr) >> received;
 
-         Assert::IsFalse(ss.fail());
+         Assert::IsTrue(ss.fail());
       }
 
-      TEST_METHOD(istream_invalid_and_abort)
+      TEST_METHOD(istream_invalid_no_abort)
       {
          struct unknown_t {} unknown;
 
          wstringstream ss;
          transaction_t tr;
+         ref_ostream_t rostr(ss);
+         rostr.set_abort_on_unknown(false);
 
-         ss << unknown;
+         rostr << unknown;
 
          unknown_t received;
          ref_istream_t ristr(ss, voc::get_namespace(), tr);
-         ristr.set_abort_on_unknown(true);
+         ristr.set_abort_on_unknown(false);
          ristr >> received;
 
-         Assert::IsTrue(ss.fail());
+         Assert::IsFalse(ss.fail());
       }
 
       TEST_METHOD(istream_name)

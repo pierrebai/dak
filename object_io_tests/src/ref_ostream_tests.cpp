@@ -29,23 +29,23 @@ namespace dak::object::tests
          struct unknown_t {} unknown;
 
          ss << unknown;
-         Assert::AreEqual(text_t(L"@ 1 void "), ss.str());
+         Assert::AreEqual(text_t(L"@ 1 "), ss.str());
 
-         Assert::IsFalse(ss.fail());
+         Assert::IsTrue(ss.fail());
       }
 
-      TEST_METHOD(ostream_invalid_and_abort)
+      TEST_METHOD(ostream_invalid_no_abort)
       {
          wstringstream ss;
          struct unknown_t {} unknown;
 
          ref_ostream_t rostr(ss);
-         rostr.set_abort_on_unknown(true);
+         rostr.set_abort_on_unknown(false);
 
          rostr << unknown;
-         Assert::AreEqual(text_t(L"@ 1 "), ss.str());
+         Assert::AreEqual(text_t(L"@ 1 void "), ss.str());
 
-         Assert::IsTrue(ss.fail());
+         Assert::IsFalse(ss.fail());
       }
 
       TEST_METHOD(ostream_name)

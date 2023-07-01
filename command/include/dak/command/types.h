@@ -11,11 +11,13 @@ namespace dak::command
 
    struct command_t;
    struct command_tree_t;
+   struct command_work_item_t;
 }
 
 #define USING_DAK_COMMAND_TYPES           \
    USING_DAK_OBJECT_TYPES;                \
    using dak::command::command_t;         \
-   using dak::object::command_tree_t
+   using dak::command::command_tree_t     \
+   using dak::command::command_work_item_t
 
 #endif /* DAK_COMMAND_TYPES_H */

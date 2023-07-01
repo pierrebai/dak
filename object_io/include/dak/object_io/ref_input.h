@@ -40,10 +40,10 @@ namespace dak::object
       ref_input_t(const valid_ref_t<namespace_t>& into_ns, transaction_t& transaction);
 
       // Control if the input should be aborted when an unknown object is read.
-      bool abort_on_unknown() const { return my_abort_on_unknown; }
+      void abort_on_unknown() const { if (my_abort_on_unknown) abort(); }
       void set_abort_on_unknown(bool abort) { my_abort_on_unknown = abort; }
 
-      // Abort the input, called on errors, when abort_on_unknown() is true.
+      // Abort the input, called on errors, in particular by abort_on_unknown().
       virtual void abort() const = 0;
 
       // Target namespace that will receive sub-namespace and names.
@@ -88,7 +88,7 @@ namespace dak::object
 
       transaction_t&           my_transaction;
       valid_ref_t<namespace_t> my_target_namespace;
-      bool                     my_abort_on_unknown = false;
+      bool                     my_abort_on_unknown = true;
    };
 }
 

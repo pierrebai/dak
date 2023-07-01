@@ -6,6 +6,14 @@ namespace dak::object
    //
    // Output a end-line and indent the next line to the current indentation.
 
+
+   // Abort the input, called on errors, in particular by abort_on_unknown().
+   void ref_ostream_t::abort() const
+   {
+      auto& ostr = get_stream();
+      ostr.setstate(std::ios::failbit);
+   }
+
    const ref_ostream_t& ref_ostream_t::end_line() const
    {
       static const wchar_t whitespaces[] = L"                            ";
