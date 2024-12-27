@@ -24,7 +24,7 @@ namespace dak::utility
 
    struct multi_thread_progress_t
    {
-      // Wrap a non-threas safe progress.
+      // Wrap a non-thread-safe progress.
       multi_thread_progress_t() = default;
       multi_thread_progress_t(size_t a_report_every)
          : my_report_every(std::max(size_t(1), a_report_every)) {}

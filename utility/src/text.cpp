@@ -1,6 +1,8 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include <dak/utility/text.h>
 
 #include <clocale>
+#undef _CRT_SECURE_NO_WARNINGS
 
 namespace dak::utility
 {

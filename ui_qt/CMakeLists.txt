@@ -35,14 +35,9 @@ target_include_directories(dak_ui_qt PUBLIC
 target_link_libraries(dak_ui_qt dak_geometry)
 target_link_libraries(dak_ui_qt dak_utility)
 target_link_libraries(dak_ui_qt dak_ui)
-
-target_include_directories(dak_ui_qt PUBLIC
-   "${Qt5Core_INCLUDE_DIRS}"
-   "${Qt5Widgets_INCLUDE_DIRS}"
-   "${Qt5Gui_INCLUDE_DIRS}"
-   "${Qt5WinExtras_INCLUDE_DIRS}"
-)
+target_link_libraries(dak_ui_qt Qt5::Core Qt5::Widgets Qt5::Gui Qt5::WinExtras)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set_property(TARGET dak_ui_qt PROPERTY CXX_STANDARD 20)
+
