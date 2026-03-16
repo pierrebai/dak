@@ -41,8 +41,8 @@ namespace dak::utility
       void clear_progress() { my_total_count_so_far = 0; }
 
    protected:
-      // Receive progress from a per-thread progress. (see below)
-      void update_progress_from_thread(size_t a_count_from_thread);
+      // Receive progress from a per-thread progress and return if it should stop. (see below)
+      bool update_progress_from_thread(size_t a_count_from_thread);
 
       // Propagate the progress to the non-thread-safe progress.
       void report_to_non_thread_safe_progress(size_t a_count);
@@ -51,6 +51,7 @@ namespace dak::utility
       progress_t*          my_non_thread_safe_progress = nullptr;
       size_t               my_report_every = 100 * 1000;
       std::atomic<size_t>  my_total_count_so_far = 0;
+      bool                 my_stopped = false;
       std::mutex           my_mutex;
 
       friend struct per_thread_progress_t;
@@ -68,19 +69,9 @@ namespace dak::utility
    {
       // Create a per-thread progress that report to the given multi-thread progress.
       per_thread_progress_t() = default;
-      per_thread_progress_t(multi_thread_progress_t& a_mt_progress)
-         : progress_t(a_mt_progress.my_report_every / 10), my_mt_progress(&a_mt_progress) {}
-
-      per_thread_progress_t(const per_thread_progress_t& an_other)
-         : progress_t(an_other), my_mt_progress(an_other.my_mt_progress) { clear_progress(); }
-
-      per_thread_progress_t& operator=(const per_thread_progress_t& an_other)
-      {
-         progress_t::operator=(an_other);
-         // Avoid copying the per-thread progress accumulated.
-         clear_progress();
-         return *this;
-      }
+      per_thread_progress_t(multi_thread_progress_t& a_mt_progress);
+      per_thread_progress_t(const per_thread_progress_t& an_other);
+      per_thread_progress_t& operator=(const per_thread_progress_t& an_other);
 
       // Report the final progress tally when destroyed.
       ~per_thread_progress_t();

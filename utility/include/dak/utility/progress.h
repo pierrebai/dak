@@ -37,6 +37,12 @@ namespace dak::utility
       // Get the total progress so far.
       size_t total_progress() const { return my_total_count_so_far; }
 
+      // Request that what is progressing stops.
+      void stop_progress(bool stop = true) { my_stopped = stop; }
+
+      // Request that what is progressing stops.
+      bool is_progress_stopped() const { return my_stopped; }
+
    protected:
       // Update the total progress so far to the actual implementation.
       virtual void update_progress(size_t a_total_count_so_far) = 0;
@@ -44,6 +50,7 @@ namespace dak::utility
    private:
       size_t my_report_every = my_default_report_every;
       size_t my_total_count_so_far = 0;
+      bool my_stopped = false;
 
       friend struct multi_thread_progress_t;
    };

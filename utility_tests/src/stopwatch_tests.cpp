@@ -121,13 +121,21 @@ namespace dak::utility::tests
          std::wstring wide_time;
          stopwatch_t stopwatch(nullptr, &narrow_time, &wide_time);
 
+         stopwatch.set_elapsed(1.5);
+         Assert::AreEqual<std::string>("0s 500ms", narrow_time);
+         Assert::AreEqual<std::wstring>(L"0s 500ms", wide_time);
+
+         stopwatch.set_elapsed(16.5);
+         Assert::AreEqual<std::string>("16s", narrow_time);
+         Assert::AreEqual<std::wstring>(L"16s", wide_time);
+
          stopwatch.set_elapsed(300.5);
-         Assert::AreEqual<std::string>("5m 0s 500ms", narrow_time);
-         Assert::AreEqual<std::wstring>(L"5m 0s 500ms", wide_time);
+         Assert::AreEqual<std::string>("5m 0s", narrow_time);
+         Assert::AreEqual<std::wstring>(L"5m 0s", wide_time);
 
          stopwatch.set_elapsed(7265.5);
-         Assert::AreEqual<std::string>("2h 1m 5s 500ms", narrow_time);
-         Assert::AreEqual<std::wstring>(L"2h 1m 5s 500ms", wide_time);
+         Assert::AreEqual<std::string>("2h 1m 5s", narrow_time);
+         Assert::AreEqual<std::wstring>(L"2h 1m 5s", wide_time);
 
       }
    };

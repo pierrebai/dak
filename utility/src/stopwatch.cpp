@@ -51,12 +51,14 @@ namespace dak::utility
       const int seconds = static_cast<int>(std::floor(some_seconds));
       const int milliseconds = static_cast<int>((some_seconds - seconds) * 1000);
 
-      if (seconds < 2 * 60)
+      if (seconds < 5)
          stream << seconds << "s " << (milliseconds % 1000) << "ms";
+      else if (seconds < 2 * 60)
+         stream << seconds << "s";
       else if (seconds < 60 * 60)
-         stream << (seconds / 60) << "m " << (seconds % 60) << "s " << (milliseconds % 1000) << "ms";
+         stream << (seconds / 60) << "m " << (seconds % 60) << "s";
       else
-         stream << (seconds / 3600) << "h " << ((seconds / 60) % 60) << "m " << (seconds % 60) << "s " << (milliseconds % 1000) << "ms";
+         stream << (seconds / 3600) << "h " << ((seconds / 60) % 60) << "m " << (seconds % 60) << "s";
 
       return stream.str();
    }

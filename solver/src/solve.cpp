@@ -124,30 +124,33 @@ namespace dak::solver
       const auto sub_sub_problems = a_ctx.problem->create_sub_problems(a_sub_problem, partial_solution);
       for (const sub_problem_t::ptr_t& sub_sub_problem : sub_sub_problems)
       {
-         //#ifndef _DEBUG
-         //// Avoid queuing sub-sub-problem that are too simple or if there are already enough
-         //// parallel tasks, to avoid overflowing the work queue.
-         //if (partial_solution->is_almost_done(a_ctx.problem))
-         //{
-         //   // Note: a_progress is passed by value so that a new one will be created for the sub-thread.
-         //   auto new_future = a_ctx.threaded_worker.add_work(sub_sub_problem, a_ctx.recursion_depth, [&a_ctx, partial_solution](sub_problem_t::ptr_t a_sub_sub_problem, size_t a_depth) -> all_solutions_t
-         //   {
-         //      solve_context_t ctx(a_ctx);
-         //      try
-         //      {
-         //         ctx.recursion_depth = a_depth;
-         //         solve_sub_problem_with_tile(a_sub_sub_problem, partial_solution, ctx);
-         //      }
-         //      catch (...)
-         //      {
-         //         ctx.threaded_worker.stop();
-         //      }
-         //      return ctx.solutions;
-         //   });
-         //   solutions_futures.emplace_back(std::move(new_future));
-         //}
-         //else
-         //#endif
+         #ifndef TANTRIX_DO_NOT_MULTI_THREAD
+         // Avoid queuing sub-sub-problem that are too simple or if there are already enough
+         // parallel tasks, to avoid overflowing the work queue.
+         if (!partial_solution->is_almost_done(a_ctx.problem))
+         {
+           // Note: a_progress is passed by value so that a new one will be created for the sub-thread.
+           auto new_future = a_ctx.threaded_worker.add_work(sub_sub_problem, a_ctx.recursion_depth, [&a_ctx, partial_solution](sub_problem_t::ptr_t a_sub_sub_problem, size_t a_depth) -> all_solutions_t
+           {
+              solve_context_t ctx(a_ctx);
+              try
+              {
+                 ctx.recursion_depth = a_depth;
+                 solve_sub_problem_with_tile(a_sub_sub_problem, partial_solution, ctx);
+                 if (ctx.progress.is_progress_stopped()) {
+                    ctx.threaded_worker.stop();
+                 }
+              }
+              catch (...)
+              {
+                 ctx.threaded_worker.stop();
+              }
+              return ctx.solutions;
+           });
+           solutions_futures.emplace_back(std::move(new_future));
+         }
+         else
+         #endif
          {
             solve_sub_problem_with_tile(sub_sub_problem, partial_solution, a_ctx);
          }
@@ -183,6 +186,9 @@ namespace dak::solver
             try
             {
                solve_sub_problem_with_tile(sub_problem, an_empty_solution, ctx);
+               if (ctx.progress.is_progress_stopped()) {
+                  ctx.threaded_worker.stop();
+               }
             }
             catch (...)
             {
