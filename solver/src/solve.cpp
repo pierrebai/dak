@@ -18,17 +18,22 @@ namespace dak::solver
    // Keeper of all solutions.
 
    // Normalize and add a solution if it is not already known.
-   static void add_solution(all_solutions_t& all_solutions, solution_t::ptr_t&& a_solution)
+   static void add_solution(all_solutions_t& all_solutions, const solution_t::ptr_t& a_solution, size_t count = 1)
    {
-      a_solution->normalize();
+      for (auto& [existing_solution, count] : all_solutions) {
+         if ((*existing_solution <=> *a_solution) == std::strong_ordering::equal) {
+            count += 1;
+            return;
+         }
+      }
       all_solutions[a_solution] += 1;
    }
 
    // Add many solutions, we assume they have been already normalized.
-   static void add_solutions(all_solutions_t& all_solutions, all_solutions_t&& other_solutions)
+   static void add_solutions(all_solutions_t& all_solutions, all_solutions_t& other_solutions)
    {
       for (auto& [solution, count] : other_solutions)
-         all_solutions[solution] += count;
+         add_solution(all_solutions, solution, count);
    }
 
 
@@ -86,7 +91,8 @@ namespace dak::solver
       }
       else if (a_ctx.problem->is_solution_valid(new_partial))
       {
-         add_solution(a_ctx.solutions, std::move(new_partial));
+         new_partial->normalize();
+         add_solution(a_ctx.solutions, new_partial);
       }
    }
 
@@ -118,30 +124,30 @@ namespace dak::solver
       const auto sub_sub_problems = a_ctx.problem->create_sub_problems(a_sub_problem, partial_solution);
       for (const sub_problem_t::ptr_t& sub_sub_problem : sub_sub_problems)
       {
-         #ifndef _DEBUG
-         // Avoid queuing sub-sub-problem that are too simple or if there are already enough
-         // parallel tasks, to avoid overflowing the work queue.
-         if (partial_solution->is_almost_done())
-         {
-            // Note: a_progress is passed by value so that a new one will be created for the sub-thread.
-            auto new_future = a_ctx.threaded_worker.add_work(sub_sub_problem, a_ctx.recursion_depth, [&a_ctx, partial_solution](sub_problem_t::ptr_t a_sub_sub_problem, size_t a_depth) -> all_solutions_t
-            {
-               solve_context_t ctx(a_ctx);
-               try
-               {
-                  ctx.recursion_depth = a_depth;
-                  solve_sub_problem_with_tile(a_sub_sub_problem, partial_solution, ctx);
-               }
-               catch (...)
-               {
-                  ctx.threaded_worker.stop();
-               }
-               return ctx.solutions;
-            });
-            solutions_futures.emplace_back(std::move(new_future));
-         }
-         else
-         #endif
+         //#ifndef _DEBUG
+         //// Avoid queuing sub-sub-problem that are too simple or if there are already enough
+         //// parallel tasks, to avoid overflowing the work queue.
+         //if (partial_solution->is_almost_done(a_ctx.problem))
+         //{
+         //   // Note: a_progress is passed by value so that a new one will be created for the sub-thread.
+         //   auto new_future = a_ctx.threaded_worker.add_work(sub_sub_problem, a_ctx.recursion_depth, [&a_ctx, partial_solution](sub_problem_t::ptr_t a_sub_sub_problem, size_t a_depth) -> all_solutions_t
+         //   {
+         //      solve_context_t ctx(a_ctx);
+         //      try
+         //      {
+         //         ctx.recursion_depth = a_depth;
+         //         solve_sub_problem_with_tile(a_sub_sub_problem, partial_solution, ctx);
+         //      }
+         //      catch (...)
+         //      {
+         //         ctx.threaded_worker.stop();
+         //      }
+         //      return ctx.solutions;
+         //   });
+         //   solutions_futures.emplace_back(std::move(new_future));
+         //}
+         //else
+         //#endif
          {
             solve_sub_problem_with_tile(sub_sub_problem, partial_solution, a_ctx);
          }
@@ -150,7 +156,7 @@ namespace dak::solver
       for (auto& new_future : solutions_futures)
       {
          auto partial_solutions = a_ctx.threaded_worker.wait_for(new_future, a_ctx.recursion_depth);
-         add_solutions(a_ctx.solutions, std::move(partial_solutions));
+         add_solutions(a_ctx.solutions, partial_solutions);
       }
    }
 
@@ -176,7 +182,7 @@ namespace dak::solver
             solve_context_t ctx(threaded_worker, a_problem, mt_progress, a_depth);
             try
             {
-               solve_partial(sub_problem, an_empty_solution, ctx);
+               solve_sub_problem_with_tile(sub_problem, an_empty_solution, ctx);
             }
             catch (...)
             {
@@ -190,7 +196,7 @@ namespace dak::solver
       for (auto& new_future : solutions_futures)
       {
          auto partial_solutions = threaded_worker.wait_for(new_future, 0);
-         add_solutions(all_solutions, std::move(partial_solutions));
+         add_solutions(all_solutions, partial_solutions);
       }
 
       return all_solutions;
