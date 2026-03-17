@@ -50,7 +50,7 @@ namespace dak::solver
       virtual bool has_more_sub_problems(const sub_problem_t::ptr_t& a_current_sub_problem) const = 0;
 
       // Retrieve all potential solution parts that could solve the problem at given sub-problem and partial solution.
-      virtual std::vector<solution_part_t::ptr_t> get_sub_problem_potential_parts(
+      virtual std::vector<solver::solution_part_t::ptr_t> get_sub_problem_potential_parts(
          const sub_problem_t::ptr_t& a_current_sub_problem,
          const solution_t::ptr_t& a_partial_solution) const = 0;
 
