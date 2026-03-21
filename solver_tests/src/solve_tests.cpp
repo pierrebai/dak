@@ -78,6 +78,11 @@ namespace dak::solver::tests
    {
       test_problem_t() = default;
 
+      bool is_valid() const override
+      {
+         return true;
+      }
+
       std::vector<sub_problem_t::ptr_t> create_initial_sub_problems() const override
       {
          test_sub_problem_t sub;

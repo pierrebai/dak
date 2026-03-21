@@ -36,6 +36,9 @@ namespace dak::solver
       problem_t() = default;
       virtual ~problem_t() = default;
 
+      // Verify if the problem is valid.
+      virtual bool is_valid() const = 0;
+
       // Solver interaction.
 
       // Create the initial list of sub-problems to solve.
