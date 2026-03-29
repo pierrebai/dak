@@ -172,7 +172,7 @@ namespace dak::solver
       // Protect the normal non-thread-safe progress against multi-threading.
       multi_thread_progress_t mt_progress(a_progress);
 
-      problem_threaded_worker_t threaded_worker(3, 1);
+      problem_threaded_worker_t threaded_worker(5, 1);
 
       std::vector<std::future<all_solutions_t>> solutions_futures;
 
