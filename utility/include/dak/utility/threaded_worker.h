@@ -53,13 +53,22 @@ namespace dak::utility
          my_cond.notify_all();
       }
 
+      void stop(bool finish_queued_work)
+      {
+         my_finish_queued_work = finish_queued_work;
+         stop();
+      }
+
       // Check if this threaded worker is stopped.
       bool is_stopped() const override { return my_stop; }
+
+      // Check if this threaded worker should continue queued work.
+      bool is_working() const { return my_finish_queued_work || !my_stop; }
 
       // Queue the given function and work item to be executed in a thread.
       std::future<result_t> add_work(work_item_t a_work_item, size_t a_recursion_depth, function_t a_function)
       {
-         if (my_stop)
+         if (!is_working())
             return {};
 
          // Only queue the work item if we've recursed into the threaded work only a few times.
@@ -94,7 +103,7 @@ namespace dak::utility
       // Wait for a particular result, execute work while waiting.
       result_t wait_for(std::future<result_t>& a_token, size_t a_recursion_depth)
       {
-         while (!is_stopped())
+         while (is_working())
          {
             std::unique_lock lock(my_mutex);
 
@@ -118,7 +127,7 @@ namespace dak::utility
       // Wait for something to execute or execute something already in queue.
       void internal_wait_or_execute(std::unique_lock<std::mutex>& a_lock, size_t a_recursion_depth)
       {
-         if (my_stop)
+         if (!is_working())
             return;
 
          // If there is nothing in the queue, wait for something to
@@ -143,6 +152,7 @@ namespace dak::utility
       std::mutex                    my_mutex;
       std::condition_variable       my_cond;
       std::atomic<bool>             my_stop = false;
+      std::atomic<bool>             my_finish_queued_work = false;
       std::vector<work_t>           my_work_items;
       const size_t                  my_max_recursion;
 

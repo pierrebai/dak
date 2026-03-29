@@ -17,23 +17,23 @@ namespace dak::solver
    //
    // Keeper of all solutions.
 
-   // Normalize and add a solution if it is not already known.
-   static void add_solution(all_solutions_t& all_solutions, const solution_t::ptr_t& a_solution, size_t count = 1)
+   // Add a solution, we assume it has been already normalized.
+   static void add_solution(all_solutions_t& all_solutions, const solution_t::ptr_t& a_solution)
    {
-      for (auto& [existing_solution, count] : all_solutions) {
-         if ((*existing_solution <=> *a_solution) == std::strong_ordering::equal) {
-            count += 1;
-            return;
-         }
+      auto it = all_solutions.find(a_solution);
+      if (it != all_solutions.end()) {
+         (*it)->add_similar_solution(a_solution);
       }
-      all_solutions[a_solution] += 1;
+      else {
+         all_solutions.insert(a_solution);
+      }
    }
 
    // Add many solutions, we assume they have been already normalized.
    static void add_solutions(all_solutions_t& all_solutions, all_solutions_t& other_solutions)
    {
-      for (auto& [solution, count] : other_solutions)
-         add_solution(all_solutions, solution, count);
+      for (auto& solution : other_solutions)
+         add_solution(all_solutions, solution);
    }
 
 
@@ -136,14 +136,16 @@ namespace dak::solver
               try
               {
                  ctx.recursion_depth = a_depth;
-                 solve_sub_problem_with_tile(a_sub_sub_problem, partial_solution, ctx);
                  if (ctx.progress.is_progress_stopped()) {
-                    ctx.threaded_worker.stop();
+                    ctx.threaded_worker.stop(true);
+                 }
+                 else {
+                    solve_sub_problem_with_tile(a_sub_sub_problem, partial_solution, ctx);
                  }
               }
               catch (...)
               {
-                 ctx.threaded_worker.stop();
+                 ctx.threaded_worker.stop(true);
               }
               return ctx.solutions;
            });
@@ -172,10 +174,6 @@ namespace dak::solver
 
       problem_threaded_worker_t threaded_worker(3, 1);
 
-      // The first tile can be chosen arbitrarily and placed.
-      // This will force the orientation of the solution, so
-      // we won't have to compare with rotations or translations.
-
       std::vector<std::future<all_solutions_t>> solutions_futures;
 
       for (const auto& sub_problem : a_problem->create_initial_sub_problems())
@@ -185,14 +183,16 @@ namespace dak::solver
             solve_context_t ctx(threaded_worker, a_problem, mt_progress, a_depth);
             try
             {
-               solve_sub_problem_with_tile(sub_problem, an_empty_solution, ctx);
                if (ctx.progress.is_progress_stopped()) {
-                  ctx.threaded_worker.stop();
+                  ctx.threaded_worker.stop(true);
+               }
+               else {
+                  solve_sub_problem_with_tile(sub_problem, an_empty_solution, ctx);
                }
             }
             catch (...)
             {
-               ctx.threaded_worker.stop();
+               ctx.threaded_worker.stop(true);
             }
             return ctx.solutions;
          });

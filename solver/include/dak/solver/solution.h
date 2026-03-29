@@ -58,5 +58,8 @@ namespace dak::solver
 
       // Compare solutions.
       virtual std::strong_ordering operator<=>(const solution_t& another_solution) const = 0;
+
+      // Add a similar solution to this solution.
+      virtual void add_similar_solution(const solution_t::ptr_t& another_solution) = 0;
    };
 }

@@ -5,7 +5,7 @@
 #include <dak/solver/problem.h>
 #include <dak/solver/solution.h>
 
-#include <map>
+#include <set>
 
 namespace dak::utility
 {
@@ -19,9 +19,25 @@ namespace dak::solver
 
    ////////////////////////////////////////////////////////////////////////////
    //
-   // Solve the problem.
+   // Container of solutions.
 
-   using all_solutions_t = std::map<solution_t::ptr_t, size_t>;
+   struct less_solution_ptr_t
+   {
+      bool operator()(const solution_t::ptr_t& a, const solution_t::ptr_t& b) const
+      {
+         if (!a)
+            return bool(b);
+         if (!b)
+            return false;
+         return (*a <=> *b) == std::strong_ordering::less;
+      }
+   };
+
+   using all_solutions_t = std::set<solution_t::ptr_t, less_solution_ptr_t>;
+
+   ////////////////////////////////////////////////////////////////////////////
+   //
+   // Solve the problem.
 
    all_solutions_t solve(
       const problem_t::ptr_t& a_problem,
