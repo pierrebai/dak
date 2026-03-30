@@ -17,6 +17,7 @@ add_subdirectory(geometry_tests)
 
 add_subdirectory(utility)
 add_subdirectory(utility_tests)
+add_subdirectory(solver_tests)
 
 add_subdirectory(object)
 add_subdirectory(object_tests)
@@ -29,9 +30,6 @@ add_subdirectory(any_op_tests)
 
 add_subdirectory(command)
 add_subdirectory(command_tests)
-
-add_subdirectory(solver)
-add_subdirectory(solver_tests)
 
 add_subdirectory(ui)
 

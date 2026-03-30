@@ -23,7 +23,15 @@ namespace dak::utility
       if (!my_stream)
          return;
 
-      *my_stream << a_total_count_so_far << "\r";
+      if (a_total_count_so_far < 2 * 1000)
+         *my_stream << a_total_count_so_far << "\r";
+      else if (a_total_count_so_far < 10 * 1000 * 1000)
+         *my_stream << (a_total_count_so_far / 1000) << " thousands        \r";
+      else if (a_total_count_so_far < 10 * 1000 * 1000 * 1000)
+         *my_stream << (a_total_count_so_far / (1000 * 1000)) << " millions        \r";
+      else
+         *my_stream << (a_total_count_so_far / (1000 * 1000 * 1000)) << " billions        \r";
+      
    }
 }
 

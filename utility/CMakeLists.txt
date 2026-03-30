@@ -19,6 +19,10 @@ add_library(dak_utility
    include/dak/utility/types.h
    include/dak/utility/undo_stack.h                src/undo_stack.cpp
    include/dak/utility/work_item.h
+
+   include/dak/solver/problem.h
+   include/dak/solver/solution.h
+   include/dak/solver/solve.h
 )
 
 target_include_directories(dak_utility PUBLIC
